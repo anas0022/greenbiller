@@ -45,21 +45,15 @@ class SalereturnController extends Controller
         $unit = Unit::all();
         $customers = [];  
         $prefix =[];
-        $items =[];
         if($storeId){
             $customers = Customer::where('store_id', $storeId)->get();
         }
         if($customer){
             $prefix = Sale::where('customer_id', $sale->customer)->where('prefix')->get();
         }
-        
-            $prefix = Sale::where('customer_id', $sale->customer)->where('prefix')->get(); 
-    
 
-    $items = Saleitems::where('sales_id', $sale->id)
-        ->whereIn('prefix', $prefix)
-        ->get();
-    
+
+       
         $category = category::all();
      
         $country = countrysettings::all();
@@ -750,55 +744,45 @@ class SalereturnController extends Controller
             return redirect()->back()->withErrors(['error' => 'An error occurred while processing the sale return: ' . $e->getMessage()]);
         }
     }
-
-    public function getItemsByPrefix(Request $request)
+    public function getSaleItems(Request $request)
     {
         try {
-            $customerId = $request->customer_id;
-            $sales = Sale::where('customer_id', $customerId)
-                        ->select('id', 'prefix', 'sales_code', 'sales_type')
-                        ->get();
+            $searchQuery = $request->input('search');
+            $sale_id = $request->input('sales_ids');
+
             
-            return response()->json([
-                'success' => true,
-                'sales' => $sales
-            ]);
+            $items = Saleitems::where('sales_id', $sale_id)
+                ->where(function ($query) use ($searchQuery) {
+                    $query->where('item_name', 'LIKE', "%{$searchQuery}%")
+                        ->orWhere('part_no', 'LIKE', "%{$searchQuery}%");
+                })
+               
+                ->get();
+
+           
+
+                if ($items->isNotEmpty()) {
+
+
+
+                    return $items;
+    
+                } else {
+    
+                    return 'No data fount';
+                }
+
         } catch (Exception $e) {
+            \Log::error('Search Error:', ['error' => $e->getMessage()]);
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage()
-            ]);
+                'message' => 'An error occurred while fetching sale items',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 
-   public function getSaleItems(Request $request)
-   {
-   $searchQuery = $request->input('search');
-   $sale_id = $request->input('sale_id');
-   if ($searchQuery != '') {
-
-       $items = Saleitems::where('sales_id', $sale_id)
-
-           ->where(function ($query) use ($searchQuery) {
-
-               $query->where('item_code', 'LIKE', "%{$searchQuery}%")
-                   ->orWhere('item_name', 'LIKE', "%{$searchQuery}%")
-                   ->orWhere('part_no', 'LIKE', "%{$searchQuery}%")
-                   ->orWhere('barcode', 'LIKE', "%{$searchQuery}%");
-           })
-           ->get();
 
 
-       if ($items->isNotEmpty()) {
+    }
 
-
-
-           return $items;
-
-       } else {
-
-           return 'No data fount';
-       }
-   }}
-
-}

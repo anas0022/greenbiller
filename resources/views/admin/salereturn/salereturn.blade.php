@@ -555,7 +555,7 @@
 
 
                                 @csrf
-                              
+
                                 <div class="modal fade" id="discount-modal" tabindex="-1">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
@@ -608,11 +608,11 @@
                                                 </button>
                                             </div>
                                         </div>
-       
+
                                     </div>
-                         
+
                                 </div>
-                             
+
                                 <div class="modal fade" id="terms-modal" tabindex="-1">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
@@ -641,12 +641,12 @@
                                                 </button>
                                             </div>
                                         </div>
-                              
+
                                     </div>
-                           
+
                                 </div>
 
-                            
+
                                 <div class="modal fade" id="hold-modal" tabindex="-1">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
@@ -717,7 +717,6 @@
                                                             @endforeach
                                                         </select>
 
-
                                                     </div>
 
                                                 </div>
@@ -729,29 +728,7 @@
 
                                         </div>
 
-                                        <div class="col-md-2">
-                                            <div class="input-group" data-toggle="tooltip" title=""
-                                                data-original-title="Customer">
 
-                                                <span class="input-group-addon"><i class="fa fa-info"></i></span>
-                                                <select name="sale_prefix" id="bill_no"
-                                                    class="form-control selectpicker">
-                                                    <option value="">-select-</option>
-                                                    @foreach ($prefix as $bill)
-                                                        <option value="{{ $bill }}">{{ $bill }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-
-
-
-
-                                            </div>
-
-
-
-
-                                        </div>
                                         <div class="col-md-2">
                                             <input type="text" class="form-control" data-toggle="tooltip"
                                                 title="" placeholder="Invioce Number" id="sale_code"
@@ -1023,31 +1000,199 @@
                                                     id="show_part" name="show_part" value="1" checked>
 
                                             </div>
-                                          
+
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="input-group" data-toggle="tooltip" title=""
+                                                data-original-title="Customer">
+
+
+                                                <span class="input-group-addon"><i class="fa fa-info"></i></span>
+                                                <select name="sale_prefix" id="bill_no"
+                                                    class="form-control selectpicker">
+                                                    <option value="">-Select Bill-</option>
+                                                    @foreach ($prefix as $bill)
+                                                        <option value="{{ $bill }}">{{ $bill }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+
+                                                <div id="prefix-input-template" style="display: none;">
+                                                    <div class="form-group prefix-group-wrapper"
+                                                        style="
+                                                        flex: 0 0 calc(33.333% - 10px); 
+                                                        min-width: 200px;
+                                                           margin-top: 5px;
+                                                        margin-bottom: 5px;
+                                                        margin-left: 20px;
+                                                    ">
+                                                        <div class="prefix-group"
+                                                            style="
+                                                            display: flex;
+                                                            width: 100%;
+                                                            align-items: center;
+                                                            padding: 5px;
+                                                            background-color: #f9f9f9;
+                                                            border: 1px solid #ddd;
+                                                            border-radius: 4px;
+                                                        ">
+                                                            <input type="text" name="prefixs[]"
+                                                                class="form-control prefix-input" readonly
+                                                                style="flex: 1; margin-right: 5px;">
+                                                            <button type="button"
+                                                                class="btn btn-danger shadow btn-xs sharp delete-prefix">
+                                                                <i class="fa fa-trash"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <script>
+                                                    $(document).ready(function() {
+                                                        // Create container if it doesn't exist
+                                                        if ($('.prefix-container').length === 0) {
+                                                            $('#bill_no').parent().after(
+                                                                '<div class="prefix-container" style="display: grid; grid-template-columns: repeat(3, 1fr); "></div>'
+                                                            );
+                                                        }
+
+                                                        $('#bill_no').on('change', function() {
+                                                            var selectedOption = $(this).find('option:selected');
+                                                            var prefix = selectedOption.text();
+                                                            var saleId = selectedOption.data('sale-id');
+
+                                                            if (prefix && prefix !== '-Select Bill-') {
+                                                                // Check if this prefix already exists
+                                                                var existingPrefix = false;
+                                                                $('.prefix-input').each(function() {
+                                                                    if ($(this).val() === prefix) {
+                                                                        existingPrefix = true;
+                                                                        swal({
+                                                                            title: "Already Selected!",
+                                                                            text: "This bill is already in your selection.",
+                                                                            icon: "warning",
+                                                                            button: "OK",
+                                                                        });
+                                                                        return false; // Break the loop
+                                                                    }
+                                                                });
+
+                                                                // Only proceed if prefix doesn't exist
+                                                                if (!existingPrefix) {
+                                                                    var inputCount = $('.prefix-input').length + 1;
+
+                                                                    // Clone the template
+                                                                    var newInput = $('#prefix-input-template').children().first().clone();
+
+                                                                    // Update the cloned element
+                                                                    newInput.find('.prefix-group').attr('id', 'prefix-group-' + inputCount);
+                                                                    newInput.find('.prefix-input')
+                                                                        .attr('id', 'prefix_' + inputCount)
+                                                                        .val(prefix)
+                                                                        .attr('data-sale-id', saleId); // Store sale ID with the input
+                                                                    newInput.find('.delete-prefix').attr('onclick', 'removePrefix(' + inputCount + ')');
+
+                                                                    // Add to container
+                                                                    $('.prefix-container').append(newInput);
+
+                                                                    // Store the sale ID in a hidden input if needed
+                                                                    if ($('#selected_sale_ids').length === 0) {
+                                                                        $('.prefix-container').after(
+                                                                            '<input type="hidden" id="selected_sale_ids" name="selected_sale_ids">');
+                                                                    }
+                                                                    updateSelectedSaleIds();
+                                                                }
+
+
+                                                            }
+                                                        });
+                                                    });
+
+                                                    function updateSelectedSaleIds() {
+                                                        var saleIds = [];
+                                                        $('.prefix-input').each(function() {
+                                                            var saleId = $(this).data('sale-id');
+                                                            if (saleId) {
+                                                                saleIds.push(saleId);
+                                                            }
+                                                        });
+                                                        $('#selected_sale_ids').val(saleIds.join(','));
+                                                    }
+
+                                                    function removePrefix(id) {
+                                                        const prefixGroup = $(`#prefix-group-${id}`);
+                                                        const removedPrefix = prefixGroup.find('.prefix-input').val();
+
+                                                        // Remove the prefix group wrapper
+                                                        if (prefixGroup.length) {
+                                                            prefixGroup.closest('.prefix-group-wrapper').remove();
+                                                        }
+
+                                                        // Remove all rows from the table that match this prefix
+                                                        $('#purchase_table tr.item-row').each(function() {
+                                                            if ($(this).data('prefix') === removedPrefix) {
+                                                                $(this).remove();
+                                                            }
+                                                        });
+
+                                                        // Recalculate totals
+                                                        let totalQty = 0;
+                                                        let totalAmount = 0;
+
+                                                        // Sum up remaining quantities
+                                                        $('input[name="sales_qty[]"]').each(function() {
+                                                            totalQty += parseFloat($(this).val()) || 0;
+                                                        });
+
+                                                        // Sum up remaining amounts
+                                                        $('input[name="total_amount[]"]').each(function() {
+                                                            totalAmount += parseFloat($(this).val()) || 0;
+                                                        });
+
+                                                        // Update total displays
+                                                        $('#totalitemqty').val(totalQty);
+                                                        $('#subtotal_amt').val(totalAmount.toFixed(3));
+
+                                                        // Trigger other calculations
+                                                        total_sum();
+                                                        alldiscout();
+                                                        totalamtsum();
+                                                    }
+                                                </script>
+
+
+
+
+
+                                            </div>
+
+
+
+
                                         </div>
 
 
-                                  
                                     </div>
+
                                     <script>
                                         function saletype() {
                                             var sale_type = document.getElementById('sales_type').value;
-                                    
+
                                             if (sale_type == 1) {
-                                              
+
                                                 document.getElementById('tax_report').checked = false;
-                                            }
-                                            else{
+                                            } else {
                                                 document.getElementById('tax_report').checked = true;
                                             }
                                         }
                                     </script>
-                                    
-                                    <input type="text" name="sales_type" id="sales_type"  value="1" oninput="saletype()">
-                                    <input type="text" name="sale_id" id="sale_id"  >
+
+                                    <input type="hidden" name="sales_type" id="sales_type" value="1"
+                                        oninput="saletype()">
+                                    <input type="hidden" name="sale_id" id="sale_id">
                                     <script>
-                                        $(document).ready(function () {
-                                            $('#customer_select').on('change', function () {
+                                        $(document).ready(function() {
+                                            $('#customer_select').on('change', function() {
                                                 var customerId = $(this).val();
                                                 if (customerId) {
                                                     $.ajax({
@@ -1056,17 +1201,21 @@
                                                         data: {
                                                             customer_id: customerId
                                                         },
-                                                        success: function (response) {
+
+                                                        success: function(response) {
                                                             $('#bill_no').empty();
                                                             $('#bill_no').append('<option value="">-select-</option>');
-                                                            
+
                                                             if (response.success && response.sales.length > 0) {
-                                                                $.each(response.sales, function (key, sale) {
+                                                                $.each(response.sales, function(key, sale) {
                                                                     $('#bill_no').append(
-                                                                        '<option value="' + sale.prefix + '/' + sale.sales_code + '" ' +
+                                                                        '<option value="' + sale.prefix + '/' + sale
+                                                                        .sales_code + '" ' +
                                                                         'data-prefix="' + sale.prefix + '" ' +
-                                                                        'data-sales-code="' + sale.sales_code + '" ' +
-                                                                        'data-sales-type="' + sale.sales_type + '" ' +
+                                                                        'data-sales-code="' + sale.sales_code +
+                                                                        '" ' +
+                                                                        'data-sales-type="' + sale.sales_type +
+                                                                        '" ' +
                                                                         'data-sale-id="' + sale.id + '">' +
                                                                         sale.prefix + '/' + sale.sales_code +
                                                                         '</option>'
@@ -1078,47 +1227,20 @@
                                                 } else {
                                                     $('#bill_no').empty();
                                                     $('#bill_no').append('<option value="">-select-</option>');
-                                                    $('#sale_id').val('');
                                                     $('#sales_type').val('');
                                                     $('#sales_code').val('');
                                                 }
                                             });
 
                                             $('#bill_no').on('change', function() {
-                                                alert('Select changed'); // Debug alert 1
-                                                
+
+
                                                 var selectedOption = $(this).find('option:selected');
                                                 var saleId = selectedOption.data('sale-id');
-                                                
-                                                alert('Sale ID: ' + saleId); // Debug alert 2
-                                                
-                                                if(saleId) {
-                                                    $.ajax({
-                                                        url: "{{ route('get.sale.items') }}",
-                                                        type: "GET",
-                                                        data: { sale_id: saleId },
-                                                        beforeSend: function() {
-                                                            alert('AJAX starting'); // Debug alert 3
-                                                        },
-                                                        success: function(response) {
-                                                            alert('AJAX success'); // Debug alert 4
-                                                            console.log('Response:', response); // Debug log
-                                                            
-                                                            $('#item-results').empty();
-                                                            // ... rest of your success code ...
-                                                        },
-                                                        error: function(xhr, status, error) {
-                                                            alert('AJAX error: ' + error); // Debug alert 5
-                                                            console.log('Error details:', {
-                                                                status: status,
-                                                                error: error,
-                                                                response: xhr.responseText
-                                                            });
-                                                        }
-                                                    });
-                                                } else {
-                                                    alert('No sale ID found'); // Debug alert 6
-                                                }
+
+                                                document.getElementById('sale_id').value = saleId;
+
+
                                             });
                                         });
                                     </script>
@@ -1158,66 +1280,6 @@
                                                     <tbody style=" font-size: 16px;font-weight: bold;overflow: scroll;"
                                                         id="item-results">
 
-                                                        <!--  <tr>
-                                                                <td><input name="item_id[]" type="hidden" id="item_id_"
-                                                                        class="form-control form-control-sm itemRow"
-                                                                        value="">
-                                                                    €Item Name
-                                                                </td>
-
-                                                                <td>
-                                                                    <div class="input-group input-group-sm">
-                                                                        <span class="input-group-btn">
-                                                                            <button type="button"
-                                                                                class="btn btn-default btn-flat"><i
-                                                                                    class="fa fa-minus text-danger"></i></button>
-                                                                        </span>
-                                                                        <input name="qty[]" type="text"
-                                                                            class="form-control no-padding text-center min_width"
-                                                                            value="" oninput="">
-                                                                        <span class="input-group-btn">
-                                                                            <button type="button" onclick=""
-                                                                                class="btn btn-default btn-flat">
-                                                                                <i class="fa fa-plus text-success"></i>
-                                                                            </button>
-                                                                        </span>
-                                                                    </div>
-                                                                </td>
-                                                                <td class="text-right">
-                                                                    
-                                                                    <select name="" id="" class="form-control no-padding min_width">
-                                                                        <option value="">1</option>
-                                                                    </select>
-                                                                </td>
-                                                                <td class="text-right">
-                                                                    <input id="" oninput="" name="sales_price[]" type="text" class="form-control no-padding min_width" value="" />
-                                                                </td>
-                                                                <td class="text-right">
-                                                                    <input id="" name="item_discount_amt[]" type="text" class="form-control no-padding min_width pointer" value="" />
-                                                                 </td>
-                                                                <td>
-                                                                    <input id="" name="tax_amt[]" type="text" class="form-control no-padding pointer min_width"  value="" />
-                                                                </td>
-                                                                <td class="text-right">
-                                                                <select name="" id="" class="form-control no-padding min_width">
-                                                                        <option value="">1</option>
-                                                                    </select>
-                                                                </td>
-                                                                <td class="text-right">
-                                                                    <input id="" name="item_discount_amt[]" type="text" class="form-control no-padding min_width pointer" value="" />
-                                                                 </td>
-                                                                 <td class="text-right">
-                                                                    <input id="" name="item_discount_amt[]" type="text" class="form-control no-padding min_width pointer" value="" />
-                                                                 </td>
-                                                                 <td class="text-right">
-                                                                    <input id="" name="item_discount_amt[]" type="text" class="form-control no-padding min_width pointer" value="" />
-                                                                 </td>
-
-                                                               
-                                                                <td> <a class="fa fa-fw fa-trash-o text-red"
-                                                                        style="cursor: pointer; font-size: 20px"
-                                                                        onclick="" title="Delete Item?"></a> </td>
-                                                            </tr> -->
 
 
                                                     </tbody>
@@ -1494,76 +1556,87 @@
 
     <script>
         function searchitem() {
+            const search = document.getElementById("search").value;
+            const sale_id = document.getElementById("sale_id").value;
 
-            var search = document.getElementById("search").value;
+            // Get all currently selected item IDs
+            const selectedItems = Array.from(document.getElementsByName('item_id[]')).map(input => input.value);
 
-            var store_id = document.getElementById("store_select").value;
-
-            // alert(store_id);
-            if (store_id == '') {
-                // alert('Please select the store');
-                swal("Warning!", "Please select a store", "warning");
+            if (sale_id == '') {
+                swal("Warning!", "Please select a bill", "warning");
             }
             if (search == '') {
                 document.getElementById("ui-id-1").style.display = "none";
                 document.getElementById("ui-id-1").innerHTML = response;
-
             }
+
             document.getElementById("ui-id-1").style.display = "block";
             document.getElementById("ui-id-1").innerHTML = "!Loading .....!";
+
             $.ajax({
                 type: "GET",
-                url: "{{ route('search-items') }}",
+                url: "{{ route('get.sale.items') }}",
                 data: {
                     search: search,
-                    store_id: store_id
+                    sales_ids: sale_id
                 },
                 success: function(response) {
-                    //  var data = jQuery.parseJSON(response)
-                    // var json_obj = JSON.parse(response);
-                    var test = JSON.stringify(response);
-                    //  var data = JSON.parse(response);
-                    // alert(test);
                     document.getElementById("ui-id-1").style.display = "block";
                     document.getElementById("ui-id-1").innerHTML = "";
 
                     response.forEach(function(test) {
-                        var searchs = document.getElementById("ui-id-1").innerHTML;
 
+                        var searchs = document.getElementById("ui-id-1").innerHTML;
                         var stockColor = (test.opening_stock < 10) ? 'red' : 'green';
 
                         document.getElementById("ui-id-1").innerHTML = searchs +
                             '<li class="ui-menu-item" role="presentation" >' +
-                            '<a href="javascript:void(0)" onclick="additem(' + test.id +
+                            '<a href="javascript:void(0)" onclick="additem(' + test.item_id + ', ' +
+                            test.sales_qty + ', ' + test.unit_id + ' , ' + test.rate_inclusive_tax +
+                            ' , ' + test.price_per_unit + ', ' + test.discount_amt + ', ' + test
+                            .tax_amt + ',' + test.mrp + ', ' + test.total_cost +
                             ')" class="ui-corner-all" tabindex="-1" style="display:flex; ">' +
                             test.item_name + ' [ ' + test.part_no + ' ] ' +
-                            '<p style="color:' + stockColor + ';"  id="stock">( Stock ' + test
-                            .opening_stock + ' )</p>' +
+                            '<p style="color:' + stockColor +
+                            ';   id="stock"> Item Qty ' +
+                            test.sales_qty + ' </p>' +
                             '</a></li>';
 
                     });
 
+                    // If no items are available to show
+                    if (document.getElementById("ui-id-1").innerHTML === "") {
+                        document.getElementById("ui-id-1").innerHTML =
+                            '<li class="ui-menu-item" role="presentation"><a class="ui-corner-all" tabindex="-1">No items available</a></li>';
+                    }
                 },
             });
         }
 
-        function additem(item_id) {
+
+
+        function additem(item_id, sales_qty, unit_id, rate_inclusive_tax, price_per_unit, discount_amt, tax_amt, mrp,
+            total_cost) {
+
             document.getElementById("ui-id-1").style.display = "none";
             document.getElementById("search").value = "";
 
             $.ajax({
                 type: "GET",
-                // url: "controller/add-item-purchase.php",
                 url: "{{ route('add-item') }}",
                 data: {
-                    item_id: item_id,
+                    item_id: item_id
                 },
                 success: function(response) {
                     var data = JSON.stringify(response);
+
                     response.forEach(function(data) {
+
                         var count = $(".itemRow").length;
                         var htmlRows = "";
-                        htmlRows += "<tr>";
+                        htmlRows += `<tr class="item-row" data-prefix="${$('#bill_no').val()}">`;
+
+
 
                         htmlRows += '<td><input name="item_id[]" type="hidden" id="item_id_' +
 
@@ -1580,29 +1653,31 @@
                             '<td> <div class="input-group input-group-sm"><span class="input-group-btn"> <button type="button" onclick="decrement_qty(1,' +
                             count +
                             ')" class="btn btn-default btn-flat"><i class="fa fa-minus text-danger"></i></button></span> <input name="sales_qty[]" type="text" id="qty_' +
-                            count +
-                            '" class="form-control no-padding text-center min_width" value="1"  >  <span class="input-group-btn">  <button type="button" onclick="increment_qty(1,' +
+                            count + '" class="form-control no-padding text-center min_width" value="' +
+                            sales_qty + '" name="sale_qty_' + count +
+                            '">  <span class="input-group-btn">  <button type="button" onclick="increment_qty(1,' +
                             count +
                             ')" class="btn btn-default btn-flat"><i class="fa fa-plus text-success"></i> </button>  </span> </div> </td>';
                         htmlRows += '<td>';
 
                         // Unit ID exists in the data, pre-select the option in the dropdown
-                        htmlRows += '<select class="form-control form-control-sm"  name="unit_id[]">';
+                        htmlRows += '<select class="form-control form-control-sm"  name="unit_id[]" >';
                         htmlRows += '<option value="">select</option>';
-                        @if ($unit->isNotEmpty())
-                            @foreach ($unit as $unitvalue)
-                                htmlRows +=
-                                    '<option value="{{ $unitvalue->id }}" data-name="{{ $unitvalue->unit_name }}">{{ $unitvalue->unit_name }}</option>';
-                            @endforeach
-                        @else
-                            htmlRows += '<option value="">No units available</option>';
-                        @endif
+                        @foreach ($unit as $unitvalue)
+                            htmlRows += '<option value="{{ $unitvalue->id }}" ' +
+                                'data-name="{{ $unitvalue->unit_name }}" ' +
+                                // Check if this unit matches the passed unit_id
+                                ({{ $unitvalue->id }} == unit_id ? 'selected' : '') +
+                                '>{{ $unitvalue->unit_name }}</option>';
+                        @endforeach
+                        htmlRows += '</select>';
+                        htmlRows += '</td>';
 
                         htmlRows +=
                             '<td> <input name="rate_inc_tax[]" id="rate_inc_tax_' +
                             count +
-                            '" type="text" class="form-control form-control-sm" value="" oninput="cal_division(' +
-                            count + ')"></td>';
+                            '" type="text" class="form-control form-control-sm" value="' +
+                            rate_inclusive_tax + '" oninput="cal_division(' + count + ')"></td>';
 
                         htmlRows +=
                             '<td> <input name="purchase_price[]" id="purchase_price_' +
@@ -1610,12 +1685,11 @@
                             '" type="text"  oninput="update_calculation(' +
                             count +
                             ')" class="form-control form-control-sm" value="' +
-                            (data.purchase_price ? data.purchase_price : "00") +
+                            price_per_unit +
                             '"></td>';
                         htmlRows += '<td> <input name="discount_amt[]" id="discount_' + count +
                             '" type="text" oninput="cal_division(' + count +
-                            ')" class="form-control form-control-sm" value="' + (data.discount ? data
-                                .discount : "00") +
+                            ')" class="form-control form-control-sm" value="' + discount_amt +
                             '"><select class="underselect" name="item_discount_type[]" id="item_discount_type_' +
                             count + '" onchange="cal_division(' + count +
                             ')"><option value="percent">Percent</option><option value="fixed">Fixed</option></select></td>';
@@ -1626,7 +1700,7 @@
                             '" class="form-control form-control-sm" onchange="calculatetax(' + count +
                             ');">';
                         htmlRows += '<option value="">select</option>';
-                        @foreach ($taxes as $taxvalue)
+                        @foreach ($tax as $taxvalue)
                             htmlRows += '<option ';
                             if (data['tax_id'] == {{ $taxvalue->id }}) {
                                 htmlRows += 'selected ';
@@ -1642,29 +1716,23 @@
                         htmlRows +=
                             '<td> <input name="tax_amt[]" id="tax_amt_' +
                             count +
-                            '" type="text" class="form-control form-control-sm" value="00" readonly style="background-color: #ddd;"></td>';
+                            '" type="text" class="form-control form-control-sm" value="' + tax_amt +
+                            '" readonly style="background-color: #ddd;"></td>';
 
                         htmlRows +=
                             '<td><input type="text" id="mrp_' +
                             count +
                             '" value="' +
-                            (data.mrp ? data.mrp : "00") +
+                            mrp +
                             '" name="mrp[]" class="form-control form-control-sm"></td>'
 
                         htmlRows +=
                             '<td> <input name="total_amount[]" id="total_amount_' +
                             count +
                             '" type="text" class="form-control form-control-sm total" value="' +
-                            (data.purchase_price ? data.purchase_price : '000') +
+                            total_cost +
                             '" readonly style="background-color: #ddd;" oninput="total_sum()" ></td>';
-                        // htmlRows +=
-                        //     '<td> <input name="bach_no[]" id="bach_no_' +
-                        //     count +
-                        //     '" type="text" class="form-control form-control-sm" ></td>';
-                        // htmlRows +=
-                        //     '<td> <input name="expire_date[]" id="expiry_date_' +
-                        //     count +
-                        //     '" type="date" class="form-control form-control-sm"></td>';
+
                         htmlRows +=
                             '<td> <button onclick="delete_row(' +
                             count +
@@ -1678,12 +1746,19 @@
                         itemTotal(count);
                         total_sum();
                         alldiscout();
+                        removePrefix();
 
                     });
                 },
             });
 
         }
+
+
+
+
+
+
 
 
 
@@ -1741,6 +1816,8 @@
             var qty = document.getElementById("qty_" + counts).value;
             var purchase_price = (parseFloat(amt_inc_tax) * 100) / (100 + parseFloat(taxvalue));
             document.getElementById("purchase_price_" + counts).value = purchase_price;
+
+
 
 
             calculatingtax(counts);
@@ -1912,7 +1989,6 @@
 
 
             var gotAttri = selectedOption.getAttribute('data-name');
-
 
 
 

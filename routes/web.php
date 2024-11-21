@@ -131,6 +131,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'role:admin|superadm
     Route::get('/add_adjustment', [AdjustmentController::class, 'addajustment'])->name('addajustment');
     Route::get('/search-items', [PurchaseController::class, 'searchItems'])->name('search-items');
     Route::get('/add-item', [PurchaseController::class, 'addItem'])->name('add-item');
+    Route::get('/addItem_return',[SalereturnController::class,'addItem_return'])->name('addItem_return');
     Route::post('/adjust_post', [AdjustmentController::class, 'adjust_post'])->name('adjust.post');
     Route::post('/adjustmentview', [AdjustmentController::class, 'adjustmentview'])->name('adjustmentview');
     Route::post('/delete_adjustment', [AdjustmentController::class, 'delete_adjustment'])->name('delete.adjust');
