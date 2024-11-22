@@ -728,11 +728,15 @@
 
                                         </div>
 
-
+                                        <div class="col-md-2">
+                                            <input type="text" class="form-control" data-toggle="tooltip"
+                                                title="" placeholder="Prefix" id="sale_code"
+                                                name="return_prefix" value="SRB2024-25" readonly/>
+                                        </div>
                                         <div class="col-md-2">
                                             <input type="text" class="form-control" data-toggle="tooltip"
                                                 title="" placeholder="Invioce Number" id="sale_code"
-                                                name="sale_code" value="{{ $saleCode }}" />
+                                                name="sale_code" value="{{ $saleCode }}" readonly/>
                                         </div>
                                     </div>
                                     <script>
@@ -1038,7 +1042,7 @@
                                                         ">
                                                             <input type="text" name="prefixs[]"
                                                                 class="form-control prefix-input" readonly
-                                                                style="flex: 1; margin-right: 5px;">
+                                                                style="flex: 1; margin-right: 5px;" value="{{ old('prefixs.0') }}">
                                                             <button type="button"
                                                                 class="btn btn-danger shadow btn-xs sharp delete-prefix">
                                                                 <i class="fa fa-trash"></i>
@@ -1187,7 +1191,7 @@
                                         }
                                     </script>
 
-                                    <input type="hidden" name="sales_type" id="sales_type" value="1"
+                                    <input type="hidden" name="sales_types" id="sales_type" value="1"
                                         oninput="saletype()">
                                     <input type="hidden" name="sale_id" id="sale_id">
                                     <script>
@@ -1237,9 +1241,9 @@
 
                                                 var selectedOption = $(this).find('option:selected');
                                                 var saleId = selectedOption.data('sale-id');
-
+                                                var saleType = selectedOption.data('sales-type');
                                                 document.getElementById('sale_id').value = saleId;
-
+                                                document.getElementById('sales_type').value = saleType;
 
                                             });
                                         });
@@ -1558,58 +1562,97 @@
         function searchitem() {
             const search = document.getElementById("search").value;
             const sale_id = document.getElementById("sale_id").value;
+            const sale_type = document.getElementById("sales_type").value;
 
-            // Get all currently selected item IDs
-            const selectedItems = Array.from(document.getElementsByName('item_id[]')).map(input => input.value);
+            // Debug logs
+            console.log('Search Parameters:', {
+                search: search,
+                sale_id: sale_id,
+                sale_type: sale_type
+            });
 
-            if (sale_id == '') {
-                swal("Warning!", "Please select a bill", "warning");
+            if (!sale_id) {
+                swal("Warning!", "Please select a bill first", "warning");
+                return;
             }
-            if (search == '') {
-                document.getElementById("ui-id-1").style.display = "none";
-                document.getElementById("ui-id-1").innerHTML = response;
+
+            const searchResults = document.getElementById("ui-id-1");
+            
+            if (!search) {
+                searchResults.style.display = "none";
+                return;
             }
 
-            document.getElementById("ui-id-1").style.display = "block";
-            document.getElementById("ui-id-1").innerHTML = "!Loading .....!";
+            searchResults.style.display = "block";
+            searchResults.innerHTML = "Loading...";
+
+            // Add CSRF token to headers
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
 
             $.ajax({
                 type: "GET",
                 url: "{{ route('get.sale.items') }}",
                 data: {
                     search: search,
-                    sales_ids: sale_id
+                    sales_ids: sale_id,
+                    sales_types: sale_type
                 },
+                dataType: 'json',
                 success: function(response) {
-                    document.getElementById("ui-id-1").style.display = "block";
-                    document.getElementById("ui-id-1").innerHTML = "";
-
-                    response.forEach(function(test) {
-
-                        var searchs = document.getElementById("ui-id-1").innerHTML;
-                        var stockColor = (test.opening_stock < 10) ? 'red' : 'green';
-
-                        document.getElementById("ui-id-1").innerHTML = searchs +
-                            '<li class="ui-menu-item" role="presentation" >' +
-                            '<a href="javascript:void(0)" onclick="additem(' + test.item_id + ', ' +
-                            test.sales_qty + ', ' + test.unit_id + ' , ' + test.rate_inclusive_tax +
-                            ' , ' + test.price_per_unit + ', ' + test.discount_amt + ', ' + test
-                            .tax_amt + ',' + test.mrp + ', ' + test.total_cost +
-                            ')" class="ui-corner-all" tabindex="-1" style="display:flex; ">' +
-                            test.item_name + ' [ ' + test.part_no + ' ] ' +
-                            '<p style="color:' + stockColor +
-                            ';   id="stock"> Item Qty ' +
-                            test.sales_qty + ' </p>' +
-                            '</a></li>';
-
-                    });
-
-                    // If no items are available to show
-                    if (document.getElementById("ui-id-1").innerHTML === "") {
-                        document.getElementById("ui-id-1").innerHTML =
-                            '<li class="ui-menu-item" role="presentation"><a class="ui-corner-all" tabindex="-1">No items available</a></li>';
+                    console.log('Success Response:', response);
+                    searchResults.innerHTML = "";
+                    
+                    if (!response.data || response.data.length === 0) {
+                        searchResults.innerHTML = '<li class="ui-menu-item"><a class="ui-corner-all">No items found</a></li>';
+                        return;
                     }
+
+                    response.data.forEach(function(item) {
+                        console.log('Processing item:', item);
+                        const li = document.createElement('li');
+                        li.className = 'ui-menu-item';
+                        li.innerHTML = `
+                            <a href="javascript:void(0)" 
+                               onclick="additem(
+                                   '${item.item_id}', 
+                                   '${item.sales_qty}', 
+                                   '${item.unit_id}', 
+                                   '${item.rate_inclusive_tax}', 
+                                   '${item.price_per_unit}', 
+                                   '${item.discount_amt}', 
+                                   '${item.tax_amt}', 
+                                   '${item.mrp}', 
+                                   '${item.total_cost}'
+                               )" 
+                               class="ui-corner-all">
+                                ${item.item_name} [ ${item.part_no || ''} ] - Qty: ${item.sales_qty}
+                            </a>`;
+                        searchResults.appendChild(li);
+                    });
                 },
+                error: function(xhr, status, error) {
+                    console.error('AJAX Error:', {
+                        status: xhr.status,
+                        statusText: xhr.statusText,
+                        responseText: xhr.responseText,
+                        error: error
+                    });
+                    
+                    let errorMessage = 'Failed to fetch items';
+                    try {
+                        const response = JSON.parse(xhr.responseText);
+                        errorMessage = response.message || errorMessage;
+                    } catch(e) {
+                        console.error('Error parsing response:', e);
+                    }
+                    
+                    searchResults.innerHTML = `<li class="ui-menu-item"><a class="ui-corner-all">Error: ${errorMessage}</a></li>`;
+                    swal("Error!", errorMessage, "error");
+                }
             });
         }
 
@@ -1816,7 +1859,6 @@
             var qty = document.getElementById("qty_" + counts).value;
             var purchase_price = (parseFloat(amt_inc_tax) * 100) / (100 + parseFloat(taxvalue));
             document.getElementById("purchase_price_" + counts).value = purchase_price;
-
 
 
 

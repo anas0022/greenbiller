@@ -531,7 +531,7 @@
 
 
                                 @csrf
-                     <input type="hidden" name="sale_id" id="" value="{{$sale->id}}">
+
                                 <!-- models -->
                                 <!-- customer model start-->
 
@@ -759,8 +759,9 @@
                                                 data-original-title="Invoice Initial Code">
                                                 <span class="input-group-addon"><i class="fa fa-th-list"></i></span>
                                                 <input type="text" class="form-control"
-                                                    placeholder="Invioce Initial Code" id="prefix" name="sale_prefix"
-                                                    value="{{ $sale->prefix }}/{{ $sale->sales_code }}" />
+                                                    placeholder="Invioce Initial Code" id="prefix" name="prefix"
+                                                    value="SRB2024-25" />
+                                                    <input type="hidden" name="sale_id" id="sale_id" value="{{$sale->id}}">
                                             </div>
                                         </div>
                                         <div class="col-md-4">
@@ -854,57 +855,6 @@
                                                         class="fa fa-user-edit text-primary fa-lg"
                                                         data-toggle="modal"></i></span>
                                             </div>
-{{-- 
-                                            <script>
-                                                function showedit() {
-                                                    // Get the selected option element
-                                                    var selectElement = document.getElementById('customer_id');
-                                                    var customer_id = selectElement.value;
-
-
-                                                    var customer_name = selectElement.options[selectElement.selectedIndex].getAttribute('data-name');
-                                                    var mobile = selectElement.options[selectElement.selectedIndex].getAttribute('data-mobile');
-                                                    var email = selectElement.options[selectElement.selectedIndex].getAttribute('data-email');
-                                                    var gst_no = selectElement.options[selectElement.selectedIndex].getAttribute('data-gst_number');
-
-                                                    var credit = selectElement.options[selectElement.selectedIndex].getAttribute('data-credit');
-                                                    var pre_due = selectElement.options[selectElement.selectedIndex].getAttribute('data-previous_due');
-                                                    var address = selectElement.options[selectElement.selectedIndex].getAttribute('data-address');
-                                                    var city = selectElement.options[selectElement.selectedIndex].getAttribute('data-city');
-                                                    var state = selectElement.options[selectElement.selectedIndex].getAttribute('data-state');
-                                                    var country = selectElement.options[selectElement.selectedIndex].getAttribute('data-country');
-                                                    var ship_country = selectElement.options[selectElement.selectedIndex].getAttribute('data-ship_country');
-                                                    var ship_state = selectElement.options[selectElement.selectedIndex].getAttribute('data-ship_state');
-                                                    var ship_postcode = selectElement.options[selectElement.selectedIndex].getAttribute('data-ship_postcode');
-                                                    var tax_number = selectElement.options[selectElement.selectedIndex].getAttribute('data-tax_number');
-                                                    var price_level_type = selectElement.options[selectElement.selectedIndex].getAttribute('data-pricelevel_type');
-                                                    var price_level = selectElement.options[selectElement.selectedIndex].getAttribute('data-price_level');
-
-
-                                                    if (customer_id === '') {
-                                                        swal("Warning!", "Please select a customer", "warning");
-                                                    } else {
-                                                        $("#customer-modal").modal();
-                                                    }
-                                                    document.getElementById('id').value = customer_id;
-                                                    document.getElementById('customer_name').value = customer_name;
-                                                    document.getElementById('mobile').value = mobile;
-                                                    document.getElementById('email').value = email;
-                                                    document.getElementById('gst_no').value = gst_no;
-                                                    document.getElementById('tax_number').value = tax_number;
-                                                    document.getElementById('credit').value = credit;
-                                                    document.getElementById('previous_due').value = pre_due;
-                                                    document.getElementById('address').value = address;
-                                                    document.getElementById('state').value = state;
-                                                    document.getElementById('country').innerText = country;
-                                                    document.getElementById('ship_address').value = ship_country;
-                                                    document.getElementById('ship_state').value = ship_state;
-                                                    document.getElementById('ship_postcode').value = ship_postcode;
-                                                    document.getElementById('price_level_type').value = price_level_type;
-                                                    document.getElementById('price_level').value = price_level;
-
-                                                }
-                                            </script> --}}
                                             <div class="form-group" style="margin-bottom:0px !important;">
 
                                                 <label for="staticEmail" class="col-sm-4 col-form-label"
@@ -1003,22 +953,14 @@
                                             </script>
                                         </div>
 
-                                        <div class="col-md-6">
+                                        <div class="col-md-2">
                                             <div class="input-group" data-toggle="tooltip" title=""
-                                                data-original-title="Customer">
-                                                <span class="input-group-addon"><i class="fa fa-info"></i></span>
-                                                <input type="text" class="form-control ui-autocomplete-input"
-                                                    placeholder=" Reference No " id="item_search" name="re_no"
-                                                    value="{{ $sale->reference_no }}" />
-
-                                                </select>
-
-
+                                                data-original-title="Invoice Initial Code">
+                                     
+                                                <input type="text" class="form-control"
+                                                    placeholder="Invioce Initial Code" id="prefix" name="sale_prefix"
+                                                    value="{{ $sale->prefix }}/{{ $sale->sales_code }}" />
                                             </div>
-                                            <!-- <span class="customer_points text-success" style="display: none"></span>
-                                    <lable>Previous Due :</lable>
-                                    <input type="text" id="totalitemqty_1" name="totalitemqty_1" class="form-control form-control-sm diaplaylabel" readonly value="0"> -->
-
                                         </div>
 
 

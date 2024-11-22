@@ -73,7 +73,7 @@
                     <div class="card" style="padding: 10px;">
                         <div>
                             <div class="card-footer" >
-                                <h4 class="card-text d-inline"> Sales List </h4>
+                                <h4 class="card-text d-inline"> Return List </h4>
                                 <div style="padding: 10px;">
 
                                     <a href="{{route('Sale.return.mass')}}"
@@ -290,15 +290,15 @@
                             <table id="example" class="display" style="width:100%; ">
                                 <thead style="">
                                     <th>#</th>
-                                    <th>Sale Date</th>
-                                    <th>Sale Code</th>
-                                    <th>Sale Status</th>
-                                    <th>Reference No</th>
+                                    <th>Return Date</th>
+                                    <th>Return Bill</th>
+                                    <th>Return Status</th>
+                           
                                     <th>Customer Name</th>
-                                    <th>Total</th>
+                              
                                    
                                     <th>Created by</th>
-                                    <!-- <th>Created by</th>                                       -->
+                                                             
                                     <th><i class="fas fa-arrow-circle-down"></i></th>
                                 </thead>
                                 <tbody style="width:100%; overflow-x:scroll;">
@@ -312,22 +312,22 @@
                                                 {{$item->sales_status}}
 
                                             </td>
-                                            <td>{{ $item->reference_no }}</td>
+                                           
                                             <td>{{ $suppliers->firstWhere('id', $item->customer_id)->customer_name ?? 'N/A' }}
                                             </td>
-                                            <!-- Accessing the supplier's name -->
-                                            <td>{{ $item->grand_total }}</td>
-                                           
-
+                         
                                             <td>{{ $user->firstWhere('id', $item->created_by)->role ?? 'N/A' }}</td>
                                             <td>
                                                 <div class="dropdown">
                                                     <button type="button" class="btn btn-success light sharp"
                                                         data-bs-toggle="dropdown" aria-expanded="false"><i
                                                             class="fa-solid fa-computer-mouse-scrollwheel"></i></button>
-                                                    <div class="dropdown-menu" style="z-">
-                                                        <a href="{{ route('invoice_sale.main', ['id'=>$item->id,'sale_type'=>$item->sales_type]) }}"
-                                                            class="dropdown-item" type="submit">
+                                                    <div class="dropdown-menu" >
+                                                        <a href="{{ route('invoice_sale.view', [
+                                                            'id' => $item->id,
+                                                            'sale_type' => $item->sales_type ?? 0,
+                                                            'sale_id' => $item->sale_id
+                                                        ]) }}" class="dropdown-item">
                                                             <i class="fas fa-eye"></i> View Sale
                                                         </a>
 

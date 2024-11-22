@@ -954,11 +954,11 @@ class SalesController extends Controller
         return response()->json(['message' => 'Item not found'], 404);
     }
 
-    public function invoice_sale_view($id, $sale_type)
+    public function invoice_sale_view($id, $sale_type,$sale_id)
     {
         $logo = Coresetting::all();
         $sale = Sale::find($id);
-     
+      
            
        
              
@@ -967,7 +967,12 @@ class SalesController extends Controller
                 ->get();
                 $hsn_codes = $sales_itemdata->pluck('hsn_code')
                 
-                ->unique(); // Get unique HSN codes
+                ->unique();
+                $prefix_get = SaleReturn::where('sale_id',$sale_id)->get();
+                $prefix = $prefix_get->pluck('sale_prefix' );
+            
+           
+            
                 
                 $response_data = []; 
                 
@@ -979,7 +984,8 @@ class SalesController extends Controller
                         ->get();
                         
                        
-                        $taxable_amount = $sales_items->pluck('rate_inclusive_tax')->sum();
+                        $tax_amt = $sales_items->pluck('tax_amt')->sum();
+                        $rate_inclusive_tax = $sales_items->pluck('rate_inclusive_tax')->sum();
             
                         $tax_ids = $sales_items->pluck('tax_id');
                 
@@ -1000,7 +1006,8 @@ class SalesController extends Controller
                         // Add the calculated data for the current HSN code to the response data
                         $response_data[] = [
                             'hsn_code' => $hsn_code,
-                            'taxable_amount' => $taxable_amount,
+                            'tax_amt' => $tax_amt,
+                            'rate_inclusive_tax'=>$rate_inclusive_tax,
                             'total_tax_percentage' => $total_tax_percentage,
                         ];
                     }
@@ -1062,7 +1069,7 @@ class SalesController extends Controller
                     $customerIds = collect([$sale->customer_id]);
                     $customer = Customer::whereIn('id', $customerIds)->get();
                 }
-                return view('admin/invoice/invoice-sale', compact('unit_id','userids','response_data','tax_records','hsn_code', 'sales_itemdata', 'storeurlstore', 'qrCode', 'sale', 'pay', 'items', 'item_alqty', 'customer', 'tax', 'user', 'store', 'logo'));
+                return view('admin/invoice/invoice-sale', compact('unit_id','prefix','userids','response_data','tax_records','hsn_code', 'sales_itemdata', 'storeurlstore', 'qrCode', 'sale', 'pay', 'items', 'item_alqty', 'customer', 'tax', 'user', 'store', 'logo'));
             }
                
             
@@ -1096,8 +1103,8 @@ class SalesController extends Controller
                         ->get();
                         
                        
-                        $taxable_amount = $sales_items->pluck('rate_inclusive_tax')->sum();
-            
+                        $tax_amt = $sales_items->pluck('tax_amt')->sum();
+                        $rate_inclusive_tax = $sales_items->pluck('rate_inclusive_tax')->sum();
                         $tax_ids = $sales_items->pluck('tax_id');
                 
                       
@@ -1117,7 +1124,8 @@ class SalesController extends Controller
                         // Add the calculated data for the current HSN code to the response data
                         $response_data[] = [
                             'hsn_code' => $hsn_code,
-                            'taxable_amount' => $taxable_amount,
+                            'tax_amt' => $tax_amt,
+                            'rate_inclusive_tax'=>$rate_inclusive_tax,
                             'total_tax_percentage' => $total_tax_percentage,
                         ];
                     }
@@ -1191,8 +1199,9 @@ class SalesController extends Controller
                         ->get();
                         
                        
-                        $taxable_amount = $sales_items->pluck('rate_inclusive_tax')->sum();
-            
+               
+                        $tax_amt = $sales_items->pluck('tax_amt')->sum();
+                        $rate_inclusive_tax = $sales_items->pluck('rate_inclusive_tax')->sum();
                         $tax_ids = $sales_items->pluck('tax_id');
                 
                       
@@ -1212,7 +1221,8 @@ class SalesController extends Controller
                         // Add the calculated data for the current HSN code to the response data
                         $response_data[] = [
                             'hsn_code' => $hsn_code,
-                            'taxable_amount' => $taxable_amount,
+                            'tax_amt' => $tax_amt,
+                            'rate_inclusive_tax'=>$rate_inclusive_tax,
                             'total_tax_percentage' => $total_tax_percentage,
                         ];
                     }
@@ -1446,7 +1456,7 @@ class SalesController extends Controller
         $sale = Sale::find($id);
 
 
-        $saleCode = $sale ? str_pad($sale->return_bill_init + 1, 4, '0', STR_PAD_LEFT) : '0001';
+        $saleCode = $sale ? str_pad($sale->count_id + 1, 4, '0', STR_PAD_LEFT) : '0001';
 
         // Correctly query for sale items and off sale items
         $sales_itemdata = Saleitems::where('sales_id', $id)->where('status', '0')->get();
@@ -1661,10 +1671,10 @@ class SalesController extends Controller
                 'sales_type' => $sales_type,
                 'sale_prefix' => $sale_prefix,
                 'total_qty' => $total_qty,
-
+                'sale_id'=> $sale_id ,
                 'prefix' => $prefix,
-                'return_sale_code' => $return_sale_code,
-                'sales_code' => $sale_code,
+                'sales_code' => $return_sale_code,
+                
 
                 'tax_report' => $tax_report,
 
@@ -1713,7 +1723,7 @@ class SalesController extends Controller
                 'count_id' => $newcount,
 
                 'due_date' => $due_date,
-                'sale_id'=> $sale_id,
+                
 
 
                 'other_charges_tax_id' => $other_charges_tax_id
@@ -2091,6 +2101,7 @@ class SalesController extends Controller
 
             return redirect()->route('invoice_sale.view', [
                 'id' => $sale->id,
+                'sale_id'=>$sale_id,
                 'sale_type' => $sales_type
             ])->with([
                 'success' => 'Sale return processed successfully',
@@ -2107,6 +2118,7 @@ class SalesController extends Controller
                 'item_alqty' => $item_alqty,
                 'part_no' => $part_no
             ]);
+
 
 
 
@@ -2161,6 +2173,7 @@ class SalesController extends Controller
 }
 
 // Fetch payment record
+
 
 
 

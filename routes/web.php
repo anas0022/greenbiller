@@ -215,8 +215,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'role:admin|superadm
     Route::post('/sale_edit', [SalesController::class, 'sale_edit'])->name('sale.edit');
     Route::get('/data.tables.data', [SalesController::class, 'data_tables_data'])->name('data.tables.data');
 
-    Route::get('/invoice_sale_view/{id}/{sale_type}/', [SalesController::class, 'invoice_sale_view'])->name('invoice_sale.view');
-    Route::get('/invoice_sale_main/{id}/{sale_type}/', [SalesController::class, 'invoice_sale_main'])->name('invoice_sale.main');
+    Route::get('/invoice-sale-view/{id}/{sale_type}/{sale_id}', [SalesController::class, 'invoice_sale_view'])->name('invoice_sale.view');
+    Route::get('/invoice-sale-main/{id}/{sale_type}/', [SalesController::class, 'invoice_sale_main'])->name('invoice_sale.main');
 
 
 

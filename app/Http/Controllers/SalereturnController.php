@@ -10,6 +10,7 @@ use App\Models\countrysettings;
 use App\Models\Customer;
 use App\Models\Item;
 use App\Models\ledger;
+use App\Models\Offsaleitems;
 use App\Models\Sale;
 use App\Models\Saleitems;
 use App\Models\SaleReturn;
@@ -25,37 +26,41 @@ use App\Models\Warehouse;
 use App\Models\Warehouseitem;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException; // Add this line
 use Exception;
+
 use Illuminate\Http\Request;
 
 class SalereturnController extends Controller
 {
-    public function salereturn(Request $request){
+    public function salereturn(Request $request)
+    {
         $ware = Warehouse::all();
-        $sale = Sale::latest('id')->first(); // Retrieve the latest sale entry by ID
-
-        $saleCode = $sale 
-            ? str_pad($sale->return_bill_init + 1, 4, '0', STR_PAD_LEFT) 
+        $sale = Sale::latest('id')->first();
+      
+      
+        $saleCode = $sale
+            ? str_pad($sale->count_id + 1, 4, '0', STR_PAD_LEFT)
             : '0001';
-       
-        
+
+
         $store = Store::all();
         $storeId = $request->input('store_id');
         $customer = $request->input('customer_id');
         $unit = Unit::all();
-        $customers = [];  
-        $prefix =[];
-        if($storeId){
+        $customers = [];
+        $prefix = [];
+        if ($storeId) {
             $customers = Customer::where('store_id', $storeId)->get();
         }
-        if($customer){
+        if ($customer) {
             $prefix = Sale::where('customer_id', $sale->customer)->where('prefix')->get();
         }
 
 
-       
+
         $category = category::all();
-     
+
         $country = countrysettings::all();
         $brands = Brand::where('status', 'active')->get();
         $category = category::where('status', 'active')->get();
@@ -64,12 +69,12 @@ class SalereturnController extends Controller
         $unit = Unit::where('status', 'active')->get();
         $tax = Tax::where('status', 'active')->get();
         $stores = Store::where('store_status', 'active')->get();
-        
+
         $taxes = Tax::all();
         $items = Item::where('id', $request->input('id'))->first();
 
         $account = Account::all();
-        return view('admin.salereturn.salereturn',compact('prefix','customers','tax','saleCode','storeId','stores', 'ware', 'taxes', 'store', 'unit',   'account', 'brands', 'category', 'items', 'country'));
+        return view('admin.salereturn.salereturn', compact('prefix', 'customers', 'tax', 'saleCode', 'storeId', 'stores', 'ware', 'taxes', 'store', 'unit', 'account', 'brands', 'category', 'items', 'country'));
 
 
     }
@@ -83,13 +88,14 @@ class SalereturnController extends Controller
             ->get();
         return response()->json($customers);
     }
-  
-    public function salereturn_list(){
+
+    public function salereturn_list()
+    {
         $sales = SaleReturn::all();
         $sale_return = SaleReturn::all();
 
         foreach ($sales as $sale) {
-      
+
             $sales_pay = salespayment::where('sales_id', $sale->id)->first();
 
 
@@ -106,7 +112,7 @@ class SalereturnController extends Controller
             $user = UserList::whereIn('id', $userIds)->first();
             $suppliers = Customer::whereIn('id', $supplierIds)->get();
             $account = Account::all();
-        
+
 
 
         }
@@ -128,9 +134,9 @@ class SalereturnController extends Controller
         try {
             $customerId = $request->customer_id;
             $sales = Sale::where('customer_id', $customerId)
-                        ->select('id', 'prefix', 'sales_code', 'sales_type')
-                        ->get();
-            
+                ->select('id', 'prefix', 'sales_code', 'sales_type')
+                ->get();
+
             return response()->json([
                 'success' => true,
                 'sales' => $sales
@@ -143,8 +149,9 @@ class SalereturnController extends Controller
         }
     }
 
-    public function return_sale_mass(Request $request){
-        
+    public function return_sale_mass(Request $request)
+    {
+
         $rules = [
             'sales_date' => 'required',
             'purchase_price' => 'required|array',
@@ -161,6 +168,8 @@ class SalereturnController extends Controller
             'discount_amt.*' => 'required',
             'total_amount' => 'required|array',
             'total_amount.*' => 'required',
+            'prefixs' => 'required|array',
+
         ];
 
         if (!empty($paid_amount)) {
@@ -190,8 +199,6 @@ class SalereturnController extends Controller
 
         try {
 
-            // Collect main sale data
-
             $sale_code = $request->input('sale_code');
 
             $prefix = $request->input('prefix');
@@ -207,7 +214,7 @@ class SalereturnController extends Controller
             $customer_id = $request->input('customer_id');
 
             $created_on = $sales_date;
-            $sale_prefix = $request->input('sale_prefix');
+
 
             $re_no = $request->input('re_no');
 
@@ -245,20 +252,19 @@ class SalereturnController extends Controller
 
             $sales_qty = $request->input('sales_qty');
             $sale_id = $request->input('sale_id');
+            $return_prefix = $request->input('return_prefix');
             $invoice_terms = $request->input('invoice_terms');
+            $prefixs = $request->input('prefixs', []);
 
             $isNewPurchase = $request->input('is_new_sale', true);
 
             $customer = Customer::find($customer_id);
 
-
-            // Calculate total billed and paid amounts
-
             $totalbilledamt = SaleReturn::where('customer_id', $customer_id)->sum('grand_total');
 
             $totalpayedamt = SaleReturn::where('customer_id', $customer_id)->sum('paid_amount');
 
-            $sales_type = $request->input('sales_type');
+            $sales_type = $request->input('sales_types');
 
 
             // Determine new or existing sale ID
@@ -267,8 +273,7 @@ class SalereturnController extends Controller
 
             $saleId = $isNewPurchase ? $maxSaleId + 1 : $request->input('existing_sale_id');
 
-
-            // Determine new count ID for the sale
+            
 
             $lastSaleEntry = SaleReturn::where('store_id', $store_id)
 
@@ -279,74 +284,84 @@ class SalereturnController extends Controller
                 ->first();
 
             $newcount = $lastSaleEntry ? $lastSaleEntry->count_id + 1 : 1;
+         
+            
+            if (!empty($prefixs)) {
+                foreach ($prefixs as $prefix) {
+                    if (is_null($prefix)) {
+
+                        \Log::error('Prefix is null');
+                
+                        continue; // Skip to the next iteration if prefix is null
+                
+                    }
+                    $sale = SaleReturn::create([
+                       
+                        'tot_discount_to_all_amt' => $tot_discount_to_all_amt,
+                        'sale_prefix' => $prefix,
+                        'sales_type' => $sales_type,
+
+                        'total_qty' => $total_qty,
+
+                        'prefix' => $return_prefix,
+                        'return_sale_code' => $return_sale_code,
+                        'sales_code' => $sale_code,
+
+                        'tax_report' => $tax_report,
+
+                        'discount_to_all_type' => $discount_to_all_type,
+
+                        'discount_to_all_input' => $discount_to_all_input,
+
+                        'created_by' => Auth()->id(),
+
+                        'order_id' => $request->input('order_id'),
+
+                        'warehouse_id' => $warehouse_id,
+
+                        'other_charges_amt' => $other_charges,
+
+                        'store_id' => $store_id,
+
+                        'payment_type' => $payment_type,
+
+                        'purchase_note' => $note,
+
+                        'subtotal' => $subtotal_amt,
+
+                        'reference_no' => $re_no,
+
+                        'payment_note' => $payment_note,
+
+                        'paid_amount' => $payment_amount,
+
+                        'round_off' => $round_off,
+
+                        'customer_id' => $customer_id,
+
+                        'created_on' => $created_on,
+
+                        'grand_total' => $grand_total,
+
+                        'invoice_terms' => $invoice_terms,
+
+                        'account' => $account,
+
+                        'sales_note' => $description,
+
+                        'sales_date' => $sales_date,
+
+                        'count_id' => $newcount,
+
+                        'due_date' => $due_date,
+                        'sale_id' => $sale_id,
 
 
-            // Create new Sale entry
+                        'other_charges_tax_id' => $other_charges_tax_id
 
-            $sale = SaleReturn::create([
-                'tot_discount_to_all_amt' => $tot_discount_to_all_amt,
-                'sales_type' => $sales_type,
-                'sale_prefix' => $sale_prefix,
-                'total_qty' => $total_qty,
-
-                'prefix' => $prefix,
-                'return_sale_code' => $return_sale_code,
-                'sales_code' => $sale_code,
-
-                'tax_report' => $tax_report,
-
-                'discount_to_all_type' => $discount_to_all_type,
-
-                'discount_to_all_input' => $discount_to_all_input,
-
-                'created_by' => Auth()->id(),
-
-                'order_id' => $request->input('order_id'),
-
-                'warehouse_id' => $warehouse_id,
-
-                'other_charges_amt' => $other_charges,
-
-                'store_id' => $store_id,
-
-                'payment_type' => $payment_type,
-
-                'purchase_note' => $note,
-
-                'subtotal' => $subtotal_amt,
-
-                'reference_no' => $re_no,
-
-                'payment_note' => $payment_note,
-
-                'paid_amount' => $payment_amount,
-
-                'round_off' => $round_off,
-
-                'customer_id' => $customer_id,
-
-                'created_on' => $created_on,
-
-                'grand_total' => $grand_total,
-
-                'invoice_terms' => $invoice_terms,
-
-                'account' => $account,
-
-                'sales_note' => $description,
-
-                'sales_date' => $sales_date,
-
-                'count_id' => $newcount,
-
-                'due_date' => $due_date,
-                'sale_id'=> $sale_id,
-
-
-                'other_charges_tax_id' => $other_charges_tax_id
-
-            ]);
-
+                    ]);
+                }
+            }
 
             // Process and add each sale item
 
@@ -718,22 +733,23 @@ class SalereturnController extends Controller
 
             return redirect()->route('invoice_sale.view', [
                 'id' => $sale->id,
+                'sale_id'=>$sale_id,
                 'sale_type' => $sales_type
             ])->with([
-                'success' => 'Sale return processed successfully',
-                'sale' => $sale,
-                'logo' => $logo,
-                'tax' => $tax,
-                'unit_id' => $unit_id,
-                'sales_itemdata' => $sales_itemdata,
-                'store' => $store,
-                'customer' => $customer,
-                'qrCode' => $qrCode,
-                'pay' => $pay,
-                'storeurlstore' => $storeurlstore,
-                'item_alqty' => $item_alqty,
-                'part_no' => $part_no
-            ]);
+                        'success' => 'Sale return processed successfully',
+                        'sale' => $sale,
+                        'logo' => $logo,
+                        'tax' => $tax,
+                        'unit_id' => $unit_id,
+                        'sales_itemdata' => $sales_itemdata,
+                        'store' => $store,
+                        'customer' => $customer,
+                        'qrCode' => $qrCode,
+                        'pay' => $pay,
+                        'storeurlstore' => $storeurlstore,
+                        'item_alqty' => $item_alqty,
+                        'part_no' => $part_no
+                    ]);
 
 
 
@@ -747,36 +763,91 @@ class SalereturnController extends Controller
     public function getSaleItems(Request $request)
     {
         try {
+            // Validate request
+            $validated = $request->validate([
+                'search' => 'required|string',
+                'sales_ids' => 'required',
+                'sales_types' => 'required'
+            ]);
+
             $searchQuery = $request->input('search');
             $sale_id = $request->input('sales_ids');
+            $sale_type = $request->input('sales_types');
 
-            
-            $items = Saleitems::where('sales_id', $sale_id)
-                ->where(function ($query) use ($searchQuery) {
-                    $query->where('item_name', 'LIKE', "%{$searchQuery}%")
-                        ->orWhere('part_no', 'LIKE', "%{$searchQuery}%");
+            // Debug logging
+            \Log::info('getSaleItems request:', [
+                'search' => $searchQuery,
+                'sale_id' => $sale_id,
+                'sale_type' => $sale_type
+            ]);
+
+            // Query builder
+            if($sale_type == '2') {
+                $query = Offsaleitems::query();
+            } else {
+                $query = Saleitems::query();
+            }
+
+            $items = $query->where('sales_id', $sale_id)
+                ->where(function($q) use ($searchQuery) {
+                    $q->where('item_name', 'LIKE', "%{$searchQuery}%")
+                      ->orWhere('part_no', 'LIKE', "%{$searchQuery}%");
                 })
-               
                 ->get();
 
-           
+            // Log the query results
+            \Log::info('Query results:', [
+                'count' => $items->count(),
+                'items' => $items->toArray()
+            ]);
 
-                if ($items->isNotEmpty()) {
+            if ($items->isEmpty()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No items found',
+                    'data' => []
+                ]);
+            }
 
+            $transformedItems = $items->map(function($item) {
+                return [
+                    'item_id' => $item->item_id,
+                    'item_name' => $item->item_name,
+                    'part_no' => $item->part_no ?? '',
+                    'sales_qty' => $item->sales_qty ?? 0,
+                    'unit_id' => $item->unit_id ?? 0,
+                    'rate_inclusive_tax' => $item->rate_inclusive_tax ?? 0,
+                    'price_per_unit' => $item->price_per_unit ?? 0,
+                    'discount_amt' => $item->discount_amt ?? 0,
+                    'tax_amt' => $item->tax_amt ?? 0,
+                    'mrp' => $item->mrp ?? 0,
+                    'total_cost' => $item->total_cost ?? 0
+                ];
+            });
 
+            return response()->json([
+                'success' => true,
+                'data' => $transformedItems
+            ]);
 
-                    return $items;
-    
-                } else {
-    
-                    return 'No data fount';
-                }
-
-        } catch (Exception $e) {
-            \Log::error('Search Error:', ['error' => $e->getMessage()]);
+        } catch (ValidationException $e) {
+            \Log::error('Validation Error:', [
+                'errors' => $e->errors()
+            ]);
             return response()->json([
                 'success' => false,
-                'message' => 'An error occurred while fetching sale items',
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
+
+        } catch (\Exception $e) {
+            \Log::error('Error in getSaleItems:', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while fetching items',
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -784,5 +855,5 @@ class SalereturnController extends Controller
 
 
 
-    }
+}
 

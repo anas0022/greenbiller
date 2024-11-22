@@ -530,29 +530,30 @@
                                             
                                                     <!-- Data Rows -->
                                                     @foreach ($response_data as $item)
-                                                        <tr>
-                                                            <td style="font-size:12px;" class="text-center">
-                                                                {{ $item['hsn_code'] }}
-                                                            </td>
-                                                            <td style="font-size:12px;" class="text-center">
-                                                                {{ number_format($item['total_tax_percentage'] / 2, 2) }}
-                                                            </td>
-                                                            <td style="font-size:12px;" class="text-center">
-                                                                {{ number_format($item['taxable_amount'] / 2, 2) }}
-                                                            </td>
-                                                            <td style="font-size:12px;" class="text-center">
-                                                                {{ number_format($item['total_tax_percentage'] / 2, 2) }}
-                                                            </td>
-                                                            <td style="font-size:12px;" class="text-center">
-                                                                {{ number_format($item['taxable_amount'] / 2, 2) }}
-                                                            </td>
-                                                            <td style="font-size:12px;" class="text-center">
-                                                                {{ number_format($item['total_tax_percentage'] / 2, 2) }}
-                                                            </td>
-                                                            <td style="font-size:12px;" class="text-center">
-                                                                {{ number_format($item['taxable_amount'], 2) }}
-                                                            </td>
-                                                        </tr>
+                                                    <tr>
+                                                        <td style="font-size:12px;" class="text-center">
+                                                            {{ $item['hsn_code'] }}
+                                                        </td>
+                                                        <td style="font-size:12px;" class="text-center">
+                                                            {{ number_format($item['rate_inclusive_tax']) }}
+                                                        </td>
+                                                        <td style="font-size:12px;" class="text-center">
+                                                            {{ number_format($item['total_tax_percentage'] / 2, 2) }}
+                                                        </td>
+                                                        <td style="font-size:12px;" class="text-center">
+                                                            
+                                                            {{ number_format($item['tax_amt'] / 2, 2) }}
+                                                        </td>
+                                                        <td style="font-size:12px;" class="text-center">
+                                                            {{ number_format($item['total_tax_percentage'] / 2, 2) }}
+                                                        </td>
+                                                        <td style="font-size:12px;" class="text-center">
+                                                            {{ number_format($item['tax_amt'] / 2, 2) }}
+                                                        </td>
+                                                        <td style="font-size:12px;" class="text-center">
+                                                            {{ number_format($item['tax_amt']) }}
+                                                        </td>
+                                                    </tr>
                                                     @endforeach
                                                 </table>
                                             </div>

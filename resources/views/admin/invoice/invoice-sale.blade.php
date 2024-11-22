@@ -73,6 +73,7 @@
                             <h3 style="width: 100%; display:flex; justify-content:center;"> Credit Note</h3>
                             <div style=" width:100%; display:flex; gap:20px; justify-content:end;">
                                 <div style="left: 10px; position: absolute;">
+                                   
                                     @if ($sale->paid_amount == null)
                                         <p class=" Not-paid" style="padding:2px; width:50%;"> Un Paid </p>
                                     @else
@@ -80,23 +81,35 @@
                                     @endif
                             
                                     <p style="font-size: 12px;">
-                                    Created By : {{$user->firstWhere('id',$userids)->name}}({{$user->firstWhere('id',$userids)->role}})</p>
-                                </div>
-                                <p style="font-size:15px;"><b>Bill No : {{ $sale->sale_prefix }} /{{ $sale->return_sale_code }}
-                                    </b>
+                                    Created By : {{$user->firstWhere('id',$userids)->name}}({{$user->firstWhere('id',$userids)->role}})
+                                 
+                                  
                                 </p>
+                                   
+                                </div>
+                                <p style="font-size:15px;"><b>Credit Bill No : {{ $sale->prefix }} /{{ $sale->sales_code }} <br>
+                      
+                                    </b>
+                    
+                                </p>
+                               
                                 <span style="display:flex; gap:10px;">
 
-                                    <p style="font-size:15px;"><b>Reference No : {{ $sale->reference_no }}</b>
-                                    </p>
+                                  
                                     <br>
-                                    <p style="right:0%; position:relative; font-size:15px;"><b>Date :
+                                    <p style="right:0%; position:relative; font-size:15px;"><b>Credit Date :
                                             {{ $sale->sales_date }}
                                         </b>
                                     </p>
-                                </span>
+                                  
+                                </span><br>
+                          
                             </div>
+
+                           
                         </div>
+                    
+                       
                         <div class="card-body">
 
                             <div class="invoice-box">
@@ -278,7 +291,11 @@
                                         <div
                                             style="display:flex; margin-top:10px; float:right; width:60%; flex-direction: column;  justify-content:cente;">
                                             <div style=" width:100%; display:flex; gap:30px; justify-content:center;">
-                                               
+                                                <p style="width:100%; font-size:15px;">
+                                                    <b>Invoice No :</b> <br>
+                                                    @foreach ($prefix->unique() as $pre)
+                                                        <b>{{ $pre }}</b> ,
+                                                    @endforeach
                                        
                                                     <p style="font-size:15px;"> {!! $qrCode !!} <br> Preview</p>
 
@@ -505,7 +522,7 @@
                                                     
                                                     <!-- Column Headers Row 1 -->
                                                     <tr class="bg-sky text-bold">
-                                                        <td rowspan="2" style="font-size:12px; padding-right:12px; width:15%; height:60px;" class="text-center">
+                                                        <td rowspan="2" style="font-size:12px; padding-right:12px; width:15%; height:35px;" class="text-center">
                                                             HSN/SAC
                                                         </td>
                                                         <td rowspan="2" style="font-size:12px; width:15%;" class="text-center">
@@ -537,22 +554,23 @@
                                                                 {{ $item['hsn_code'] }}
                                                             </td>
                                                             <td style="font-size:12px;" class="text-center">
-                                                                {{ number_format($item['total_tax_percentage'] / 2, 2) }}
-                                                            </td>
-                                                            <td style="font-size:12px;" class="text-center">
-                                                                {{ number_format($item['taxable_amount'] / 2, 2) }}
+                                                                {{ number_format($item['rate_inclusive_tax']) }}
                                                             </td>
                                                             <td style="font-size:12px;" class="text-center">
                                                                 {{ number_format($item['total_tax_percentage'] / 2, 2) }}
                                                             </td>
                                                             <td style="font-size:12px;" class="text-center">
-                                                                {{ number_format($item['taxable_amount'] / 2, 2) }}
+                                                                
+                                                                {{ number_format($item['tax_amt'] / 2, 2) }}
                                                             </td>
                                                             <td style="font-size:12px;" class="text-center">
                                                                 {{ number_format($item['total_tax_percentage'] / 2, 2) }}
                                                             </td>
                                                             <td style="font-size:12px;" class="text-center">
-                                                                {{ number_format($item['taxable_amount'], 2) }}
+                                                                {{ number_format($item['tax_amt'] / 2, 2) }}
+                                                            </td>
+                                                            <td style="font-size:12px;" class="text-center">
+                                                                {{ number_format($item['tax_amt']) }}
                                                             </td>
                                                         </tr>
                                                     @endforeach
