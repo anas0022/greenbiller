@@ -1,4 +1,3 @@
-
 @include('admin.layouts.header');
 
 @include('admin.layouts.sidebar');
@@ -26,4 +25,4 @@
         ***********************************-->
 
 
-	<!-- In the head section -->
+	<!-- In the head section --> 

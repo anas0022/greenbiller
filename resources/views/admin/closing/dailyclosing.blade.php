@@ -16,9 +16,15 @@
                     <div class="card-header">
                         <h4 class="card-text d-inline">Daily Closing</h4>
                     </div>
-                    <div class="card-body">
-                        <p>Today Date: {{date('d-m-Y')}}</p>
-                        
+                    <form action="{{route('daily.closing.post')}}" method="post">
+                        @csrf
+                        <div class="card-body" >
+                            <div style="display: flex; justify-content: space-between;">
+                                <p>Today Date: {{date('d-m-Y')}}</p>
+                                <p>Opening Balance: {{$opening_balance->closing_amount ?? 0 }}</p>
+                                <input type="hidden" name="opening" value="{{$opening_balance->closing_amount ?? 0 }}">
+                            </div>
+                          
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
@@ -51,12 +57,15 @@
                                 <tr class="table-info">
                                     <th class="text-center">
                                         Total Invoices: {{number_format($total_invoice_count, 0)}}
+                                        <input type="hidden" name="invoice_count" value="{{$total_invoice_count}}">
                                     </th>
                                     <th class="text-center">
                                         Total Sales: ₹{{number_format($sale_payment, 2)}}
+                                        <input type="hidden" name="total_sale" value="{{$sale_payment}}">
                                     </th>
                                     <th class="text-center">
                                         Total Expenses: ₹{{number_format($expense_amount, 2)}}
+                                        <input type="hidden" name="total_expense" value="{{$expense_amount}}">
                                     </th>
                                 </tr>
                                 
@@ -65,12 +74,17 @@
                                     <th colspan="2" class="text-center">Total Closing Balance</th>
                                     <td class="text-center font-weight-bold">
                                         ₹{{number_format($sale_payment - $expense_amount, 2)}}
-                                    </td>
+                                        <input type="hidden" name="closing_amount" value="{{$sale_payment - $expense_amount}}">
+                                            </td>
                                 </tr>
                             </tbody>
                         </table>
+                        <button type="submit" class="btn btn-primary">Make Closing</button>
                     </div>
+
                 </div>
+           
+                </form>
 
             </div>
         </div>

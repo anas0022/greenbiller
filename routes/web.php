@@ -272,6 +272,9 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'role:admin|superadm
     Route::post('/reciept_add',[RecieptController::class,'reciept_add'])->name('reciept.add');
     Route::post('/get-customer-prefix', [RecieptController::class, 'getCustomerPrefix'])->name('get.customer.prefix');
     Route::get('/receipt/view/{id}', [RecieptController::class, 'view_receipt'])->name('reciept.view');
+    Route::post('/daily_closing_post',[ClosingController::class,'daily_closing_post'])->name('daily.closing.post');
+    Route::get('closing/bill/{id}', [ClosingController::class, 'closingBill'])->name('closing.bill');
+    Route::get('closing-list',[ClosingController::class,'closing_list'])->name('closing.list');
 });
 
 Route::group(['prefix' => 'store', 'middleware' => 'auth'], function () {

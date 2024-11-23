@@ -23,7 +23,9 @@ class MakepaymentController extends Controller
         ]);
 
         $sale = Sale::where('id', $request->input('id'))->first();
+       
         $storeIds = Store::where('id', $sale->store_id)->first();
+       
 
         $sales_payment_init = $storeIds->pluck('sales_payment_init')->first();
 
@@ -60,7 +62,7 @@ class MakepaymentController extends Controller
         $sales_type = $sale->sales_type;
         if ($salespayment->save()) {
             $ledger = new ledger();
-
+            $ledger->sale_id = $sale->id;
             $ledger->customer_id = $sale->customer_id;
             $ledger->store_id = $sale->store_id;
             $ledger->date = $sale->sales_date;
@@ -136,7 +138,7 @@ class MakepaymentController extends Controller
 
         if ($salespayment->save()) {
             $ledger = new ledger();
-
+            $ledger->purchase_id = $purchase->id;
             $ledger->customer_id = $purchase->supplier_id;
             $ledger->store_id = $purchase->store_id;
             $ledger->date = $purchase->purchase_date;

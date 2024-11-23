@@ -743,12 +743,13 @@ class SalesController extends Controller
 
             $logo = Coresetting::all();
             $supplierIds = $sales->pluck('customer_id');
-
+            $ledger = Ledger::whereIn('sale_id', $sales->pluck('id'))->get();
+          
             $userIds = $sales->pluck('created_by');
             $user = UserList::whereIn('id', $userIds)->first();
             $suppliers = Customer::whereIn('id', $supplierIds)->get();
             $account = Account::all();
-            return view('admin.sales.saleslist', compact('sales','sale_return', 'suppliers', 'user', 'logo', 'account', 'sale_pays'));
+            return view('admin.sales.saleslist', compact('sales','ledger','sale_return', 'suppliers', 'user', 'logo', 'account', 'sale_pays'));
 
 
         }
