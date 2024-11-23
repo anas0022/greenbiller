@@ -431,14 +431,10 @@ class SalereturnController extends Controller
             ) {
 
                 for ($i = 0; $i < count($item_ids); $i++) {
-                    $saleitems_minus = Saleitems::find($request->input('sale_id'));
+                    
 
 
-                    $saleitems_minus->total_cost -= $total_amounts[$i];
-                    $saleitems_minus->sales_qty -= $sales_qty[$i];
-
-
-                    $saleitems_minus->save();
+                  
                     $normalsale = sales_return_items::create([
 
                         'item_id' => $item_ids[$i],
@@ -674,14 +670,7 @@ class SalereturnController extends Controller
 
             }
 
-            $sale_minus = Sale::find($request->input('sale_id'));
-            $sales_qty = $sale_minus->total_qty;
-            $sale_sub = $sale_minus->subtotal;
-
-            $sale_minus->total_qty -= $total_qty;
-            $sale_minus->subtotal -= $subtotal_amt;
-            $sale_minus->grand_total -= $grand_total;
-            $sale_minus->save();
+           
 
 
 

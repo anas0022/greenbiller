@@ -766,7 +766,7 @@
                                                 <span class="input-group-addon pointer" data-toggle="modal"
                                                     data-target=""><i
                                                         class="fa fa-user-plus text-primary fa-lg"></i></span>
-                                                <select class="form-control selectpicker" id="customer_select"
+                                                <select class="form-control selectpicker select2  select2-hidden-accessible " data-live-search="true" id="customer_select"
                                                     name="customer_id" style="width: 100%" tabindex="-1"
                                                     aria-hidden="true" onchange="customercheck()">
 
@@ -1205,27 +1205,40 @@
                                                         data: {
                                                             customer_id: customerId
                                                         },
-
                                                         success: function(response) {
                                                             $('#bill_no').empty();
                                                             $('#bill_no').append('<option value="">-select-</option>');
 
-                                                            if (response.success && response.sales.length > 0) {
+                                                            if (response.success && response.sales && response.sales.length > 0) {
                                                                 $.each(response.sales, function(key, sale) {
                                                                     $('#bill_no').append(
-                                                                        '<option value="' + sale.prefix + '/' + sale
-                                                                        .sales_code + '" ' +
+                                                                        '<option value="' + sale.prefix + '/' + sale.sales_code + '" ' +
                                                                         'data-prefix="' + sale.prefix + '" ' +
-                                                                        'data-sales-code="' + sale.sales_code +
-                                                                        '" ' +
-                                                                        'data-sales-type="' + sale.sales_type +
-                                                                        '" ' +
+                                                                        'data-sales-code="' + sale.sales_code + '" ' +
+                                                                        'data-sales-type="' + sale.sales_type + '" ' +
                                                                         'data-sale-id="' + sale.id + '">' +
                                                                         sale.prefix + '/' + sale.sales_code +
                                                                         '</option>'
                                                                     );
                                                                 });
+                                                            } else {
+                                                                // Show sweet alert when no bills are found
+                                                                swal({
+                                                                    title: "No Bills Found!",
+                                                                    text: "This customer has no bills available for return.",
+                                                                    icon: "warning",
+                                                                    button: "OK",
+                                                                });
                                                             }
+                                                        },
+                                                        error: function(xhr, status, error) {
+                                                            // Handle AJAX errors
+                                                            swal({
+                                                                title: "Error!",
+                                                                text: "Failed to fetch customer bills. Please try again.",
+                                                                icon: "error",
+                                                                button: "OK",
+                                                            });
                                                         }
                                                     });
                                                 } else {
@@ -1237,14 +1250,11 @@
                                             });
 
                                             $('#bill_no').on('change', function() {
-
-
                                                 var selectedOption = $(this).find('option:selected');
                                                 var saleId = selectedOption.data('sale-id');
                                                 var saleType = selectedOption.data('sales-type');
                                                 document.getElementById('sale_id').value = saleId;
                                                 document.getElementById('sales_type').value = saleType;
-
                                             });
                                         });
                                     </script>

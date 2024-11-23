@@ -17,8 +17,8 @@ class ExpenseController extends Controller
 
         $expense = Expense::all();
         $logo = Coresetting::all();
-       
-        return view('admin\expences\listexpences' , compact('expense','logo'));
+        $expense_category = Expensecat::all();
+        return view('admin.expences.listexpences' , compact('expense','logo','expense_category'));
     }
     public function expense_category(){
 
@@ -112,33 +112,39 @@ class ExpenseController extends Controller
         $expenses = Expensecat::all();
         $account = Account::all();
         $user = UserList::all();
-return view('admin\expences\addexpence',compact('expenses','account','logo','user'));
+        $expense_category = Expensecat::all();
+        
+return view('admin.expences.addexpence',compact('expenses','account','logo','user','expense_category'   ));
     }
     public  function addexpense(Request $request){
         $request ->validate([
-            'date'=>'required',
-            'cat'=>'required',
-
-
-            'for'=>'required',
-            'type'=>'required',
+            'expense_date'=>'required',
+            'expense_category'=>'required',
+            'expense_for'=>'required',
+            'payment_type'=>'required',
             'account'=>'required',
-            'amount'=>'required',
-            're'=>'required',
+            'expense_amt'=>'required',
+            'reference_no'=>'required',
             'note'=>'required',
-            'expence_by'=>'required'
+            'expense_by'=>'required'
+           
         ]);
+        $latestExpense = Expense::orderBy('id', 'desc')->first();
+        $lastNumber = $latestExpense ? (int) substr($latestExpense->expence_code, -4) : 0;
+        $nextNumber = $lastNumber + 1;
+        $code = 'EXP-' . date('Y') . '-' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
 
         $expense = new Expense();
-        $expense ->date = $request->input('date');
-        $expense ->expence_by= $request->input('expence_by');
-        $expense ->category = $request->input('cat');
-        $expense ->expense_for = $request->input('for');
-        $expense ->payment_type = $request->input('type');
+        $expense ->date = $request->input('expense_date');
+        $expense ->expence_code =$code;
+        $expense ->expence_by= $request->input('expense_by');
+        $expense ->category = $request->input('expense_category');
+        $expense ->expense_for = $request->input('expense_for');
+        $expense ->payment_type = $request->input('payment_type');
         $expense ->account = $request->input('account');
-        $expense ->account = $request->input('account');
-        $expense ->amount = $request->input('amount');
-        $expense ->reference_no = $request->input('re');
+    
+        $expense ->amount = $request->input('expense_amt');
+        $expense ->reference_no = $request->input('reference_no');
         $expense ->note = $request->input('note');
         if($expense->save()){
             return back()->with('success', 'expense added successfully');

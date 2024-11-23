@@ -19,6 +19,7 @@
 							<li><a href="{{route('salereturn_list')}}">Sales Return</a></li>
 							<li><a href="{{route('salextimate')}}">Estimate</a></li>
 							<li><a href="{{route('Purchase_order_sale')}}">Purchase Order</a></li>
+							<li><a href="{{route('reciept')}}">Reciept</a></li>
 						</ul>
                     </li>
 					<li><a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
@@ -122,7 +123,7 @@
 						</a>
                         <ul aria-expanded="false">
 							<li><a href="{{route('salesreport')}}">Sales Reports</a></li>
-							
+							<li><a href="{{route('daily.closing')}}">Daily Closing</a></li>
 							
 						</ul>
                     </li> 

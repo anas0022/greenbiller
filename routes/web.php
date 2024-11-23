@@ -4,6 +4,7 @@ use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AdjustmentController;
 use App\Http\Controllers\AdvanceController;
 use App\Http\Controllers\catController;
+use App\Http\Controllers\ClosingController;
 use App\Http\Controllers\CoresettingsController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CustomerLedgerUploadController;
@@ -17,6 +18,7 @@ use App\Http\Controllers\PosController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\QrviewController;
+use App\Http\Controllers\RecieptController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\SaleExtimateController;
 use App\Http\Controllers\SalePurchaseOrderController;
@@ -264,6 +266,12 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'role:admin|superadm
     Route::post('/return-sale-mass',[SalereturnController::class,'return_sale_mass'])->name('return.sale.mass');
    
     Route::get('/get-sale-items', [SalereturnController::class, 'getSaleItems'])->name('get.sale.items');
+    Route::get('/daily-closing',[ClosingController::class,'daily_closing'])->name('daily.closing');
+    Route::get('/reciept',[RecieptController::class,'reciept'])->name('reciept');
+    Route::get('/add_reciept',[RecieptController::class,'add_reciept'])->name('add_reciept');
+    Route::post('/reciept_add',[RecieptController::class,'reciept_add'])->name('reciept.add');
+    Route::post('/get-customer-prefix', [RecieptController::class, 'getCustomerPrefix'])->name('get.customer.prefix');
+    Route::get('/receipt/view/{id}', [RecieptController::class, 'view_receipt'])->name('reciept.view');
 });
 
 Route::group(['prefix' => 'store', 'middleware' => 'auth'], function () {

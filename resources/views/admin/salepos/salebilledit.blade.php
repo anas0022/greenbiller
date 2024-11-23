@@ -1074,7 +1074,7 @@
                                                             @endphp
                                          @if ($sales_itemdata->isNotEmpty())
                                          @foreach ($sales_itemdata as $sale)
-                                             <tr>
+                                         <tr @if ($sale->sales_qty < 1) style="background-color: #f8d7da; color: #721c24;" @endif>
                                                  <td>
                                                      <input name="item_id[]" type="hidden" id="item_id_{{ $i }}" class="form-control form-control-sm itemRow" value="{{ $sale->item_id }}">
                                                      <input type="hidden" value="{{ $items->firstWhere('id', $sale->item_id)->item_name }}" name="item_name[]">
@@ -1896,7 +1896,6 @@
         function searchitem() {
             var search = document.getElementById("search").value;
             var store_id = document.getElementById("store_id").value;
-            alert(store_id);
             // alert(store_id);
             if (store_id == '') {
                 // alert('Please select the store');
@@ -2161,7 +2160,7 @@
             var taxvalue = taxoption.getAttribute('data-id');
             var qty = document.getElementById("qty_" + counts).value;
             var purchase_price = document.getElementById("purchase_price_" + counts).value;
-            var taxamt = ((parseFloat(purchase_price) * parseFloat(qty)) * parseFloat(taxvalue)) / 100)
+            var taxamt = ((parseFloat(purchase_price) * parseFloat(qty)) * parseFloat(taxvalue)) / 100
             document.getElementById("tax_amt_" + counts).value = taxamt;
             itemTotal(counts);
             alldiscout();
@@ -2185,7 +2184,7 @@
                 var discount_amt = discount;
             }
             var itemtotalamt = (((parseFloat(purchase_price) * parseFloat(qty)) + parseFloat(taxamt))) - parseFloat(
-                discount_amt));
+                discount_amt);
             document.getElementById("total_amount_" + count).value = itemtotalamt.toFixed(3);
             total_sum();
             alldiscout();

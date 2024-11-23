@@ -526,8 +526,11 @@
                                             <td>
                                                 @if($item->paid_amount == null)
                                                     <p class=" Not-paid"> Un Paid </p>
+                                                    @elseif($item->paid_amount < $item->grand_total)
+                                                    <p class="partially-paid" style="color:orange;"> Partially Paid </p>
                                                 @else
-                                                    <p class=" paid"> Paid </p>
+                                                    <p class="paid"> Paid </p>
+                                             
                                                 @endif
                                                
 
@@ -551,11 +554,11 @@
                                                         @if($item->paid_amount == Null)
                                                             <a class="dropdown-item" data-toggle="modal"
                                                                 data-target="#cash-payments-modal" 
-                                                                onclick="totals({{$item->total_qty}},{{$item->grand_total}},{{$item->id}})">
+                                                                onclick="totals({{$item->total_qty}},{{$item->grand_total}})">
                                                                 <i class="fas fa-money-check-dollar"></i> Make Payments
                                                             </a>
                                                         @else
-                                                            <a class="dropdown-item" href="{{route('payment.view',['id'=>$sale_pays])}}">
+                                                            <a class="dropdown-item" href="{{route('view_receipt',['id'=>$sale_pays])}}">
                                                                 <i class="fas fa-money-check-dollar"></i> View Payments
                                                             </a>
                                                         @endif

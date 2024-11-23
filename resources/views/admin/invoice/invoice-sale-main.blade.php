@@ -297,9 +297,11 @@
 
                                             <td style="font-size:12px; text-align:center; width:5%;"> Quantity</td>
                                             <td style="font-size:12px; text-align:center; width:5%;"> Liters</td>
-
+                                    
                                             <td style="font-size:12px; text-align:center; width:8%;"> Rate <br> (Incl. of
                                                 Tax) </td>
+                                                <td style="font-size:12px; text-align:center; width:8%;">
+                                                    Price/Unit </td>
                                             <td style="font-size:12px; text-align:center; width:8%; "> MRP</td>
                                             <td style="font-size:12px; text-align:center; width:8%;">GST (INR) </td>
                                             <td style="font-size:12px; text-align:center; width:8%;"> Amount (INR) </td>
@@ -430,27 +432,22 @@
                                                         @endif
                                                     @endif
                                                 </td>
-
+                                             
                                                 <td
                                                     style="font-size:10px; text-align:center; border-right:1px solid; width:10%;">
                                                     {{ $item->rate_inclusive_tax }}
                                                 </td>
+                                                <td
+                                                style="font-size:10px; text-align:center; border-right:1px solid; width:10%;">
+                                                {{ $item->price_per_unit }}
+                                            </td>
                                                 <td
                                                     style="font-size:10px; text-align:center; border-right:1px solid; width:10%;">
                                                     {{ $item->mrp }}
                                                 </td>
                                                 <td
                                                     style="font-size:10px; text-align:center; border-right:1px solid; width:10%;">
-                                                    <?php
-                                                    // Clean up the value to ensure it is numeric
-                                                    $pricePerUnit = preg_replace('/[^0-9.]/', '', $item->price_per_unit);
-                                                    $taxPercentage = preg_replace('/[^0-9.]/', '', $tax->firstWhere('id', (int) $item->tax_id)->per);
-                                                    
-                                                    // Calculate the tax amount
-                                                    $taxAmount = number_format(((float) $pricePerUnit * (float) $taxPercentage) / 100, 2);
-                                                    
-                                                    echo $taxAmount;
-                                                    ?>
+                                                   {{$item->tax_amt}}
                                                 </td>
                                                 <td
                                                     style="font-size:10px; text-align:center; border-right:1px solid; width:10%;">
@@ -465,7 +462,10 @@
                                         <td style="font-size:12px; text-align:center; border-right: 1px solid; ">
                                             Total
                                         </td>
-                                        <td style="text-align:right; font-weight:bold; border-right: 1px solid; "></td>
+                                      
+                                       
+                                        <td style="width:10%; text-align:center; border-right: 1px solid; ">
+                                        </td>
                                         <td style="width:10%; text-align:center; border-right: 1px solid; ">
                                         </td>
                                         <td style="width:10%; text-align:center; border-right: 1px solid; ">
@@ -476,6 +476,8 @@
                                         <td
                                             style="width:10%; text-align:center; border-right: 1px solid; font-size: 12px; ">
                                             {{ $totalLiter }}
+                                        </td>
+                                        <td style="width:10%; text-align:right; border-right: 1px solid; ">
                                         </td>
                                         <td style="width:10%; text-align:right; border-right: 1px solid; ">
                                         </td>
@@ -535,14 +537,16 @@
                                                             {{ $item['hsn_code'] }}
                                                         </td>
                                                         <td style="font-size:12px;" class="text-center">
-                                                            {{ number_format($item['rate_inclusive_tax']) }}
+                                                            {{ number_format($item['sales_qty'] * $item['price_per_unit'], 2) }}
+
+
                                                         </td>
                                                         <td style="font-size:12px;" class="text-center">
                                                             {{ number_format($item['total_tax_percentage'] / 2, 2) }}
                                                         </td>
                                                         <td style="font-size:12px;" class="text-center">
                                                             
-                                                            {{ number_format($item['tax_amt'] / 2, 2) }}
+                                                            {{ number_format($item['tax_amt'] / 2, 1) }}
                                                         </td>
                                                         <td style="font-size:12px;" class="text-center">
                                                             {{ number_format($item['total_tax_percentage'] / 2, 2) }}

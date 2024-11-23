@@ -986,7 +986,9 @@ class SalesController extends Controller
                        
                         $tax_amt = $sales_items->pluck('tax_amt')->sum();
                         $rate_inclusive_tax = $sales_items->pluck('rate_inclusive_tax')->sum();
-            
+                        $sale_qty = $sales_items ->pluck('sales_qty')->sum();
+                        $price_per_unit = $sales_items->pluck('price_per_unit')->sum();
+                      
                         $tax_ids = $sales_items->pluck('tax_id');
                 
                       
@@ -1009,6 +1011,8 @@ class SalesController extends Controller
                             'tax_amt' => $tax_amt,
                             'rate_inclusive_tax'=>$rate_inclusive_tax,
                             'total_tax_percentage' => $total_tax_percentage,
+                            'sales_qty' => $sale_qty,
+                        'price_per_unit'=>  $price_per_unit
                         ];
                     }
                 }
@@ -1069,12 +1073,12 @@ class SalesController extends Controller
                     $customerIds = collect([$sale->customer_id]);
                     $customer = Customer::whereIn('id', $customerIds)->get();
                 }
-                return view('admin/invoice/invoice-sale', compact('unit_id','prefix','userids','response_data','tax_records','hsn_code', 'sales_itemdata', 'storeurlstore', 'qrCode', 'sale', 'pay', 'items', 'item_alqty', 'customer', 'tax', 'user', 'store', 'logo'));
+                return view('admin.invoice.invoice-sale', compact('unit_id','prefix','userids','response_data','tax_records','hsn_code', 'sales_itemdata', 'storeurlstore', 'qrCode', 'sale', 'pay', 'items', 'item_alqty', 'customer', 'tax', 'user', 'store', 'logo'));
             }
                
             
         
-            /* Not Returned Item */
+       
         
     
       
@@ -1088,7 +1092,7 @@ class SalesController extends Controller
      
             if ($sale_type == "2") {
                 $sales_itemdata = Offsaleitems::where('sales_id', $id)
-                ->where('status','0')
+          
                 ->get();
                 $hsn_codes = $sales_itemdata->pluck('hsn_code')->unique();
             
@@ -1099,14 +1103,15 @@ class SalesController extends Controller
                     foreach ($hsn_codes as $hsn_code) {
                     
                         $sales_items = Offsaleitems::where('hsn_code', $hsn_code)->where('sales_id', $id)
-                        ->where('status', '0')
+                
                         ->get();
                         
                        
                         $tax_amt = $sales_items->pluck('tax_amt')->sum();
                         $rate_inclusive_tax = $sales_items->pluck('rate_inclusive_tax')->sum();
                         $tax_ids = $sales_items->pluck('tax_id');
-                
+                        $sale_qty = $sales_items ->pluck('sales_qty')->sum();
+                        $price_per_unit = $sales_items->pluck('price_per_unit')->sum();
                       
                         $tax_records = Tax::whereIn('id', $tax_ids)->get();
                 
@@ -1127,6 +1132,8 @@ class SalesController extends Controller
                             'tax_amt' => $tax_amt,
                             'rate_inclusive_tax'=>$rate_inclusive_tax,
                             'total_tax_percentage' => $total_tax_percentage,
+                            'sales_qty' => $sale_qty,
+                        'price_per_unit'=>  $price_per_unit
                         ];
                     }
                 }
@@ -1140,6 +1147,7 @@ class SalesController extends Controller
                 $store_ids = $sales_itemdata->pluck('store_id');
                 $store_view = $sales_itemdata->pluck('store_id')->first();
                 $taxids = $sales_itemdata->pluck('tax_id');
+                
                 $sale = Sale::where('id', $sales_itemdata->pluck('sales_id'))->first();
     
                 if (!$sale) {
@@ -1183,7 +1191,7 @@ class SalesController extends Controller
                 }
             } else {
                 $sales_itemdata = Saleitems::where('sales_id', $id)
-                ->where('status','0')
+          
                 ->get();
                 $hsn_codes = $sales_itemdata->pluck('hsn_code')
                 
@@ -1195,7 +1203,7 @@ class SalesController extends Controller
                     foreach ($hsn_codes as $hsn_code) {
                     
                         $sales_items = Saleitems::where('hsn_code', $hsn_code)->where('sales_id', $id)
-                        ->where('status','0')
+                 
                         ->get();
                         
                        
@@ -1203,8 +1211,8 @@ class SalesController extends Controller
                         $tax_amt = $sales_items->pluck('tax_amt')->sum();
                         $rate_inclusive_tax = $sales_items->pluck('rate_inclusive_tax')->sum();
                         $tax_ids = $sales_items->pluck('tax_id');
-                
-                      
+                        $price_per_unit = $sales_items->pluck('price_per_unit')->sum();
+                        $sale_qty = $sales_items ->pluck('sales_qty')->sum();
                         $tax_records = Tax::whereIn('id', $tax_ids)->get();
                 
                         $total_tax_percentage = 0;
@@ -1218,12 +1226,14 @@ class SalesController extends Controller
                             $total_tax_percentage += $tax->per * $count;
                         }
                 
-                        // Add the calculated data for the current HSN code to the response data
+                       
                         $response_data[] = [
                             'hsn_code' => $hsn_code,
-                            'tax_amt' => $tax_amt,
+                            'tax_amt' => $tax_amt ,
                             'rate_inclusive_tax'=>$rate_inclusive_tax,
                             'total_tax_percentage' => $total_tax_percentage,
+                            'sales_qty'=>$sale_qty,
+                            'price_per_unit'=>$price_per_unit
                         ];
                     }
                 }
@@ -1799,62 +1809,33 @@ class SalesController extends Controller
             ) {
 
                 for ($i = 0; $i < count($item_ids); $i++) {
-                    $saleitems_minus = Saleitems::find($request->input('sale_id'));
+                
+                  
 
-
-                    $saleitems_minus->total_cost -= $total_amounts[$i];
-                    $saleitems_minus->sales_qty -= $sales_qty[$i];
-
-
-                    $saleitems_minus->save();
                     $normalsale = sales_return_items::create([
-
                         'item_id' => $item_ids[$i],
-
                         'part_no' => $part_no[$i],
-
                         'sales_id' => $sale->id,
-
                         'show_part' => $show_part,
-
                         'mrp' => $mrp[$i],
-
                         'unit_id' => $unit_id[$i],
-
                         'rate_inclusive_tax' => $tax_inclusive[$i],
-
                         'item_name' => $item_name[$i],
-
                         'grand_total' => $grand_total,
-
                         'price_per_unit' => $purchase_prices[$i],
-
                         'discount_amt' => $discount_amt[$i],
-
                         'total_cost' => $total_amounts[$i],
-
                         'description' => $description,
-
                         'discount_input' => $discount_input,
-
                         'sales_qty' => $sales_qty[$i],
-
                         'store_id' => $store_id,
-
                         'tax_type' => $tax_type,
-
                         'customer_id' => $customer_id,
-
                         'created_on' => $created_on,
-
                         'hsn_code' => $hsn_code[$i],
-
                         'tax_id' => $tax_id[$i],
-
                         'tax_amt' => $tax_amount[$i],
-
                         'discount_type' => $discount_type,
-
                         'paid_amount' => $payment_amount
                     ]);
 
@@ -2042,14 +2023,7 @@ class SalesController extends Controller
 
             }
 
-            $sale_minus = Sale::find($request->input('sale_id'));
-            $sales_qty = $sale_minus->total_qty;
-            $sale_sub = $sale_minus->subtotal;
-
-            $sale_minus->total_qty -= $total_qty;
-            $sale_minus->subtotal -= $subtotal_amt;
-            $sale_minus->grand_total -= $grand_total;
-            $sale_minus->save();
+         
 
 
 
@@ -2124,6 +2098,7 @@ class SalesController extends Controller
 
 
 
+
         } catch (Exception $e) {
             DB::rollBack();
             return redirect()->back()->withErrors(['error' => 'An error occurred while processing the sale return: ' . $e->getMessage()]);
@@ -2145,6 +2120,7 @@ class SalesController extends Controller
             if ($sales) {
 
                 $sales->return_Sale_id = $request->input('returnsale_code');
+
 
 
                 $sales_type = $sales->sales_type;

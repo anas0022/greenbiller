@@ -532,8 +532,7 @@
 
                                 @csrf
 
-                                <!-- models -->
-                                <!-- customer model start-->
+                         
 
 
 
@@ -842,6 +841,7 @@
                                                 <span class="input-group-addon pointer" data-toggle="modal"
                                                     data-target=""><i
                                                         class="fa fa-user-plus text-primary fa-lg"></i></span>
+                                                        
                                                 <select class="form-control select2 select2-hidden-accessible"
                                                     id="customer_id" name="customer_id" style="width: 100%"
                                                     tabindex="-1" aria-hidden="true" onchange="customercheck()">
@@ -1154,13 +1154,13 @@
                                                  <td><input type="text" id="mrp_{{ $i }}" value="{{ $sale->mrp }}" name="mrp[]" class="form-control form-control-sm"></td>
                                                  <td><input name="total_amount[]" id="total_amount_{{ $i }}" type="text" class="form-control form-control-sm total" value="{{ $sale->total_cost }}" style="background-color: #ddd;" oninput="total_sum()"></td>
                                                  <td>
-                                                     <form action="{{ route('item_delete_salebill') }}" method="post">
-                                                         @csrf
-                                                         <input type="hidden" name="id" value="{{ $sale->id }}">
+                                                   
+                                                     
+                                
                                                          <button type="button" onclick="deleteItem({{ $sale->id }})" class="btn btn-danger shadow btn-xs sharp">
                                                              <i class="fa fa-trash"></i>
                                                          </button>
-                                                     </form>
+                                                 
                                                  </td>
                                              </tr>
                                              @php $i++; @endphp
