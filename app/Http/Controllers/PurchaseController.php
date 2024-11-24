@@ -604,7 +604,7 @@ class PurchaseController extends Controller
                     'stock' => $stock,
                     'hsn_code'=>$hsn_code[$i],
                     'unit_total_cost' => $unit_total_cost[$i],
-                    'tax_id' => $tax_id,
+                    'tax_id' => is_array($tax_id) ? $tax_id[$i] : $tax_id,
                     'tax_amt' => $tax_amount[$i],
                     'discount_type' => $discount_type,
                     'unit_id' => $unit_id[$i],

@@ -325,7 +325,7 @@
                                     @if($item->paid_amount === null || $item->paid_amount == 0)
                                         <p class="not-paid">Not Paid</p>
                                     @elseif($item->paid_amount < $purchaseItems->where('purchase_id', $item->id)->sum('total_cost'))
-                                        <p class="partial">Partial</p>
+                                        <p class="partial" style="background-color: orange   !important; color: white !important;  border-radius: 4px; text-align: center; ">Partial</p>
                                     @else
                                         <p class="paid">Paid</p>
                                     @endif
@@ -345,7 +345,7 @@
                                                     <i class="fas fa-money-check-dollar"></i> Make Payments
                                                 </a>
                                             @else
-                                                <a class="dropdown-item" href="{{ route('payment.view_purchase', ['id' => $payment_id]) }}"><i class="fas fa-money-check-dollar"></i> View Payments</a>
+                                                <a class="dropdown-item" href="{{ route('reciept.view', ['id' => $payment_id]) }}"><i class="fas fa-money-check-dollar"></i> View Payments</a>
                                             @endif
                                             
                                             <a class="dropdown-item" href="{{ route('purchase.return', ['id' => $item->id]) }}" style="color:red;">

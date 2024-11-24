@@ -12,6 +12,8 @@ use App\Models\purchase_order_sale;
 use App\Models\purchase_order_sales_items;
 use App\Models\Purchaseitems;
 use App\Models\Purchaseitems_order;
+use App\Models\PurchaseReturn;
+use App\Models\PurchaseReturnItem;
 use App\Models\Sale;
 use App\Models\saleExtimate;
 use App\Models\saleExtimateItems;
@@ -37,10 +39,10 @@ class InvoiceController extends Controller
            
        
              
-                $sales_itemdata = Purchaseitems::where('purchase_id', $purchase)
+                $purchase_itemdata = Purchaseitems::where('purchase_id', $purchase)
            
                 ->get();
-                $hsn_codes = $sales_itemdata->pluck('hsn_code')
+                        $hsn_codes = $purchase_itemdata->pluck('hsn_code')
                 
                 ->unique(); // Get unique HSN codes
                 
@@ -49,14 +51,16 @@ class InvoiceController extends Controller
                 if ($hsn_codes->isNotEmpty()) {
                     foreach ($hsn_codes as $hsn_code) {
                     
-                        $sales_items = Purchaseitems::where('hsn_code', $hsn_code)->where('purchase_id', $purchase)
+                        $purchase_items = Purchaseitems::where('hsn_code', $hsn_code)->where('purchase_id', $purchase)
                      
                         ->get();
                         
                        
-                        $taxable_amount = $sales_items->pluck('rate_inclusive_tax')->sum();
-            
-                        $tax_ids = $sales_items->pluck('tax_id');
+                        $taxable_amount = $purchase_items->pluck('rate_inclusive_tax')->sum();
+                        $tax_amt = $purchase_items->pluck('tax_amt')->sum();
+                        $price_per_unit = $purchase_items->pluck('price_per_unit')->sum();
+                        $purchase_qty = $purchase_items->pluck('purchase_qty')->sum();
+                        $tax_ids = $purchase_items->pluck('tax_id');
                 
                       
                         $tax_records = Tax::whereIn('id', $tax_ids)->get();
@@ -77,22 +81,25 @@ class InvoiceController extends Controller
                             'hsn_code' => $hsn_code,
                             'taxable_amount' => $taxable_amount,
                             'total_tax_percentage' => $total_tax_percentage,
+                            'tax_amt' => $tax_amt,
+                            'price_per_unit' => $price_per_unit,
+                            'purchase_qty' => $purchase_qty,
                         ];
                     }
                 }
                 
          
          
-                if ($sales_itemdata->isEmpty()) {
+                if ($purchase_itemdata->isEmpty()) {
                     return back()->with('error','No sale Item Found');
                 }
     
-                $itemIds = $sales_itemdata->pluck('item_id');
-                $unit_id = Unit::whereIn('id', $sales_itemdata->pluck('unit_id'))->get();
-                $store_ids = $sales_itemdata->pluck('store_id');
-                $store_view = $sales_itemdata->pluck('store_id')->first();
+                $itemIds = $purchase_itemdata->pluck('item_id');
+                $unit_id = Unit::whereIn('id', $purchase_itemdata->pluck('unit_id'))->get();
+                $store_ids = $purchase_itemdata->pluck('store_id');
+                $store_view = $purchase_itemdata->pluck('store_id')->first();
        
-                $sale = Purchase::where('id', $sales_itemdata->pluck('purchase_id'))->first();
+                $sale = Purchase::where('id', $purchase_itemdata->pluck('purchase_id'))->first();
     
                 if (!$sale) {
                     return back()->with('error','Every Item In This Sale Has Been Returned.');
@@ -101,7 +108,7 @@ class InvoiceController extends Controller
     
                 $items = Item::whereIn('id', $itemIds)->get();
     
-                $amount_pay = $sales_itemdata->first();
+                $amount_pay = $purchase_itemdata->first();
     
                 if (!$amount_pay) {
                     return response()->json(['message' => 'No amount payment found.'], 404);
@@ -114,7 +121,7 @@ class InvoiceController extends Controller
                     return response()->json(['message' => 'Store not found.'], 404);
                 }
     
-                $item_alqty = Item::whereIn('id', $sales_itemdata->pluck('item_id'))->get();
+                $item_alqty = Item::whereIn('id', $purchase_itemdata->pluck('item_id'))->get();
                 $url = route('qrview', ['id' => $sale->id]);
                 $qrCode = QrCode::size(100)->generate($url);
                 $upiID = $store->upi_code;
@@ -133,7 +140,7 @@ class InvoiceController extends Controller
                   
                 }
 
-        return view('admin.instentprint.invoicepurchase', compact('unit_id','userids','response_data','tax_records','hsn_code', 'sales_itemdata', 'storeurlstore', 'qrCode', 'sale', 'pay', 'items', 'item_alqty', 'customer', 'tax', 'user', 'store', 'logo'));
+        return view('admin.instentprint.invoicepurchase', compact('unit_id','userids','response_data','tax_records','hsn_code', 'purchase_itemdata', 'storeurlstore', 'qrCode', 'sale', 'pay', 'items', 'item_alqty', 'customer', 'tax', 'user', 'store', 'logo'));
     }
     
         public function invoice_sale(Request $request)
@@ -212,49 +219,114 @@ class InvoiceController extends Controller
     public function invoice_purchase_return(Request $request, $purchase)
     {
      
-        $purchaseids = Purchase::where('id', $purchase)->first();
-    
-       
-        if (!$purchaseids) {
-            return redirect()->back()->with('error', 'Purchase not found.');
-        }
-    
-
         $logo = Coresetting::all();
-    
-
-        $purchaseItems = collect();
-        $items = collect();
-        $tax = collect();
-        $store = collect();
-    
-    
-        if ($purchaseids->purchase_return_status == '1') {
-       
-            $purchaseItems = Purchaseitems::where('purchase_id', $purchaseids->id)
-                ->where('status', '1')
-                ->get();
-        } else {
-        
-            $purchaseItems = Purchaseitems::where('purchase_id', $purchaseids->id)->get();
-        }
-    
+        $sale = PurchaseReturn::find($purchase);
      
-        $itemIds = $purchaseItems->pluck('item_id');
+           
+       
+             
+                $purchase_itemdata = PurchaseReturnItem::where('purchase_id', $purchase)
+           
+                ->get();
+                        $hsn_codes = $purchase_itemdata->pluck('hsn_code')
+                
+                ->unique(); // Get unique HSN codes
+                
+                $response_data = []; 
+                
+                if ($hsn_codes->isNotEmpty()) {
+                    foreach ($hsn_codes as $hsn_code) {
+                    
+                        $purchase_items = PurchaseReturnItem::where('hsn_code', $hsn_code)->where('purchase_id', $purchase)
+                     
+                        ->get();
+                        
+                       
+                        $taxable_amount = $purchase_items->pluck('rate_inclusive_tax')->sum();
+                        $tax_amt = $purchase_items->pluck('tax_amt')->sum();
+                        $price_per_unit = $purchase_items->pluck('price_per_unit')->sum();
+                        $purchase_qty = $purchase_items->pluck('purchase_qty')->sum();
+                        $tax_ids = $purchase_items->pluck('tax_id');
+                
+                      
+                        $tax_records = Tax::whereIn('id', $tax_ids)->get();
+                
+                        $total_tax_percentage = 0;
+                
+                        // Calculate total tax percentage for the current HSN code
+                        foreach ($tax_records as $tax) {
+                            $count = $tax_ids->filter(function ($id) use ($tax) {
+                                return $id == $tax->id;
+                            })->count();
+                
+                            $total_tax_percentage += $tax->per * $count;
+                        }
+                
+                        // Add the calculated data for the current HSN code to the response data
+                        $response_data[] = [
+                            'hsn_code' => $hsn_code,
+                            'taxable_amount' => $taxable_amount,
+                            'total_tax_percentage' => $total_tax_percentage,
+                            'tax_amt' => $tax_amt,
+                            'price_per_unit' => $price_per_unit,
+                            'purchase_qty' => $purchase_qty,
+                        ];
+                    }
+                }
+                
+         
+         
+                if ($purchase_itemdata->isEmpty()) {
+                    return back()->with('error','No sale Item Found');
+                }
     
-      
-        $items = Item::whereIn('id', $itemIds)->get();
+                $itemIds = $purchase_itemdata->pluck('item_id');
+                $unit_id = Unit::whereIn('id', $purchase_itemdata->pluck('unit_id'))->get();
+                $store_ids = $purchase_itemdata->pluck('store_id');
+                $store_view = $purchase_itemdata->pluck('store_id')->first();
+       
+                $sale = PurchaseReturn::where('id', $purchase_itemdata->pluck('purchase_id'))->first();
     
-  
-        $taxIds = $purchaseItems->pluck('tax_id');
-        $storeIds = $purchaseItems->pluck('store_id');
+                if (!$sale) {
+                    return back()->with('error','Every Item In This Sale Has Been Returned.');
+                    
+                }
     
-      
-        $store = Store::whereIn('id', $storeIds)->get();
-        $tax = Tax::whereIn('id', $taxIds)->get();
-
-        return view('admin.instentprint.invoicepurchase_return', compact('purchaseItems', 'items', 'tax', 'store', 'logo'));
-    }
+                $items = Item::whereIn('id', $itemIds)->get();
+    
+                $amount_pay = $purchase_itemdata->first();
+    
+                if (!$amount_pay) {
+                    return response()->json(['message' => 'No amount payment found.'], 404);
+                }
+    
+                $amount = $amount_pay->grand_total;
+                $store = Store::whereIn('id', $store_ids)->first();
+    
+                if (!$store) {
+                    return response()->json(['message' => 'Store not found.'], 404);
+                }
+    
+                $item_alqty = Item::whereIn('id', $purchase_itemdata->pluck('item_id'))->get();
+                $url = route('qrview', ['id' => $sale->id]);
+                $qrCode = QrCode::size(100)->generate($url);
+                $upiID = $store->upi_code;
+                $payeeName = $store->store_name;
+                $currency = 'INR';
+                $upiUrl = "upi://pay?pa={$upiID}&pn={$payeeName}&am={$amount}&cu={$currency}";
+                $pay = QrCode::size(100)->generate($upiUrl);
+                $storeurl = route('store_itemsscan', ['id' => $store_view]);
+                $storeurlstore = QrCode::size(100)->generate($storeurl);
+    
+                if ($sale) {
+                    $userids = $sale->created_by;
+                    $user = UserList::where('id', $userids)->first();
+                    $customerIds = collect([$sale->supplier_id]);
+                    $customer = Supplier::whereIn('id', $customerIds)->get();
+                  
+                }
+            return view('admin.instentprint.invoicepurchase_return', compact('unit_id','userids','response_data','tax_records','hsn_code', 'purchase_itemdata', 'storeurlstore', 'qrCode', 'sale', 'pay', 'items', 'item_alqty', 'customer', 'tax', 'user', 'store', 'logo'));
+        }
     public function invoice_sale_extimate($id, $sale_type)
     {
         $logo = Coresetting::all();
@@ -281,7 +353,9 @@ class InvoiceController extends Controller
                         
                        
                         $taxable_amount = $sales_items->pluck('rate_inclusive_tax')->sum();
-            
+                        $tax_amt = $sales_items->pluck('tax_amt')->sum();
+                        $price_per_unit = $sales_items->pluck('price_per_unit')->sum();
+                        $sales_qty = $sales_items->pluck('sales_qty')->sum();
                         $tax_ids = $sales_items->pluck('tax_id');
                 
                       
@@ -303,6 +377,9 @@ class InvoiceController extends Controller
                             'hsn_code' => $hsn_code,
                             'taxable_amount' => $taxable_amount,
                             'total_tax_percentage' => $total_tax_percentage,
+                            'tax_amt' => $tax_amt,
+                            'price_per_unit' => $price_per_unit,
+                            'sales_qty' => $sales_qty,
                         ];
                     }
                 }
@@ -385,14 +462,18 @@ public function invoice_purchase_order(Request $request ,$id){
             if ($hsn_codes->isNotEmpty()) {
                 foreach ($hsn_codes as $hsn_code) {
                 
-                    $sales_items = Purchaseitems_order::where('hsn_code', $hsn_code)->where('purchase_id', $id)
+                    $purchase_items = Purchaseitems_order::where('hsn_code', $hsn_code)->where('purchase_id', $id)
                  
                     ->get();
                     
                    
-                    $taxable_amount = $sales_items->pluck('rate_inclusive_tax')->sum();
-        
-                    $tax_ids = $sales_items->pluck('tax_id');
+                        
+                    $taxable_amount = $purchase_items->pluck('rate_inclusive_tax')->sum();
+                    $tax_amt = $purchase_items->pluck('tax_amt')->sum();
+                    $price_per_unit = $purchase_items->pluck('price_per_unit')->sum();
+                    $purchase_qty = $purchase_items->pluck('purchase_qty')->sum();
+                    $tax_ids = $purchase_items->pluck('tax_id');
+           
             
                   
                     $tax_records = Tax::whereIn('id', $tax_ids)->get();
@@ -409,11 +490,14 @@ public function invoice_purchase_order(Request $request ,$id){
                     }
             
                     // Add the calculated data for the current HSN code to the response data
-                    $response_data[] = [
-                        'hsn_code' => $hsn_code,
-                        'taxable_amount' => $taxable_amount,
-                        'total_tax_percentage' => $total_tax_percentage,
-                    ];
+                     $response_data[] = [
+                            'hsn_code' => $hsn_code,
+                            'taxable_amount' => $taxable_amount,
+                            'total_tax_percentage' => $total_tax_percentage,
+                            'tax_amt' => $tax_amt,
+                            'price_per_unit' => $price_per_unit,
+                            'purchase_qty' => $purchase_qty,
+                        ];
                 }
             }
             
@@ -471,7 +555,7 @@ public function invoice_purchase_order(Request $request ,$id){
 
         return view('admin.invoice.purchase-order-invoice', compact('unit_id','userids','response_data','tax_records','hsn_code', 'sales_itemdata', 'storeurlstore', 'qrCode', 'sale', 'pay', 'items', 'item_alqty', 'customer', 'tax', 'user', 'store', 'logo'));
 }
-public function invoice_purchase_sale($id){
+public function invoice_purchase_sale($id) {
     $logo = Coresetting::all();
     $sale = purchase_order_sale::find($id);
 
@@ -490,35 +574,34 @@ public function invoice_purchase_sale($id){
            
             if ($hsn_codes->isNotEmpty()) {
                 foreach ($hsn_codes as $hsn_code) {
-                
-                    $sales_items = purchase_order_sales_items::where('hsn_code', $hsn_code)->where('sales_id', $id)
-               
-                    ->get();
+                    $sales_items = purchase_order_sales_items::where('hsn_code', $hsn_code)
+                        ->where('sales_id', $id)
+                        ->get();
                     
-                   
                     $taxable_amount = $sales_items->pluck('rate_inclusive_tax')->sum();
-        
+                    $tax_amt = $sales_items->pluck('tax_amt')->sum();
+                    $price_per_unit = $sales_items->pluck('price_per_unit')->sum();
+                    $purchase_qty = $sales_items->pluck('sales_qty')->sum();
                     $tax_ids = $sales_items->pluck('tax_id');
-            
-                  
+                    
                     $tax_records = Tax::whereIn('id', $tax_ids)->get();
-            
                     $total_tax_percentage = 0;
-            
-                    // Calculate total tax percentage for the current HSN code
+                    
                     foreach ($tax_records as $tax) {
                         $count = $tax_ids->filter(function ($id) use ($tax) {
                             return $id == $tax->id;
                         })->count();
-            
+                        
                         $total_tax_percentage += $tax->per * $count;
                     }
-               
-            
+                    
                     $response_data[] = [
                         'hsn_code' => $hsn_code,
                         'taxable_amount' => $taxable_amount,
                         'total_tax_percentage' => $total_tax_percentage,
+                        'tax_amt' => $tax_amt,
+                        'price_per_unit' => $price_per_unit,
+                        'sales_qty' => $purchase_qty
                     ];
                 }
             }

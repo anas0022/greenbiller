@@ -105,7 +105,7 @@
 
                                                                     <div>
                                                                        
-                                                                        <input type="text" name="id" id="id">
+                                                                        <input type="hidden" name="id" id="id">
                                                                     
 
                                                                         <div class="col-md-12 payments_div">

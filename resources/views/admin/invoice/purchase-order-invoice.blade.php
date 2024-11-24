@@ -305,32 +305,7 @@
                                         @endforeach
 
                                     </tbody>
-                                    {{-- <tr class="bg-sky text-bold" style="border-bottom:1px solid;">
-                                        <td style="font-size:12px; text-align:center; border-right: 1px solid; ">
-                                            Total
-                                        </td>
-                                        <td style="text-align:right; font-weight:bold; border-right: 1px solid; "></td>
-                                        <td style="width:10%; text-align:center; border-right: 1px solid; ">
-                                        </td>
-                                        <td style="width:10%; text-align:center; border-right: 1px solid; ">
-                                        </td>
-                                        <td style="font-size:12px; text-align:center; border-right: 1px solid; ">
-                                            {{ $totalQuantity }}
-                                        </td>
-                                        <td
-                                            style="width:10%; text-align:center; border-right: 1px solid; font-size: 12px; ">
-                                            {{ $totalLiter }}
-                                        </td>
-                                        <td style="width:10%; text-align:right; border-right: 1px solid; ">
-                                        </td>
-                                        <td style="width:10%; text-align:right; border-right: 1px solid; ">
-                                        </td>
-                                        
-                                        <td
-                                            style=" width:10%; font-size:12px; text-align:center; border-right: 1px solid; ">
-                                            {{ $totalAmount }}
-                                        </td>
-                                    </tr> --}}
+                                   
                                     <td style="width:90%;" colspan="5"></td>
                                 </table>
                                 <table>
@@ -373,29 +348,29 @@
                                             
                                                     <!-- Data Rows -->
                                                     @foreach ($response_data as $item)
-                                                        <tr>
-                                                            <td style="font-size:12px;" class="text-center">
-                                                                {{ $item['hsn_code'] }}
-                                                            </td>
-                                                            <td style="font-size:12px;" class="text-center">
-                                                                {{ number_format($item['total_tax_percentage'] / 2, 2) }}
-                                                            </td>
-                                                            <td style="font-size:12px;" class="text-center">
-                                                                {{ number_format($item['taxable_amount'] / 2, 2) }}
-                                                            </td>
-                                                            <td style="font-size:12px;" class="text-center">
-                                                                {{ number_format($item['total_tax_percentage'] / 2, 2) }}
-                                                            </td>
-                                                            <td style="font-size:12px;" class="text-center">
-                                                                {{ number_format($item['taxable_amount'] / 2, 2) }}
-                                                            </td>
-                                                            <td style="font-size:12px;" class="text-center">
-                                                                {{ number_format($item['total_tax_percentage'] / 2, 2) }}
-                                                            </td>
-                                                            <td style="font-size:12px;" class="text-center">
-                                                                {{ number_format($item['taxable_amount'], 2) }}
-                                                            </td>
-                                                        </tr>
+                                                    <tr>
+                                                        <td style="font-size:12px;" class="text-center">
+                                                            {{ $item['hsn_code'] }}
+                                                        </td>
+                                                        <td style="font-size:12px;" class="text-center">
+                                                        {{ number_format($item['price_per_unit'] * $item['purchase_qty'] , 2) }}
+                                                        </td>
+                                                        <td style="font-size:12px;" class="text-center">
+                                                            {{ number_format($item['taxable_amount'] / 2, 2) }}
+                                                        </td>
+                                                        <td style="font-size:12px;" class="text-center">
+                                                            {{ number_format($item['total_tax_percentage'] / 2, 2) }}
+                                                        </td>
+                                                        <td style="font-size:12px;" class="text-center">
+                                                            {{ number_format($item['taxable_amount'] / 2, 2) }}
+                                                        </td>
+                                                        <td style="font-size:12px;" class="text-center">
+                                                            {{ number_format($item['total_tax_percentage'] / 2, 2) }}
+                                                        </td>
+                                                        <td style="font-size:12px;" class="text-center">
+                                                            {{ number_format($item['taxable_amount'], 2) }}
+                                                        </td>
+                                                    </tr>
                                                     @endforeach
                                                 </table>
                                             </div>

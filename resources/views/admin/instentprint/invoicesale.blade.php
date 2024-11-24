@@ -45,6 +45,23 @@
     .text-center {
         text-align: center;
     }
+    .Not-paid {
+        background-color: #ffebee !important;
+        color: #c62828 !important;
+        border: 1px solid #c62828 !important;
+        border-radius: 4px;
+        padding: 2px 8px !important;
+        display: inline-block !important;
+    }
+    
+    .paid {
+        background-color: #e8f5e9 !important;
+        color: #2e7d32 !important;
+        border: 1px solid #2e7d32 !important;
+        border-radius: 4px;
+        padding: 2px 8px !important;
+        display: inline-block !important;
+    }
 </style>
 
 <div class="content-body" id="body_all">

@@ -405,44 +405,39 @@
                                                         </thead>
                                                         <tbody id="item-results">
                                                             @php
-                                                                $i = 1;
-                                                            @endphp
-                                                            @foreach ($purchaseItems as $pur)
-                                                                <tr>
-                                                                    <td><input name="item_id[]" type="text"
-                                                                            id="item_id_{{ $i }}"
-                                                                            class="form-control form-control-sm itemRow"
-                                                                            value="{{ $pur->item_id }}" hidden> <input
-                                                                            type="hidden"
-                                                                            value="{{ $items->firstWhere('id', $pur->item_id)->item_name }}"
-                                                                            name="item_name[]">
-                                                                        {{ $items->firstWhere('id', $pur->item_id)->item_name }}
-                                                                    </td>
+                                                            $i = 1;
+                                                        @endphp
+                                                        @foreach ($purchaseItems as $pur)
 
-                                                                    <td>
-                                                                        <div class="input-group input-group-sm mb-3">
-                                                                            <button type="button"
-                                                                                onclick="decrement_qty(1,{{ $i }})"
-                                                                                class="input-group-text">-</button><input
-                                                                                name="purchase_qty[]"
-                                                                                id="qty_{{ $i }}"
-                                                                                type="text"
-                                                                                class="form-control form-control-sm"
-                                                                                value="{{ $pur->purchase_qty }}"
-                                                                                oninput="update_calculation({{ $i }})"><button
-                                                                                type="button"
-                                                                                onclick="increment_qty(1,{{ $i }})"
-                                                                                class="input-group-text">+</button>
-                                                                        </div>
-                                                                    </td>
-                                                                    <td> <input name="purchase_price[]"
-                                                                            id="purchase_price_{{ $i }}"
-                                                                            type="text"
-                                                                            oninput="update_calculation({{ $i }})"
-                                                                            class="form-control form-control-sm"
-                                                                            value="{{ $pur->price_per_unit }}"></td>
-                                                                    <input type="text" name="hsn_code[]"
-                                                                        value="{{ $pur->hsn_code }}" hidden>
+
+                                                                                                                <tr>
+                                                                                                                    <td><input name="item_id[]" type="text"
+                                                                                                                            id="item_id_{{$i}}"
+                                                                                                                            class="form-control form-control-sm itemRow"
+                                                                                                                            value="{{$pur->item_id}}" hidden> <input type="hidden"
+                                                                                                                            value="{{$items->firstWhere('id', $pur->item_id)->item_name}}"
+                                                                                                                            name="item_name[]">
+                                                                                                                        {{$items->firstWhere('id', $pur->item_id)->item_name}}
+                                                                                                                    </td>
+
+                                                                                                                    <td>
+                                                                                                                        <div class="input-group input-group-sm mb-3"><button
+                                                                                                                                type="button" onclick="decrement_qty(1,{{$i}})"
+                                                                                                                                class="input-group-text">-</button><input
+                                                                                                                                name="purchase_qty[]" id="qty_{{$i}}"
+                                                                                                                                type="text" class="form-control form-control-sm"
+                                                                                                                                value="{{$pur->purchase_qty}}"
+                                                                                                                                oninput="update_calculation({{$i}})"><button
+                                                                                                                                type="button" onclick="increment_qty(1,{{$i}})"
+                                                                                                                                class="input-group-text">+</button></div>
+                                                                                                                    </td>
+                                                                                                                    <td> <input name="purchase_price[]"
+                                                                                                                            id="purchase_price_{{$i}}" type="text"
+                                                                                                                            oninput="update_calculation({{$i}})"
+                                                                                                                            class="form-control form-control-sm"
+                                                                                                                            value="{{$pur->price_per_unit}}"></td>
+                                                                                                                            <input type="text" name="hsn_code[]" value="{{$pur->hsn_code}}" hidden>
+
                                                                     <td>
 
 
@@ -462,14 +457,18 @@
                                                                 </select>
 
                                                                     </td>
+                                                                    <td> <input name="discount_amt[]" id="discount_{{$i}}"
+                                                                        type="text" class="form-control form-control-sm"
+                                                                        value="{{$pur->discount_amt}}">
+                                                                    <select name="discount_type[]"
+                                                                        id="item_discount_type_{{$i}}"  onchange="itemTotal({{$i}})">
+                                                                        <option value="">select</option>
+                                                                        <option value="percent">Percentage</option>
+                                                                        <option value="fixed">Fixed</option>
+                                                                    </select>
 
-                                                                    <td> <input name="discount_amt[]"
-                                                                            id="discount_{{ $i }}"
-                                                                            type="text"
-                                                                            class="form-control form-control-sm"
-                                                                            value="{{ $pur->discount_amt }}">
-                                                                  
-                                                                    </td>
+                                                                </td>
+
 
                                                                     <td>
                                                                         <select name="taxid[]" 

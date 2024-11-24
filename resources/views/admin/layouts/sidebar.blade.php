@@ -54,7 +54,7 @@
                         <ul aria-expanded="false">
                             <li><a href="{{route('new_purchase')}}">New Purchase</a></li>
 							<li><a href="{{route('purchase_list')}}">Purchase List</a></li>
-                       <li><a href="{{route('purchase_order_list')}}">Purchase Order</a></li> 
+   {{--                     <li><a href="{{route('purchase_order_list')}}">Purchase Order</a></li>  --}}
                             </li>
                             
                         </ul>

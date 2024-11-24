@@ -328,7 +328,7 @@
                                                             'sale_type' => $item->sales_type ?? 0,
                                                             'sale_id' => $item->sale_id
                                                         ]) }}" class="dropdown-item">
-                                                            <i class="fas fa-eye"></i> View Sale
+                                                            <i class="fas fa-eye"></i> Credit Note
                                                         </a>
 
                                                    

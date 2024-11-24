@@ -23,6 +23,7 @@ class ClosingController extends Controller
     
     public function daily_closing(){
         $today_date = date('Y-m-d');
+        $yesterday_date = date('Y-m-d', strtotime('-1 day'));
         $sale_payment = salespayment::where('payment_date',$today_date)
         ->where('payment_type','cash')
         ->get()->sum('payment');
@@ -30,7 +31,7 @@ class ClosingController extends Controller
         $sale_amount =salespayment::where('payment_date',$today_date)
         ->where('payment_type','cash')
         ->get();
-        $opening_balance = Closing::where('date',$today_date)->first();
+        $opening_balance = Closing::where('date',$yesterday_date)->first();
         $expense = Expense::where('date',$today_date)->get();
         $invoice_count = Sale::where('sales_date',$today_date)->get();
         $total_invoice = $invoice_count->pluck('prefix');

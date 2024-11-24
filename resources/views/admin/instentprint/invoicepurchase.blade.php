@@ -1,91 +1,126 @@
 @extends('admin/layouts/app')
 
-@section('title', 'Home Page')
+@section('title', 'Purchase Preview')
 
 @section('content')
-    <link href="{{ asset('admin-assets/css/toast.css') }}" rel="stylesheet">
 
-    <style type="text/css">
-        @media print {
-            @page {
-            size: portrait;
-        }
-            body {
-                -webkit-print-color-adjust: exact;
-                /* Adjusts color to match screen */
-                color-adjust: exact;
-                /* For Firefox */
-                print-color-adjust: exact;
-                font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
-            }
+ 
 
-            .item {
-                border-bottom: 1px solid gray !important;
-                /* Forces the border to appear */
-            }
-
-            table {
-                border-collapse: collapse;
-                /* Ensures borders are continuous */
-            }
+<style type="text/css">
+    @media print {
+        @page {
+        size: portrait;
+    }
+        body {
+            -webkit-print-color-adjust: exact;
+            /* Adjusts color to match screen */
+            color-adjust: exact;
+            /* For Firefox */
+            print-color-adjust: exact;
+            font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
         }
 
-        @media print and (orientation: portrait) {
-            td {
-                /* Replace with your desired font */
-                font-size: 8px !important;
-                /* Adjust the size as needed */
-            }
-            p {
-                font-size: 8px !important;
-            }
-            div{
-                font-size: 8px !important;
-                gap: 10px !important;
-            }
-            h5{
-                font-size: 10px !important;
-            }
-            #buttons{
-                display: none !important;
-            }
+        .item {
+            border-bottom: 1px solid gray !important;
+            /* Forces the border to appear */
         }
 
-        .text-bold {
-            font-weight: bold;
+        table {
+            border-collapse: collapse;
+            /* Ensures borders are continuous */
         }
-
-        .bg-sky {
-            background-color: #E8F3FD;
+        #buttons{
+            display: none !important;
         }
+    }
 
-        .text-center {
-            text-align: center;
+    @media print and (orientation: portrait) {
+        td {
+            /* Replace with your desired font */
+            font-size: 6px !important;
+            /* Adjust the size as needed */
         }
-    </style>
+        p {
+            font-size: 6px !important;
+        }
+        div{
+            font-size: 6px !important;
+            gap: 10px !important;
+        }
+        h5{
+            font-size: 8px !important;
+        }
+       
+    }
 
-    <div class="content-body" id="body_all">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="card" id="preview_data">
-                        <div style="padding:10px;">
-                           
-                            <h3 style="width: 100%; display:flex; justify-content:center;"> Purchase Preview</h3>
-                            <div style=" width:100%; display:flex; gap:20px; justify-content:start;">
-                                
-                                <div style="left: 10px; ">
-                                    @if ($sale->paid_amount == null)
-                                    <p class=" Not-paid" style="padding:2px; width:50%;"> Un Paid </p>
+    .text-bold {
+        font-weight: bold;
+    }
+
+    .bg-sky {
+        background-color: #E8F3FD;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    .Not-paid {
+        background-color: #ffebee !important;
+        color: #c62828 !important;
+        border: 1px solid #c62828 !important;
+        border-radius: 4px;
+        padding: 2px 8px !important;
+        display: inline-block !important;
+    }
+    
+    .paid {
+        background-color: #e8f5e9 !important;
+        color: #2e7d32 !important;
+        border: 1px solid #2e7d32 !important;
+        border-radius: 4px;
+        padding: 2px 8px !important;
+        display: inline-block !important;
+    }
+</style>
+
+
+<div class="content-body" id="body_all">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card" id="preview_data" style="background-color: white;">
+             
+                    <div style="padding:10px;" >
+                        <h3 style="width: 100%; display:flex; justify-content:center;"> Purchase Preview</h3>
+                        <div style=" width:100%; display:flex; gap:20px; justify-content:end; ;">
+                            <div style="left:2% ; position:absolute;  width:100%;">
+                                @if ($sale->paid_amount == null)
+                                    <p class="Not-paid" style="padding:2px 8px; width:auto; display:inline-block; margin:0;">
+                                        <strong>Un Paid</strong>
+                                    </p>
                                 @else
-                                    <p class=" paid" style="padding:2px; width:25%;"> Paid </p>
+                                    <p class="paid" style="padding:2px 8px; width:auto; display:inline-block; margin:0;">
+                                        <strong>Paid</strong>
+                                    </p>
                                 @endif
-                                    <p style="font-size: 12px;">
-                                    Created By : {{$user->firstWhere('id',$userids)->name}}({{$user->firstWhere('id',$userids)->role}})</p>
-                                </div>
-                               
-                                </span>
+                                <p style="font-size: 12px;">
+                                Created By : {{$user->firstWhere('id',$userids)->name}}({{$user->firstWhere('id',$userids)->role}})</p>
                             </div>
+                            <p style="font-size:15px;"><b>Bill No : {{ $sale->prefix }} /{{ $sale->purchase_code }}
+                                </b>
+                            </p>
+                            <span style="display:flex; gap:10px;">
+
+                                <p style="font-size:15px;"><b>Reference No : {{ $sale->reference_no }}</b>
+                                </p>
+                                <br>
+                                <p style="right:0%; position:relative; font-size:15px;"><b>Date :
+                                        {{ $sale->purchase_date }}
+                                    </b>
+                                </p>
+                            </span>
+                        </div>
                         </div>
                         <div class="card-body">
 
@@ -123,20 +158,7 @@
                                                           
                                                              
                                     </div>    </div>   </div>      </div>
-                                     <div style="width: 100%; display:flex; gap:10px; jsutify-content:end;">
-                                            <p style="font-size:15px;"><b>Bill No : {{ $sale->prefix }} /{{ $sale->purchase_code }}
-                                            </b>
-                                        </p>
-                                        <span style="display:flex; gap:10px;">
-        
-                                            <p style="font-size:15px;"><b>Reference No : {{ $sale->reference_no }}</b>
-                                            </p>
-                                            <br>
-                                            <p style="right:0%; position:relative; font-size:15px;"><b>Date :
-                                                    {{ $sale->purchase_date }}
-                                                </b>
-                                            </p>
-                                        </div>
+                                  
                                     </div>
                                 </table>
 
@@ -146,6 +168,7 @@
                                             <td style="font-size:12px; text-align:center; width:5%;">SL NO</td>
                                             <td style="font-size:12px; text-align:center; width:15%;"> Part No</td>
                                             <td style="font-size:12px; text-align:center; width:25%;">ITEM</td>
+                                            <td style="font-size:12px; text-align:center; width:12%;"> PRICE/UNIT</td>
                                             <td style="font-size:12px; text-align:center; width:12%;"> HSN/ SAC</td>
 
                                             <td style="font-size:12px; text-align:center; width:12%;"> Quantity</td>
@@ -163,9 +186,9 @@
                                             $totalAmount = 0;
                                             $totalLiter = 0;
                                         @endphp
-                                        @foreach ($sales_itemdata as $index => $item)
+                                        @foreach ($purchase_itemdata as $index => $item)
                                             @php
-                                                $quantity = $item->sales_qty;
+                                                $quantity = $item->purchase_qty;
                                                 $amount = $item->total_cost;
                                              
                                                 $totalQuantity += $quantity;
@@ -217,13 +240,17 @@
                                                     {{$items->firstWhere('id',$item->item_id)->item_name}}
                                                 </td>
                                                 <td
+                                                style="font-size:10px; border-right:1px solid;width:15%; text-align:center;">
+                                                {{$item->price_per_unit}}
+                                            </td>
+                                                <td
                                                     style="font-size:10px; text-align:center; border-right:1px solid; width:10%;">
                                                     {{ $item->hsn_code }}
                                                 </td>
 
                                                 <td
                                                     style="font-size:10px; text-align:center; border-right:1px solid; width:10%;">
-                                                    {{ $item->sales_qty }}
+                                                    {{ $item->purchase_qty }}
                                                     @if ($unit_id->firstWhere('id', $item->unit_id)->unit_name == 'Ltr')
                                                     @endif
                                                     @if ($unit_id->firstWhere('id', $item->unit_id)->unit_name == 'Ltr')
@@ -267,12 +294,12 @@
                                                                 });
                                                             </script>
                                                         @else
-                                                            {{ number_format(optional($item_alqty->firstWhere('id', $item->item_id))->alt_unit * $item->sales_qty) }}
+                                                            {{ number_format(optional($item_alqty->firstWhere('id', $item->item_id))->alt_unit * $item->purchase_qty) }}
                                                             @php
                                                                 $liter = number_format(
                                                                     optional(
                                                                         $item_alqty->firstWhere('id', $item->item_id),
-                                                                    )->alt_unit * $item->sales_qty,
+                                                                    )->alt_unit * $item->purchase_qty,
                                                                 );
                                                                 // Accumulate totals
 
@@ -285,16 +312,7 @@
                                             
                                                 <td
                                                     style="font-size:10px; text-align:center; border-right:1px solid; width:10%;">
-                                                    <?php
-                                                    // Clean up the value to ensure it is numeric
-                                                    $pricePerUnit = preg_replace('/[^0-9.]/', '', $item->price_per_unit);
-                                                    $taxPercentage = preg_replace('/[^0-9.]/', '', $tax->firstWhere('id', (int) $item->tax_id)->per);
-                                                    
-                                                    // Calculate the tax amount
-                                                    $taxAmount = number_format(((float) $pricePerUnit * (float) $taxPercentage) / 100, 2);
-                                                    
-                                                    echo $taxAmount;
-                                                    ?>
+                                                    {{ $item->tax_amt }}
                                                 </td>
                                                 <td
                                                     style="font-size:10px; text-align:center; border-right:1px solid; width:10%;">
@@ -305,32 +323,39 @@
                                         @endforeach
 
                                     </tbody>
-                                    {{-- <tr class="bg-sky text-bold" style="border-bottom:1px solid;">
+                                    <tr class="bg-sky text-bold" style="border-bottom:1px solid;">
                                         <td style="font-size:12px; text-align:center; border-right: 1px solid; ">
                                             Total
                                         </td>
-                                        <td style="text-align:right; font-weight:bold; border-right: 1px solid; "></td>
+                                      
+                                       
+                                  
                                         <td style="width:10%; text-align:center; border-right: 1px solid; ">
                                         </td>
                                         <td style="width:10%; text-align:center; border-right: 1px solid; ">
                                         </td>
                                         <td style="font-size:12px; text-align:center; border-right: 1px solid; ">
-                                            {{ $totalQuantity }}
+                                       
                                         </td>
                                         <td
                                             style="width:10%; text-align:center; border-right: 1px solid; font-size: 12px; ">
+                                         
+                                        </td>
+                                        <td style="width:10%; text-align:center; border-right: 1px solid;  font-size: 12px; ">
+                                            {{ $totalQuantity }}
+                                        </td>
+                                        <td style="width:10%; text-align:center; border-right: 1px solid;  font-size: 12px;">
                                             {{ $totalLiter }}
                                         </td>
                                         <td style="width:10%; text-align:right; border-right: 1px solid; ">
                                         </td>
-                                        <td style="width:10%; text-align:right; border-right: 1px solid; ">
-                                        </td>
-                                        
+                                       
                                         <td
                                             style=" width:10%; font-size:12px; text-align:center; border-right: 1px solid; ">
                                             {{ $totalAmount }}
                                         </td>
-                                    </tr> --}}
+                                    </tr>
+                                  
                                     <td style="width:90%;" colspan="5"></td>
                                 </table>
                                 <table>
@@ -378,22 +403,23 @@
                                                                 {{ $item['hsn_code'] }}
                                                             </td>
                                                             <td style="font-size:12px;" class="text-center">
-                                                                {{ number_format($item['total_tax_percentage'] / 2, 2) }}
-                                                            </td>
-                                                            <td style="font-size:12px;" class="text-center">
-                                                                {{ number_format($item['taxable_amount'] / 2, 2) }}
+                                                                {{ number_format($item['price_per_unit'] * $item['purchase_qty'] , 2) }}
                                                             </td>
                                                             <td style="font-size:12px;" class="text-center">
                                                                 {{ number_format($item['total_tax_percentage'] / 2, 2) }}
                                                             </td>
                                                             <td style="font-size:12px;" class="text-center">
-                                                                {{ number_format($item['taxable_amount'] / 2, 2) }}
+                                                                {{ number_format($item['tax_amt'] / 2, 2) }}
                                                             </td>
                                                             <td style="font-size:12px;" class="text-center">
                                                                 {{ number_format($item['total_tax_percentage'] / 2, 2) }}
                                                             </td>
                                                             <td style="font-size:12px;" class="text-center">
-                                                                {{ number_format($item['taxable_amount'], 2) }}
+                                                                
+                                                                {{ number_format($item['tax_amt'] / 2, 2) }}
+                                                            </td>
+                                                            <td style="font-size:12px;" class="text-center">
+                                                                {{ number_format($item['tax_amt'], 2) }}
                                                             </td>
                                                         </tr>
                                                     @endforeach
@@ -402,9 +428,9 @@
 
                                         </td>
                                        
-                                        <td style="width:100%; text-align:right;  height: 100%;  ">
+                                        <td class="col-xs-6" style="width:100%; text-align:right; position:relative; height: 100%; display:flex; justify-content:center; ">
 
-                                            <table style="width:100%; margin-left: 210px;">
+                                            <table style="width:100%;  position:relative; left:30%;">
                                                 <tr style="width:100%;">
                                                     <td>
                                                         <div class="bg-sky text-bold"
@@ -517,17 +543,17 @@
 
                         </div>
 
-
-                        <div class="card-header" id="buttons">
+                   
+                        <div class="card-header" id="buttons" style="display: flex; gap: 10px;">
                             <div class="col-xs-6">
-                                <button class="btn btn-primary" id="download_Btn"><i class="fa-solid fa-file-pdf"></i>
-                                    Download
-                                    Pdf</button>
+                                <button class="btn btn-primary" id="download_Btn">
+                                    <i class="fa-solid fa-file-pdf"></i> Download Pdf
+                                </button>
                             </div>
                             <div class="col-xs-6">
-                                <button class="btn btn-primary" onclick="printPreview()" id="print-button"><i
-                                        class="fa  fa-print"></i>
-                                    Print</button>
+                                <button class="btn btn-primary" onclick="printPreview()" id="print-button">
+                                    <i class="fa fa-print"></i> Print
+                                </button>
                             </div>
                         </div>
 
@@ -536,30 +562,135 @@
             </div>
         </div>
     </div>
-
- 
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+                        
 
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
     <script>
         function printPreview() {
-
+            // Store buttons element and its original display style
             var buttonsElement = document.getElementById('buttons');
-
-
+            var originalButtonDisplay = buttonsElement.style.display;
+            
+            // Hide buttons
+            buttonsElement.style.display = 'none';
+            
             var printContents = document.getElementById('preview_data').innerHTML;
-
             var originalContents = document.body.innerHTML;
+            
+            // Add print styles
+            var style = document.createElement('style');
+            style.type = 'text/css';
+            style.media = 'print';
+            style.innerHTML = `
+                @page {
+            size: A4 portrait !important;
+            margin: 10mm 10mm 10mm 10mm;
+        }
+        
+        body {
+            -webkit-print-color-adjust: exact;
+            color-adjust: exact;
+            print-color-adjust: exact;
+            width: 100% !important;
+            height: 100% !important;
+            font-size: 8pt !important;
+            background: white !important;  /* Force white background */
+        }
 
+        /* Remove grey backgrounds */
+        .card, 
+        .card-body,
+        .container-fluid,
+        .content-body {
+            background: white !important;
+            box-shadow: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        /* Rest of your existing styles... */
+        
+        /* Ensure only specific elements have background colors */
+        .bg-sky {
+            background-color: #E8F3FD !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        /* Remove any other unwanted backgrounds */
+        * {
+            background-color: transparent !important;
+        }
+        
+        /* Exception for elements that need background */
+        .bg-sky, 
+        thead tr,
+        .gsttable thead tr {
+            background-color: #E8F3FD !important;
+        }
+
+        @media print {
+            .Not-paid {
+                background-color: #ffebee !important;
+                color: #c62828 !important;
+                border: 1px solid #c62828 !important;
+              
+                display: inline-block !important;
+                font-weight: bold !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            
+            .paid {
+                background-color: #e8f5e9 !important;
+                color: #2e7d32 !important;
+                border: 1px solid #2e7d32 !important;
+          
+                display: inline-block !important;
+                font-weight: bold !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            
+            /* Ensure parent containers don't hide the status */
+            div[style*="position"] {
+                position: relative !important;
+                display: block !important;
+                page-break-inside: avoid !important;
+            }
+        }
+    }
+            `;
+            
+            document.getElementsByTagName('head')[0].appendChild(style);
             document.body.innerHTML = printContents;
-
+            
             window.print();
-           
-
+            
+            // Restore original content
             document.body.innerHTML = originalContents;
-
-
-
+            
+            // Re-get the buttons element since we replaced the body content
+            buttonsElement = document.getElementById('buttons');
+            // Restore the buttons display to flex
+            buttonsElement.style.display = 'flex';
+            
+            // Add a fallback in case the display isn't restored
+            setTimeout(() => {
+                if (buttonsElement.style.display === 'none') {
+                    buttonsElement.style.display = 'flex';
+                }
+            }, 100);
         }
     </script>
 
@@ -651,3 +782,4 @@ buttonsElement.style.display = "flex";
             });
         });
     </script>
+@endsection

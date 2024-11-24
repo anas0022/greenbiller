@@ -315,7 +315,7 @@ function update(category_name, parent, description, id, image) {
     new DataTable('#example', {
     layout: {
         topStart: {
-            buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+            buttons: [ 'csv', 'excel', 'pdf', 'print']
         }
     }
 });

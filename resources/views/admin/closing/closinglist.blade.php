@@ -27,23 +27,23 @@
                                 <table class="table table-bordered" id="example">
                                     <thead>
                                         <tr>
-                                            <th>Date</th>
-                                            <th>Invoice Count</th>
-                                            <th>Total Sale</th>
-                                            <th>Total Expense</th>
-                                            <th>Closing Amount</th>
-                                            <th>Action</th>
+                                            <th style="text-align: center;">Date</th>
+                                            <th style="text-align: center;">Invoice Count</th>
+                                            <th style="text-align: center;">Total Sale</th>
+                                            <th style="text-align: center;">Total Expense</th>
+                                            <th style="text-align: center;">Closing Amount</th>
+                                            <th style="text-align: center;">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody> 
                                         @foreach ($closing as $item)
                                         <tr>
-                                            <td>{{$item->date}}</td>
-                                            <td>{{$item->invoice_count}}</td>
-                                            <td>{{$item->total_sale}}</td>
-                                            <td>{{$item->total_expense}}</td>
-                                            <td>{{$item->closing_amount}}</td>
-                                            <td>
+                                            <td style="text-align: center;">{{$item->date}}</td>
+                                            <td style="text-align: center;">{{$item->invoice_count}}</td>
+                                            <td style="text-align: center;">{{$item->total_sale}}</td>
+                                            <td style="text-align: center;">{{$item->total_expense}}</td>
+                                            <td style="text-align: center;">{{$item->closing_amount}}</td>
+                                            <td style="text-align: center;">
                                                 <a href="{{route('closing.bill',['id'=>$item->id])}}" >
                                                     <i class="fas fa-eye" style="color: #007bff; font-size: 20px;"></i>
                                                 </a>
@@ -73,7 +73,7 @@
     new DataTable('#example', {
     layout: {
         topStart: {
-            buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+            buttons: [ 'csv', 'excel', 'pdf', 'print']
         }
     }
 });

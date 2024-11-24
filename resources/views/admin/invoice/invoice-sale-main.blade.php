@@ -1,9 +1,9 @@
 @extends('admin/layouts/app')
 
-@section('title', 'Home Page')
+@section('title', 'Tax Invoice')
 
 @section('content')
-    <link href="{{ asset('admin-assets/css/toast.css') }}" rel="stylesheet">
+
 
     <style type="text/css">
         @media print {
@@ -62,6 +62,23 @@
         .text-center {
             text-align: center;
         }
+         .Not-paid {
+        background-color: #ffebee !important;
+        color: #c62828 !important;
+        border: 1px solid #c62828 !important;
+        border-radius: 4px;
+        padding: 2px 8px !important;
+        display: inline-block !important;
+    }
+    
+    .paid {
+        background-color: #e8f5e9 !important;
+        color: #2e7d32 !important;
+        border: 1px solid #2e7d32 !important;
+        border-radius: 4px;
+        padding: 2px 8px !important;
+        display: inline-block !important;
+    }
     </style>
 
     <div class="content-body" id="body_all">
@@ -72,9 +89,9 @@
                         <div style="padding:10px;">
                             <h3 style="width: 100%; display:flex; justify-content:center;"> Tax Invoice</h3>
                             <div style=" width:100%; display:flex; gap:20px; justify-content:end;">
-                                <div style="left: 10px; position: absolute;">
+                                <div style="left: 10px; position: absolute;  text-align:center;">
                                     @if ($sale->paid_amount == null)
-                                        <p class=" Not-paid" style="padding:2px; width:50%;"> Un Paid </p>
+                                        <p class=" Not-paid" style="padding:2px; width:100%;"> Un Paid </p>
                                     @else
                                         <p class=" paid" style="padding:2px; width:25%;"> Paid </p>
                                     @endif

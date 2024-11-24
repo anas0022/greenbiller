@@ -499,7 +499,7 @@
                                 </thead>
                                 <tbody style="width:100%; overflow-x:scroll;">
 
-                                    @foreach($sales as $key => $item)
+                                    @foreach($purchase as $key => $item)
                                         <tr>
                                             <td>{{ $key + 1 }}</td>
                                             <td>{{ $item->sales_date }}</td>
@@ -514,14 +514,14 @@
                                             <!-- Accessing the supplier's name -->
                                             <td>{{ $item->grand_total }}</td>
                                             
-                                            <td>{{ $user->firstWhere('id', $item->created_by)->role ?? 'N/A' }}</td>
+                                  
                                             <td>
                                                 <div class="dropdown">
                                                     <button type="button" class="btn btn-success light sharp"
                                                         data-bs-toggle="dropdown" aria-expanded="false"><i
                                                             class="fa-solid fa-computer-mouse-scrollwheel"></i></button>
                                                     <div class="dropdown-menu" style="z-">
-                                                        <a href="{{ route('invoice.sale.extimate', ['id'=>$item->id,'sale_type'=>$item->sales_type]) }}"
+                                                        <a 
                                                             class="dropdown-item" type="submit">
                                                             <i class="fas fa-eye"></i> View Extimate
                                                         </a>

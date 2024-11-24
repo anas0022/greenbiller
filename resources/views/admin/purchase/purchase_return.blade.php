@@ -393,14 +393,7 @@
                                                                     style="width:7.5%;color: #fff !important;">
                                                                     Total
                                                                     Amount</th>
-                                                                <!--     <th rowspan="2" style="width:10%;color: #fff !important;"> Bach
-                                                                    No</th>
-                                                                <th rowspan="2" style="width:7.5%;color: #fff !important;">
-                                                                    Expire Date</th> -->
-                                                                <th rowspan="2"
-                                                                    style="width:5%;color: #fff !important;">
-                                                                    Action
-                                                                </th>
+                                                              
                                                             </tr>
                                                         </thead>
                                                         <tbody id="item-results">
@@ -464,13 +457,17 @@
 
                                                                     </td>
 
-                                                                    <td> <input name="discount_amt[]"
-                                                                            id="discount_{{ $i }}"
-                                                                            type="text"
-                                                                            class="form-control form-control-sm"
-                                                                            value="{{ $pur->discount_amt }}">
-                                                                  
-                                                                    </td>
+                                                                    <td> <input name="discount_amt[]" id="discount_{{$i}}"
+                                                                        type="text" class="form-control form-control-sm"
+                                                                        value="{{$pur->discount_amt ?? 0}}">
+                                                                    <select name="discount_type[]"
+                                                                        id="item_discount_type_{{$i}}"  onchange="itemTotal({{$i}})">
+                                                                        <option value="">select</option>
+                                                                        <option value="percent">Percentage</option>
+                                                                        <option value="fixed">Fixed</option>
+                                                                    </select>
+
+                                                                </td>
 
                                                                     <td>
                                                                         <select name="taxid[]" 
@@ -505,16 +502,6 @@
                                                                             class="form-control form-control-sm total"
                                                                             value="{{ $pur->total_cost }}" readonly
                                                                             style="background-color: #ddd;"></td>
-
-                                                                    <td>
-
-                                                                  
-                                                                        <a href="{{ route('delete_purchase_row', ['id' => $pur->id]) }}"
-                                                                            class="btn btn-danger shadow btn-xs sharp">
-                                                                            <i class="fa fa-trash"></i>
-                                                                        </a>
-
-                                                                    </td>
 
 
                                                                 </tr>
@@ -826,60 +813,7 @@
                                             totalamtsum();
                                         }
                                     </script>
-                                    <hr class="solid">
-
-                                    <div class="row" style="background-color: #ddd;">
-                                        <h4 style="margin-top: 5px; margin-bottom: 10px;">Return Payment : </h4>
-                                        <div class="mb-3 col-md-4">
-                                            <label class="form-label">Amount</label>
-                                            <input type="text" name="paid_amount" class="form-control form-control-sm"
-                                                value="{{ $purchase->paid_amount }}">
-                                        </div>
-                                        <div class="mb-3 col-md-4">
-                                            <input type="hidden" name="payment_type" id="accountInput">
-                                            <label class="form-label"> Payment Type </label>
-                                            <select name="paymenttypes" class="form-control selectpicker"
-                                                data-live-search="true" id="accountSelect" onchange="payselect()">
-                                                <option value="">-Select-</option>
-                                                <option value="Cash">Cash</option>
-                                                <option value="Card">Card</option>
-
-                                            </select>
-                                        </div>
-                                        <script>
-                                            function payselect() {
-                                                var selectElement = document.getElementById('accountSelect');
-                                                var inputElement = document.getElementById('accountInput');
-                                                var selectedType = selectElement.options[selectElement.selectedIndex].value;
-
-                                                // Set the selected discount type into the input field
-                                                inputElement.value = selectedType;
-                                            }
-                                        </script>
-                                        <div class="mb-3 col-md-4">
-                                            <label class="form-label" for="accountInput">Account</label>
-
-                                            <select name="account" class="form-control selectpicker" id="accountsSelect"
-                                                data-live-search="true" onchange="accountsselect()">
-                                                <option value="0" data-ttokens="-CREATE ACCOUNT HEAD-">-None-
-                                                </option>
-                                                @foreach ($account as $a)
-                                                    <option value="{{ $a->id }}">{{ $a->account_name }}</option>
-                                                @endforeach
-
-
-                                            </select>
-
-                                        </div>
-
-
-                                        <div class="mb-3 col-md-12">
-                                            <label class="form-label">Payment Note</label>
-                                            <textarea name="payment_note" class="form-control form-control-sm"></textarea>
-
-                                        </div>
-
-                                    </div>
+                                  
 
                                     <script>
                                         function unitvalue(count) {

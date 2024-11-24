@@ -707,9 +707,9 @@
                                                         <span class="input-group-addon"><i
                                                                 class="fa fa-building text-red"></i></span>
                                                         <select id="store_select" name="store_id"
-                                                            class="form-control selectpicker" data-live-search="true"
+                                                            class="form-control selectpicker " data-live-search="true"
                                                             required onchange="store()">
-
+                                                            
                                                             <option value="">Select Store</option>
                                                             @foreach ($stores as $store)
                                                                 <option value="{{ $store->id }}">
@@ -731,12 +731,12 @@
                                         <div class="col-md-2">
                                             <input type="text" class="form-control" data-toggle="tooltip"
                                                 title="" placeholder="Prefix" id="sale_code"
-                                                name="return_prefix" value="SRB2024-25" readonly/>
+                                                name="return_prefix" value="SRB2024-25" readonly />
                                         </div>
                                         <div class="col-md-2">
                                             <input type="text" class="form-control" data-toggle="tooltip"
                                                 title="" placeholder="Invioce Number" id="sale_code"
-                                                name="sale_code" value="{{ $saleCode }}" readonly/>
+                                                name="sale_code" value="{{ $saleCode }}" readonly />
                                         </div>
                                     </div>
                                     <script>
@@ -766,10 +766,12 @@
                                                 <span class="input-group-addon pointer" data-toggle="modal"
                                                     data-target=""><i
                                                         class="fa fa-user-plus text-primary fa-lg"></i></span>
-                                                <select class="form-control selectpicker select2  select2-hidden-accessible " data-live-search="true" id="customer_select"
-                                                    name="customer_id" style="width: 100%" tabindex="-1"
-                                                    aria-hidden="true" onchange="customercheck()">
 
+                                              
+                                                    <select class="form-control select2"
+                                                    id="customer_select" 
+                                                    name="customer_id" 
+                                                    style="width: 100%"  data-search="true">
                                                     <option value="">Select Customer</option>
                                                     @if ($customers)
                                                         @foreach ($customers as $customer)
@@ -1042,7 +1044,8 @@
                                                         ">
                                                             <input type="text" name="prefixs[]"
                                                                 class="form-control prefix-input" readonly
-                                                                style="flex: 1; margin-right: 5px;" value="{{ old('prefixs.0') }}">
+                                                                style="flex: 1; margin-right: 5px;"
+                                                                value="{{ old('prefixs.0') }}">
                                                             <button type="button"
                                                                 class="btn btn-danger shadow btn-xs sharp delete-prefix">
                                                                 <i class="fa fa-trash"></i>
@@ -1209,13 +1212,17 @@
                                                             $('#bill_no').empty();
                                                             $('#bill_no').append('<option value="">-select-</option>');
 
-                                                            if (response.success && response.sales && response.sales.length > 0) {
+                                                            if (response.success && response.sales && response.sales.length >
+                                                                0) {
                                                                 $.each(response.sales, function(key, sale) {
                                                                     $('#bill_no').append(
-                                                                        '<option value="' + sale.prefix + '/' + sale.sales_code + '" ' +
+                                                                        '<option value="' + sale.prefix + '/' + sale
+                                                                        .sales_code + '" ' +
                                                                         'data-prefix="' + sale.prefix + '" ' +
-                                                                        'data-sales-code="' + sale.sales_code + '" ' +
-                                                                        'data-sales-type="' + sale.sales_type + '" ' +
+                                                                        'data-sales-code="' + sale.sales_code +
+                                                                        '" ' +
+                                                                        'data-sales-type="' + sale.sales_type +
+                                                                        '" ' +
                                                                         'data-sale-id="' + sale.id + '">' +
                                                                         sale.prefix + '/' + sale.sales_code +
                                                                         '</option>'
@@ -1587,7 +1594,7 @@
             }
 
             const searchResults = document.getElementById("ui-id-1");
-            
+
             if (!search) {
                 searchResults.style.display = "none";
                 return;
@@ -1615,9 +1622,10 @@
                 success: function(response) {
                     console.log('Success Response:', response);
                     searchResults.innerHTML = "";
-                    
+
                     if (!response.data || response.data.length === 0) {
-                        searchResults.innerHTML = '<li class="ui-menu-item"><a class="ui-corner-all">No items found</a></li>';
+                        searchResults.innerHTML =
+                            '<li class="ui-menu-item"><a class="ui-corner-all">No items found</a></li>';
                         return;
                     }
 
@@ -1651,16 +1659,17 @@
                         responseText: xhr.responseText,
                         error: error
                     });
-                    
+
                     let errorMessage = 'Failed to fetch items';
                     try {
                         const response = JSON.parse(xhr.responseText);
                         errorMessage = response.message || errorMessage;
-                    } catch(e) {
+                    } catch (e) {
                         console.error('Error parsing response:', e);
                     }
-                    
-                    searchResults.innerHTML = `<li class="ui-menu-item"><a class="ui-corner-all">Error: ${errorMessage}</a></li>`;
+
+                    searchResults.innerHTML =
+                        `<li class="ui-menu-item"><a class="ui-corner-all">Error: ${errorMessage}</a></li>`;
                     swal("Error!", errorMessage, "error");
                 }
             });
