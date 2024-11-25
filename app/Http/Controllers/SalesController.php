@@ -473,7 +473,7 @@ class SalesController extends Controller
                     $ledger->invoice_purchase_no = $sale->prefix . '/' . $sale->sales_code;
 
                     $ledger->title = 'SALES';
-
+                    $ledger->sale_id = $sale->id;
                     $ledger->debit = $grand_total;
 
                     $ledger->save();
@@ -524,10 +524,10 @@ class SalesController extends Controller
                         $ledger->customer_id = $customer_id;
                         $ledger->store_id = $store_id;
                         $ledger->date = $sales_date;
-
+                        $ledger->sale_id = $sale->id;
                         $ledger->type = "Receipt";
 
-                        $ledger->invoice_purchase_no = $payment_code;
+                        $ledger->invoice_purchase_no = 'PAY/'.$sale->sales_code;
 
                         $ledger->title = 'Cash';
 

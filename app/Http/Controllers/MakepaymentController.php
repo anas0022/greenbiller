@@ -45,7 +45,7 @@ class MakepaymentController extends Controller
 
         $salespayment->payment_note = $request->input('payment_note_1');
 
-        $salespayment->payment_code = $payment_code;
+        $salespayment->payment_code = 'PAY-' . $payment_code;
 
         $salespayment->store_id = $sale->store_id;
 
@@ -61,31 +61,33 @@ class MakepaymentController extends Controller
         $salespayment->created_by = Auth()->id();
         $sales_type = $sale->sales_type;
         if ($salespayment->save()) {
-            $ledger = new ledger();
-            $ledger->sale_id = $sale->id;
-            $ledger->customer_id = $sale->customer_id;
-            $ledger->store_id = $sale->store_id;
-            $ledger->date = $sale->sales_date;
-
-            if ($sales_type == 0) {
-
-                $ledger->type = "Sales B2B";
-
-            } elseif ($sales_type == 1) {
-
-                $ledger->type = "Sales B2C";
-
+            $saleId = $sale->id;
+            
+            $existingLedger = ledger::where('sale_id', $saleId)->first();
+            
+            if ($existingLedger) {
+                $existingLedger->sale_id = $sale->id;
+                $existingLedger->customer_id = $sale->customer_id;
+                $existingLedger->store_id = $sale->store_id;
+                $existingLedger->credit = $existingLedger->credit + $request->input('paid_amount');
+                $existingLedger->invoice_purchase_no = 'PAY/'.$sale->sales_code;
+                $existingLedger->date = $sale->sales_date;
+                $existingLedger->update();
+                return redirect()->route('reciept.view', ['id' => $existingLedger->id]);
             } else {
-
-                $ledger->type = "Sales";
-
+                $ledger = new ledger();
+                $ledger->sale_id = $sale->id;
+                $ledger->customer_id = $sale->customer_id;
+                $ledger->store_id = $sale->store_id;
+                $ledger->date = $sale->sales_date;
+                $ledger->invoice_purchase_no = 'PAY/'.$sale->sales_code;
+                $ledger->title = 'Cash';
+                $ledger->credit = $request->input('paid_amount');
+                $ledger->save();
+                return redirect()->route('reciept.view', ['id' => $ledger->id]);
             }
-            $ledger->invoice_purchase_no = $payment_code;
 
-            $ledger->title = 'Cash';
-            $ledger->debit = $request->input('paid_amount');
-            $ledger->save();
-            return redirect()->route('reciept.view', ['id' => $ledger->id]);
+            
         }
 
     }

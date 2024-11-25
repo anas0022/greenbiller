@@ -12,64 +12,9 @@ use App\Http\Controllers\Controller;
 
 
 class Store_userController extends Controller
-{    public function login(){
-    return view('admin.auth.login');
-}
-    public function userlist(){
-        $logo = Coresetting::all();
-       
-        $store = Store::where('id' ,Auth::user()->store_id)->get();
-   
-        $userlist = UserList::whereIn('store_id',$store)->get();
-     
-        
-        return view('store.users.userlist',compact('userlist','logo'));
-    }
-    public function Userpost(){
-        $stores = Store::all();
-        $country = countrysettings::all();
-        $logo = Coresetting::all();
-    
-        return view('store.users.adduser',compact('stores','country','logo'));
-    }
-    public function useradd(Request $request)
-{
-    
-   
-    // Create new user instance
-    $userlist = new UserList();
- 
+{   
   
-    $userlist->name = $request->input('name');
-    $userlist->mobile = $request->input('mobile');
-    $userlist->email = $request->input('email');
-    $userlist->role = $request->input('role');
-    $userlist->password = bcrypt($request->input('password'));
-    $userlist->store_id = Auth::user()->store_id;
-    $userlist->mobile_code =$request->input('country_code');
-
-    // Generate unique username
-    $username = strtolower($request->input('name')) . '@admin.com';
-    if (UserList::where('username', $username)->exists()) {
-        // Append unique identifier if username exists
-        $username = strtolower($request->input('name')) . rand(100, 999) . '@admin.com';
-    }
-    $userlist->username = $username;
-
-    // Handle image upload and storage in 'storage/userprofile' directory
-    if ($request->hasFile('image')) {
-        $imagePath = $request->file('image')->store('userprofile', 'public');
-        $userlist->image = $imagePath;
-    }
-
-    // Save user to database
-    if ($userlist->save()) {
-        return redirect()->back()->with('success', 'User added successfully!');
-    }
-
-    return back()->withErrors('User not added');
-}
-
+  
     public function updateStatus_user(Request $request){
 
         $brands = UserList::find($request->input('id'));
@@ -130,13 +75,6 @@ public function useredit(Request $request){
     }
 
     return redirect()->route('store_userlist')->withErrors('User not added');
-}
-public function deleteuser(Request $request){
-    $brand  = UserList::where('id',$request->input('id'));
-
-    if($brand->delete()){
-        return back()->with('success' ,'Deleted successfully');
-    }
 }
 
 }

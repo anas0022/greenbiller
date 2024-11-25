@@ -3,33 +3,12 @@
 @section('title', 'Home Page')
 
 @section('content')
-<link href="{{asset('admin-assets/css/toast.css')}}" rel="stylesheet">
-<script src="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.min.js"></script>
-<link rel="stylesheet" type="text/css" href="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.css">
+
 <div class="content-body">
 
     <div class="container-fluid">
 
-        @if(session('error'))
-            <script>
-                swal({
-                    title: "error!",
-                    text: "{{ session('error') }}",
-                    icon: "error",
-                    type: "error"
-                });
-            </script>
-        @endif
-        @if(session('success'))
-            <script>
-                swal({
-                    title: "Success!",
-                    text: "{{ session('success') }}",
-                    icon: "success",
-                    type: "success"
-                });
-            </script>
-        @endif
+      
         <div class="col-12">
             <form action="{{route('store_userediting')}}" method="post" enctype="multipart/form-data">
                 @csrf
@@ -60,10 +39,8 @@
                                                 <select name="country_code" id="country_code"
                                                     class="form-control form-control-sm selectpicker"
                                                     data-live-search="true">
-                                                    <option value="{{$items->mobile_code}}">{{$items->mobile_code}}
-                                                    </option>
                                                     @foreach ($country as $a)
-                                                        <option value="{{ $a->mobile_code }}" {{ $a->mobile_code == $items->mobile_code ? 'selected' : '' }}>
+                                                        <option value="{{ $a->id }}" {{ $a->id == $items->mobile_code ? 'selected' : '' }}>
                                                             {{ $a->mobile_code }}
                                                         </option>
                                                     @endforeach
@@ -96,10 +73,12 @@
 
                                         <select name="role" id="role" class="form-control form-control-sm selectpicker"
                                             data-live-search="true">
-                                            <option value="manager" {{ $items->role == 'manager' ? 'selected' : '' }}>
-                                                Manager</option>
-                                            <option value="cashier" {{ $items->role == 'cashier' ? 'selected' : '' }}>
-                                                Cashier</option>
+                                            @foreach ($roles as $a)
+                                                <option value="{{ $a->id }}" {{ $a->id == $items->role_id ? 'selected' : '' }}>
+                                                    {{ $a->role }}
+                                                </option>
+                                            @endforeach
+                                 
                                         </select>
 
 
@@ -177,3 +156,4 @@
         </div>
     </div>
 </div>
+@endsection

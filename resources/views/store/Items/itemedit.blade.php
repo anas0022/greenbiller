@@ -2,9 +2,11 @@
 
 @section('title', 'Home Page')
 
-<link href="{{asset('admin-assets/css/toast.css')}}" rel="stylesheet">
+@push('scripts')
 <script src="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.min.js"></script>
 <link rel="stylesheet" type="text/css" href="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.css">
+@endpush
+
 @section('content')
 
 <div class="content-body">
@@ -311,7 +313,7 @@
                                                     <option value="">Select Tax</option>
                                                   
                                                     @foreach ($taxes as $t)
-        <option value="{{ $t->id }}" {{ $t->id == $tax->id ? 'selected' : '' }}>
+        <option value="{{ $t->id }}" {{ isset($tax) && $t->id == $tax->id ? 'selected' : '' }}>
             {{ $t->taxname }}
         </option>
     @endforeach
@@ -472,7 +474,7 @@
                                                 <option value="">-Select-</option>
                                               
                                                 @foreach ($ware as $w)
-        <option value="{{ $w->id }}" {{ $w->id == $warehouse->id ? 'selected' : '' }}>
+        <option value="{{ $w->id }}" {{ isset($warehouse) && $w->id == $warehouse->id ? 'selected' : '' }}>
             {{ $w->name }}
         </option>
     @endforeach

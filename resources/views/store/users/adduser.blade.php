@@ -3,39 +3,35 @@
 @section('title', 'Home Page')
 
 @section('content')
-<link href="{{asset('admin-assets/css/toast.css')}}" rel="stylesheet">
 <script src="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.min.js"></script>
 <link rel="stylesheet" type="text/css" href="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.css">
 <div class="content-body">
 
+    @if($errors->any())
+    <script>
+        swal({
+            title: "Error!",
+            text: "{!! implode('\n', $errors->all()) !!}",
+            icon: "error",
+            type: "error"
+        });
+    </script>
+@endif
 
-@if(session('error'))
-            <script>
-                swal({
-                    title: "error!",
-                    text: "{{ session('error') }}",
-                    icon: "error",
-                    type: "error"
-                });
-            </script>
-        @endif
-        @if(session('success'))
-            <script>
-                swal({
-                    title: "Success!",
-                    text: "{{ session('success') }}",
-                    icon: "success",
-                    type: "success"
-                });
-            </script>
-        @endif
-
-
+@if(session('success'))
+    <script>
+        swal({
+            title: "Success!", 
+            text: "{{ session('success') }}",
+            icon: "success",
+            type: "success"
+        });
+    </script>
+@endif
     <div class="container-fluid">
 
 
         <div class="row">
-    
 
           
                 <div class="col-12">
@@ -82,22 +78,26 @@
                                         <div class="mb-3 row">
                                             <label class="col-sm-3 col-form-label">Email</label>
                                             <div class="col-sm-9">
-                                                <input name="email" type="email" class="form-control form-control-sm" required>
+                                                <input name="email" type="email" class="form-control form-control-sm" >
                                             </div>
                                         </div>
                                       
                                         <div class="mb-3 row">
                                             <label class="col-sm-3 col-form-label">Role</label>
-                                     
-                                            <div class="col-sm-9">
-                                                <select name="role" class="form-control form-control-sm" required id="roleselect" onchange="rolechange()">
-                                                <option value="">-SELECT-</option>
-                                <option value="cashier">Cashier</option>
-                                <option value="manager">Manager</option>
-                                                                            </select>
+                                            <input type="hidden" name="role" id="roleinput">
+                                            <div class="col-sm-9" style="display: flex;">
+                                                <select name="role_id" class="form-control form-control-sm" required id="roleselect" onchange="rolechange()" style="border-top-right-radius:0px;border-bottom-right-radius:0px;">
+                                                    <option value="">-SELECT-</option>
+                                                    @foreach ($role as $r)
+                                                        <option value="{{$r->id}}" data-name="{{$r->role}}">{{$r->role}}</option>
+                                                    @endforeach
+
+                                                    
+                                                </select>
                                             </div>
                                         </div>
-                         
+               
+
 
                                         <div class="mb-3 row">
                                             <label class="col-sm-3 col-form-label">Password</label>
@@ -113,24 +113,7 @@
                                         </div>
 
 
-                                     <!--    <div class="mb-3 row">
-                                            <label class="col-sm-3 col-form-label">Default Store</label>
-                                            <div class="col-sm-9">
-
-                                           
-    <select name="store" class="form-control form-control-sm" id="wareselect" onchange="updateWarehouse()">
-        <option value="">-SELECT-</option>
-      @foreach ($stores as $store )
-
-      <option value="{{$store->id}}">{{$store->store_name}}</option>
-      
-      @endforeach
-    </select>
-    
-    
-                                            </div>
-                                        </div> -->
-
+                                       
 
                                     </div>
                                     <div class="col-6">
@@ -145,6 +128,8 @@
                                         </div>
 
                                     </div>
+
+                                    
                                 </div>
 
                             </div>
@@ -165,5 +150,14 @@
 </div>
 
 
-<script src="{{ asset('pos_assets/js/sweetalert.min.js') }}"></script>
 
+<script>
+function rolechange() {
+    var select = document.getElementById('roleselect');
+    var selectedOption = select.options[select.selectedIndex];
+    var roleName = selectedOption.getAttribute('data-name');
+    document.getElementById('roleinput').value = roleName;
+}
+</script>
+
+@endsection

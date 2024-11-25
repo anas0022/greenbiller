@@ -10,5 +10,5 @@ class UserList extends Model
     use HasFactory;
 
     protected $table ='users';
-    protected $fillable =['user_id','name','mobile','role','password','warehouse','store_id'];
+    protected $fillable =['user_id','name','mobile','role','password','warehouse','store_id','created_by'];
 }

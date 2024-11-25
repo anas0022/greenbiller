@@ -93,7 +93,7 @@
                                     @if ($sale->paid_amount == null)
                                         <p class=" Not-paid" style="padding:2px; width:100%;"> Un Paid </p>
                                     @else
-                                        <p class=" paid" style="padding:2px; width:25%;"> Paid </p>
+                                        <p class=" paid" style="padding:2px; width:100%;"> Paid </p>
                                     @endif
                                     <p style="font-size: 12px;">
                                     Created By : {{$user->firstWhere('id',$userids)->name}}({{$user->firstWhere('id',$userids)->role}})</p>

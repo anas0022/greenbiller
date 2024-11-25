@@ -131,6 +131,7 @@
 						</a>
                         <ul aria-expanded="false">
                             <li><a href="{{route('store_userlist')}}">Users</a></li>
+						{{-- 	<li><a href="{{route('user_role')}}">User Role</a></li> --}}
                          
                         </ul>
                     </li> 
