@@ -315,7 +315,7 @@
                             <tr>
                                 <td>{{ $key + 1 }} </td>
                                 <td>{{ $item->updated_at->format('Y-m-d') }}</td>
-                                <td>{{ $item->purchase_code }}</td>
+                                <td>{{ $item->prefix }}/{{ $item->purchase_code }}</td>
                                 <td>{{ $item->purchase_status }}</td>
                                 <td>{{ $item->reference_no }}</td>
                                 <td>{{ $suppliers->firstWhere('id', $item->supplier_id)->name ?? 'N/A' }}</td>
@@ -323,11 +323,11 @@
                                 <td>{{ $item->paid_amount ?? '0.00' }}</td>
                                 <td>
                                     @if($item->paid_amount === null || $item->paid_amount == 0)
-                                        <p class="not-paid">Not Paid</p>
+                                        <p class="not-paid" style="background-color: red !important; color: white !important;  border-radius: 4px; text-align: center; ">Not Paid</p>
                                     @elseif($item->paid_amount < $purchaseItems->where('purchase_id', $item->id)->sum('total_cost'))
                                         <p class="partial" style="background-color: orange   !important; color: white !important;  border-radius: 4px; text-align: center; ">Partial</p>
                                     @else
-                                        <p class="paid">Paid</p>
+                                        <p class="paid" >Paid</p>
                                     @endif
                                 </td>
                                 <td>
@@ -341,7 +341,7 @@
                                             
                                             @if ($item->paid_amount == null || $item->paid_amount < $purchaseItems->where('purchase_id', $item->id)->sum('total_cost'))
                                                 <a class="dropdown-item" data-toggle="modal" data-target="#cash-payments-modal"
-                                                    onclick="totals({{ $purchaseItems->where('purchase_id', $item->id)->first()->purchase_qty ?? 0 }}, {{ $purchaseItems->where('purchase_id', $item->id)->first()->total_cost ?? 0 }}, {{ $item->id }})">
+                                                    onclick="totals({{ $purchaseItems->where('purchase_id', $item->id)->first()->purchase_qty ?? 0 }}, {{ $purchaseItems->where('purchase_id', $item->id)->first()->total_cost ?? 0 }}, {{ $item->id }},{{ $item->paid_amount ?? 0 }})">
                                                     <i class="fas fa-money-check-dollar"></i> Make Payments
                                                 </a>
                                             @else
@@ -366,27 +366,15 @@
         </div></div>
 
      
-        <script>
-            // Get all elements with the class 'status-cell'
-            document.querySelectorAll('.status-cell').forEach(function (cell, index) {
-                cell.addEventListener('click', function () {
-                    // Find the corresponding form for the current row
-                    var formUpdate = document.getElementById('form_update_' + index);
-                    if (formUpdate) {
-                        formUpdate.style.display = (formUpdate.style.display === 'none' || formUpdate.style.display === '') ? 'flex' : 'none';
-                    }
-                });
-            });
-
-        </script>
+        
         
         <script>
   
  
-  function totals(totalQty, grandTotal,id) {
+  function totals(totalQty, grandTotal,id,paid_amount) {
 
   document.getElementById('totalitemqty_1').value = totalQty;
-  document.getElementById('total_amount_print').value = grandTotal;
+  document.getElementById('total_amount_print').value = grandTotal-paid_amount;
   document.getElementById('id').value=id;
 }
           
@@ -410,3 +398,4 @@
     }
 });
 </script>
+@endsection

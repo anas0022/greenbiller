@@ -21,6 +21,7 @@ Route::group(['prefix' => 'store', 'middleware' => 'auth'], function () {
     require __DIR__ . '/warehouse.php';
     require __DIR__ . '/item.php';
     require __DIR__ . '/user.php';
+    require __DIR__ . '/category.php';
     Route::get('/dasboard', [DashController::class, 'dashboard'])->name('store.dash');
     Route::get('add_sales', [Store_salesController::class, 'sales_add'])->name('sales_add');
     Route::put('/customer_address', [Store_salesController::class, 'customer_address'])->name('customer.address');
@@ -70,12 +71,10 @@ Route::group(['prefix' => 'store', 'middleware' => 'auth'], function () {
     
    
 
-    Route::get('/category', [Store_categoryController::class, 'category'])->name('store_category');
+    
 
-    Route::post('/category_post', [Store_categoryController::class, 'categorypost'])->name('store_category.post');
-    Route::post('/catstatusupdate', [Store_categoryController::class, 'updateStatus_cat'])->name('store_updateStatus.cat');
-    Route::post('/cat_delete', [Store_categoryController::class, 'cat_delte'])->name('store_category.delete');
-    Route::post('/cat_update', [Store_categoryController::class, 'cat_update'])->name('store_category.edit');
+    
+   
     Route::get('/brand', [Store_brandController::class, 'brand'])->name('store_brand');
     Route::post('/brandpost', [Store_brandController::class, 'brandpost'])->name('store_brandpost');
     Route::post('/brand_update', [Store_brandController::class, 'brand_update'])->name('store_brandupdate');

@@ -30,8 +30,9 @@ class MakepaymentController extends Controller
         $sales_payment_init = $storeIds->pluck('sales_payment_init')->first();
 
         $payment_code = $sales_payment_init . '/' . sprintf("%04d", $sale->id + 1);
-
-        $sale->paid_amount = $request->input('paid_amount');
+        $salepay = $sale->paid_amount;
+       
+        $sale->paid_amount = $request->input('paid_amount')+$salepay;
         $sale->update();
         $salespayment = new salespayment();
 
@@ -62,17 +63,23 @@ class MakepaymentController extends Controller
         $sales_type = $sale->sales_type;
         if ($salespayment->save()) {
             $saleId = $sale->id;
+         
             
             $existingLedger = ledger::where('sale_id', $saleId)->first();
-            
+     
             if ($existingLedger) {
-                $existingLedger->sale_id = $sale->id;
+
                 $existingLedger->customer_id = $sale->customer_id;
+             
                 $existingLedger->store_id = $sale->store_id;
+                
                 $existingLedger->credit = $existingLedger->credit + $request->input('paid_amount');
+             
                 $existingLedger->invoice_purchase_no = 'PAY/'.$sale->sales_code;
+               
                 $existingLedger->date = $sale->sales_date;
-                $existingLedger->update();
+          
+                $existingLedger->save();
                 return redirect()->route('reciept.view', ['id' => $existingLedger->id]);
             } else {
                 $ledger = new ledger();
@@ -103,13 +110,20 @@ class MakepaymentController extends Controller
         ]);
 
         $purchase = Purchase::where('id', $request->input('id'))->first();
+     
         $storeIds = Store::where('id', $purchase->store_id)->first();
 
         $sales_payment_init = $storeIds->pluck('sales_payment_init')->first();
 
         $payment_code = $sales_payment_init . '/' . sprintf("%04d", $purchase->id + 1);
 
-        $purchase->paid_amount = $request->input('paid_amount');
+      
+       
+        $purchasepay = $purchase->paid_amount;
+      
+
+        $purchase->paid_amount = $request->input('paid_amount')+$purchasepay;
+    
         $purchase->update();
         $salespayment = new Purchasepay();
 

@@ -502,15 +502,17 @@
                                         <td style="width:10%; text-align:center; border-right: 1px solid; ">
                                         </td>
                                         <td style="width:10%; text-align:center; border-right: 1px solid; ">
+                                           
                                         </td>
-                                        <td style="width:10%; text-align:center; border-right: 1px solid; ">
+                                        <td style="width:10%; text-align:center; border-right: 1px solid; font-size: 12px; ">
+                                            {{ $totalQuantity }} 
                                         </td>
-                                        <td style="font-size:12px; text-align:center; border-right: 1px solid; ">
-                                            {{ $totalQuantity }}
+                                            <td style="font-size:12px; text-align:center; border-right: 1px solid; ">
+                                            {{ $totalLiter }}
                                         </td>
                                         <td
                                             style="width:10%; text-align:center; border-right: 1px solid; font-size: 12px; ">
-                                            {{ $totalLiter }}
+                                        
                                         </td>
                                         <td style="width:10%; text-align:right; border-right: 1px solid; ">
                                         </td>
@@ -533,12 +535,12 @@
                                                 <table style="border:0px !important;">
                                                     <!-- Tax Summary Header -->
                                                  
-                                                        <td colspan="15" style="font-size:12px; padding:5px;">Tax Summary</td>
+                                                    <td colspan="15" style="font-size:12px; padding:5px;">Tax Summary</td>
                                            
                                                     
                                                     <!-- Column Headers Row 1 -->
                                                     <tr class="bg-sky text-bold">
-                                                        <td rowspan="2" style="font-size:12px; padding-right:12px; width:15%; height:35px;" class="text-center">
+                                                        <td rowspan="2" style="font-size:12px; padding-right:12px; width:15%; height:60px;" class="text-center">
                                                             HSN/SAC
                                                         </td>
                                                         <td rowspan="2" style="font-size:12px; width:15%;" class="text-center">
@@ -563,7 +565,11 @@
                                                         <td style="font-size:12px; width:10%;" class="text-center">Amt (INR)</td>
                                                     </tr>
                                             
-                                                    <!-- Data Rows -->
+                                                    @php
+                                                    $totalTaxAmount = array_sum(array_column($response_data, 'tax_amt'));
+                                                    $centralTax = $totalTaxAmount / 2;
+                                                    $stateTax = $totalTaxAmount / 2;
+                                                @endphp
                                                     @foreach ($response_data as $item)
                                                         <tr>
                                                             <td style="font-size:12px;" class="text-center">
@@ -626,40 +632,84 @@
                                                 <tr style="width:100%;">
                                                     <td>
                                                         <div class="bg-sky text-bold"
-                                                            style="width:100%; font-size:12px; ">Sub total
+                                                            style="width:100%; font-size:12px; text-align:left; padding: 5px;">Sub total
 
                                                         </div>
                                                     </td>
                                                     <td>
-                                                        <div class="bg-sky text-bold" style="font-size:12px; "
+                                                        <div class="bg-sky text-bold" style="font-size:12px; padding: 5px;"
                                                             id="subtotal">
 
-                                                          
-                                                                {{ $sale->subtotal }}
-                                                     
+
+                                                            {{ $sale->subtotal }}
+
                                                         </div>
                                                         <script>
                                                             var subtotal = document.getElementById('subtotal').value;
                                                         </script>
                                                     </td>
                                                 </tr>
+                                            
                                                 <tr>
                                                     <td>
                                                         <div colspan="7" class="bg-sky text-bold"
-                                                            style="font-size:12px; padding: 5px;"><b>Total</b></div>
+                                                            style="font-size:12px; padding: 5px; text-align:left;"><b>CGST </b>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div colspan="7" class="bg-sky text-bold"
+                                                            style="font-size:12px; padding: 5px;">
+                                                            <b>{{ number_format($centralTax, 2) }}</b>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <div colspan="7" class="bg-sky text-bold"
+                                                            style="font-size:12px; padding: 5px; text-align:left;"><b>SGST</b>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div colspan="7" class="bg-sky text-bold"
+                                                            style="font-size:12px; padding: 5px; ">
+                                                            <b>{{ number_format($stateTax, 2) }}</b>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <div colspan="7" class="bg-sky text-bold"
+                                                            style="font-size:12px; padding: 5px; text-align:left;"><b>Total</b>
+                                                        </div>
                                                     </td>
                                                     <td>
                                                         <div colspan="7" class="bg-sky text-bold"
                                                             style="font-size:12px; padding: 5px;">
                                                             <b>
-                                                              
-                                                                    <span
-                                                                        id="amountNumeric">{{ round(    $totalAmount ) }}</span>
-                                                                
+                                                                <span id="amountNumeric">{{ $sale->grand_total }}</span>
                                                             </b>
                                                         </div>
                                                     </td>
                                                 </tr>
+                                                <tr>
+                                                    <td>
+                                                        <div colspan="7" class="bg-sky text-bold"
+                                                            style="font-size:12px; padding: 5px; text-align:left;"><b>Round Off</b>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div colspan="7" class="bg-sky text-bold"
+                                                            style="font-size:12px; padding: 5px;">
+                                                            <b>
+                                                                {{ round($sale->grand_total, 0) }}
+                                                            </b>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                
+                                             
+                                                
+                                               
                                                 <tr>
                                                     <td colspan="2" style="font-size:12px;">(<b
                                                             id="amountInWords"></b>)</td>
@@ -875,3 +925,4 @@ buttonsElement.style.display = "flex";
             });
         });
     </script>
+@endsection

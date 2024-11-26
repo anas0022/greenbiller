@@ -1,6 +1,7 @@
 <?php
 
 
+use App\Http\Controllers\store\item\ItemBulckController;
 use App\Http\Controllers\store\item\ItemDeleteController;
 use App\Http\Controllers\store\item\ItemEditController;
 use App\Http\Controllers\store\item\ItemListController;
@@ -15,3 +16,4 @@ Route::post('/itemstatus', [ItemStatusController::class, 'itemstatus'])->name('s
 Route::post('/itemedit', [ItemEditController::class, 'edititem'])->name('store_edit.item');
 Route::post('/item_editpost', [ItemEditController::class, 'item_edit'])->name('Store_item_edit');
 Route::post('/deleteitem', [ItemDeleteController::class, 'deleteitem'])->name('store_deleteitem');
+Route::post('/item_bulkpost', [ItemBulckController::class, 'item_bulkpost'])->name('item_bulkpost');

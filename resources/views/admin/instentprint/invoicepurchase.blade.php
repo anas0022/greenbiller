@@ -4,123 +4,148 @@
 
 @section('content')
 
- 
 
-<style type="text/css">
-    @media print {
-        @page {
-        size: portrait;
-    }
-        body {
-            -webkit-print-color-adjust: exact;
-            /* Adjusts color to match screen */
-            color-adjust: exact;
-            /* For Firefox */
-            print-color-adjust: exact;
-            font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+
+    <style type="text/css">
+        @media print {
+            @page {
+                size: portrait;
+            }
+
+            body {
+                -webkit-print-color-adjust: exact;
+                /* Adjusts color to match screen */
+                color-adjust: exact;
+                /* For Firefox */
+                print-color-adjust: exact;
+                font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+            }
+
+            .item {
+                border-bottom: 1px solid gray !important;
+                /* Forces the border to appear */
+            }
+
+            table {
+                border-collapse: collapse;
+                /* Ensures borders are continuous */
+            }
+
+            #buttons {
+                display: none !important;
+            }
         }
 
-        .item {
-            border-bottom: 1px solid gray !important;
-            /* Forces the border to appear */
+        @media print and (orientation: portrait) {
+            td {
+     
+                font-size: 2px !important;
+               
+            }
+
+            p {
+                font-size: 2px !important;
+            }
+
+            div {
+                font-size: 2px !important;
+                gap: 10px !important;
+            }
+
+            h5 {
+                font-size: 4px !important;
+            }
+            .text-bold {
+                font-weight: lighter;
+                font-size: 10px !important;
+            }
+          
+
         }
 
-        table {
-            border-collapse: collapse;
-            /* Ensures borders are continuous */
+        .text-bold {
+            font-weight: bold;
         }
-        #buttons{
-            display: none !important;
+
+        .bg-sky {
+            background-color: #E8F3FD;
         }
-    }
 
-    @media print and (orientation: portrait) {
-        td {
-            /* Replace with your desired font */
-            font-size: 6px !important;
-            /* Adjust the size as needed */
+        .text-center {
+            text-align: center;
         }
-        p {
-            font-size: 6px !important;
+
+        .Not-paid {
+            background-color: #ffebee !important;
+            color: #c62828 !important;
+            border: 1px solid #c62828 !important;
+            border-radius: 4px;
+            padding: 2px 8px !important;
+            display: inline-block !important;
         }
-        div{
-            font-size: 6px !important;
-            gap: 10px !important;
+
+        .paid {
+            background-color: #e8f5e9 !important;
+            color: #2e7d32 !important;
+            border: 1px solid #2e7d32 !important;
+            border-radius: 4px;
+            padding: 2px 8px !important;
+            display: inline-block !important;
         }
-        h5{
-            font-size: 8px !important;
+        .partially-paid{
+            background-color: #fff3e0 !important;
+            color: #ffa726 !important;
+            border: 1px solid #ffa726 !important;
+            border-radius: 4px;
         }
-       
-    }
-
-    .text-bold {
-        font-weight: bold;
-    }
-
-    .bg-sky {
-        background-color: #E8F3FD;
-    }
-
-    .text-center {
-        text-align: center;
-    }
-
-    .Not-paid {
-        background-color: #ffebee !important;
-        color: #c62828 !important;
-        border: 1px solid #c62828 !important;
-        border-radius: 4px;
-        padding: 2px 8px !important;
-        display: inline-block !important;
-    }
-    
-    .paid {
-        background-color: #e8f5e9 !important;
-        color: #2e7d32 !important;
-        border: 1px solid #2e7d32 !important;
-        border-radius: 4px;
-        padding: 2px 8px !important;
-        display: inline-block !important;
-    }
-</style>
+    </style>
 
 
-<div class="content-body" id="body_all">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="card" id="preview_data" style="background-color: white;">
-             
-                    <div style="padding:10px;" >
-                        <h3 style="width: 100%; display:flex; justify-content:center;"> Purchase Preview</h3>
-                        <div style=" width:100%; display:flex; gap:20px; justify-content:end; ;">
-                            <div style="left:2% ; position:absolute;  width:100%;">
-                                @if ($sale->paid_amount == null)
-                                    <p class="Not-paid" style="padding:2px 8px; width:auto; display:inline-block; margin:0;">
-                                        <strong>Un Paid</strong>
+    <div class="content-body" id="body_all">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card" id="preview_data" style="background-color: white;">
+
+                        <div style="padding:10px;">
+                            <h3 style="width: 100%; display:flex; justify-content:center;"> Purchase Preview</h3>
+                            <div style=" width:100%; display:flex; gap:20px; justify-content:end; ;">
+                                <div style="left:2% ; position:absolute;  width:100%;">
+                                    @if ($sale->paid_amount == null)
+                                        <p class="Not-paid"
+                                            style="padding:2px 8px; width:auto; display:inline-block; margin:0;">
+                                            <strong>Un Paid</strong>
+                                        </p>
+                                    @elseif($sale->paid_amount < $sale->total_cost)
+                                        <p class="partially-paid"
+                                            style="padding:2px 8px; width:auto; display:inline-block; margin:0;">
+                                            <strong>Partially Paid</strong>
+                                        </p>
+                                    @else
+                                        <p class="paid"
+                                            style="padding:2px 8px; width:auto; display:inline-block; margin:0;">
+                                            <strong>Paid</strong>
+                                        </p>
+                                    @endif
+                                    <p style="font-size: 12px;">
+                                        Created By :
+                                        {{ $user->firstWhere('id', $userids)->name }}({{ $user->firstWhere('id', $userids)->role }})
                                     </p>
-                                @else
-                                    <p class="paid" style="padding:2px 8px; width:auto; display:inline-block; margin:0;">
-                                        <strong>Paid</strong>
-                                    </p>
-                                @endif
-                                <p style="font-size: 12px;">
-                                Created By : {{$user->firstWhere('id',$userids)->name}}({{$user->firstWhere('id',$userids)->role}})</p>
-                            </div>
-                            <p style="font-size:15px;"><b>Bill No : {{ $sale->prefix }} /{{ $sale->purchase_code }}
-                                </b>
-                            </p>
-                            <span style="display:flex; gap:10px;">
-
-                                <p style="font-size:15px;"><b>Reference No : {{ $sale->reference_no }}</b>
-                                </p>
-                                <br>
-                                <p style="right:0%; position:relative; font-size:15px;"><b>Date :
-                                        {{ $sale->purchase_date }}
+                                </div>
+                                <p style="font-size:15px;"><b>Bill No : {{ $sale->prefix }} /{{ $sale->purchase_code }}
                                     </b>
                                 </p>
-                            </span>
-                        </div>
+                                <span style="display:flex; gap:10px;">
+
+                                    <p style="font-size:15px;"><b>Reference No : {{ $sale->reference_no }}</b>
+                                    </p>
+                                    <br>
+                                    <p style="right:0%; position:relative; font-size:15px;"><b>Date :
+                                            {{ $sale->purchase_date }}
+                                        </b>
+                                    </p>
+                                </span>
+                            </div>
                         </div>
                         <div class="card-body">
 
@@ -145,20 +170,25 @@
                                                     {{ $store->firstWhere('id', $sale->store_id)->mobile }}
                                                 </div>
                                             </div>
-                                          
+
                                             <div>
 
                                                 <div colspan="3">
                                                     <h5 style="font-size:15px;">
                                                         Bill To:</h4>
                                                         <div style="font-size:12px;">
-                                                         Name :   {{ $customer->firstWhere('id', $sale->supplier_id)->name ?? 'N/A' }}<br>
-                                                         Gst :   {{ $customer->firstWhere('id', $sale->supplier_id)->gst ?? 'N/A' }}<br>
-                                                            
-                                                          
-                                                             
-                                    </div>    </div>   </div>      </div>
-                                  
+                                                            Name :
+                                                            {{ $customer->firstWhere('id', $sale->supplier_id)->name ?? 'N/A' }}<br>
+                                                            Gst :
+                                                            {{ $customer->firstWhere('id', $sale->supplier_id)->gst ?? 'N/A' }}<br>
+
+
+
+                                                        </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </table>
 
@@ -174,8 +204,8 @@
                                             <td style="font-size:12px; text-align:center; width:12%;"> Quantity</td>
                                             <td style="font-size:12px; text-align:center; width:12%;"> Liters</td>
 
-                              
-                                          
+
+
                                             <td style="font-size:12px; text-align:center; width:12%;">GST (INR) </td>
                                             <td style="font-size:12px; text-align:center; width:12%;"> Amount (INR) </td>
                                         </tr>
@@ -190,10 +220,10 @@
                                             @php
                                                 $quantity = $item->purchase_qty;
                                                 $amount = $item->total_cost;
-                                             
+
                                                 $totalQuantity += $quantity;
                                                 $totalAmount += $amount;
-                                            
+
                                             @endphp
                                             <tr class="item" style="border-bottom:1px solid gray; width:5%;">
                                                 <td style="font-size:10px; text-align:center; border-right:1px solid; ">
@@ -201,7 +231,7 @@
                                                 </td>
                                                 <td
                                                     style="font-size:10px; text-align:center; border-right:1px solid; width:10%;">
-                                                    @if (is_null( $items->firstWhere('id',$item->item_id)->part_no))
+                                                    @if (is_null($items->firstWhere('id', $item->item_id)->part_no))
                                                         <form id="part_no">
                                                             @csrf
                                                             <input type="hidden" id="item_id" name="id"
@@ -232,17 +262,17 @@
                                                             });
                                                         </script>
                                                     @else
-                                                    {{$items->firstWhere('id',$item->item_id)->part_no}}
+                                                        {{ $items->firstWhere('id', $item->item_id)->part_no }}
                                                     @endif
                                                 </td>
                                                 <td
                                                     style="font-size:10px; border-right:1px solid;width:15%; text-align:center;">
-                                                    {{$items->firstWhere('id',$item->item_id)->item_name}}
+                                                    {{ $items->firstWhere('id', $item->item_id)->item_name }}
                                                 </td>
                                                 <td
-                                                style="font-size:10px; border-right:1px solid;width:15%; text-align:center;">
-                                                {{$item->price_per_unit}}
-                                            </td>
+                                                    style="font-size:10px; border-right:1px solid;width:15%; text-align:center;">
+                                                    {{ $item->price_per_unit }}
+                                                </td>
                                                 <td
                                                     style="font-size:10px; text-align:center; border-right:1px solid; width:10%;">
                                                     {{ $item->hsn_code }}
@@ -309,7 +339,7 @@
                                                     @endif
                                                 </td>
 
-                                            
+
                                                 <td
                                                     style="font-size:10px; text-align:center; border-right:1px solid; width:10%;">
                                                     {{ $item->tax_amt }}
@@ -327,83 +357,101 @@
                                         <td style="font-size:12px; text-align:center; border-right: 1px solid; ">
                                             Total
                                         </td>
-                                      
-                                       
-                                  
+
+
+
                                         <td style="width:10%; text-align:center; border-right: 1px solid; ">
                                         </td>
                                         <td style="width:10%; text-align:center; border-right: 1px solid; ">
                                         </td>
                                         <td style="font-size:12px; text-align:center; border-right: 1px solid; ">
-                                       
+
                                         </td>
                                         <td
                                             style="width:10%; text-align:center; border-right: 1px solid; font-size: 12px; ">
-                                         
+
                                         </td>
-                                        <td style="width:10%; text-align:center; border-right: 1px solid;  font-size: 12px; ">
+                                        <td
+                                            style="width:10%; text-align:center; border-right: 1px solid;  font-size: 12px; ">
                                             {{ $totalQuantity }}
                                         </td>
-                                        <td style="width:10%; text-align:center; border-right: 1px solid;  font-size: 12px;">
+                                        <td
+                                            style="width:10%; text-align:center; border-right: 1px solid;  font-size: 12px;">
                                             {{ $totalLiter }}
                                         </td>
                                         <td style="width:10%; text-align:right; border-right: 1px solid; ">
                                         </td>
-                                       
+
                                         <td
                                             style=" width:10%; font-size:12px; text-align:center; border-right: 1px solid; ">
                                             {{ $totalAmount }}
                                         </td>
                                     </tr>
-                                  
+
                                     <td style="width:90%;" colspan="5"></td>
                                 </table>
-                                <table>
+                                <table style="width:100%;">
                                     <tr class="item">
                                         <td style="width:60%;" colspan="4">
 
                                             <div class="gsttable">
                                                 <table style="border:0px !important;">
                                                     <!-- Tax Summary Header -->
-                                                 
-                                                        <td colspan="15" style="font-size:12px; padding:5px;">Tax Summary</td>
-                                           
-                                                    
+
+                                                    <td colspan="15" style="font-size:12px; padding:5px;">Tax Summary
+                                                    </td>
+
+
                                                     <!-- Column Headers Row 1 -->
                                                     <tr class="bg-sky text-bold">
-                                                        <td rowspan="2" style="font-size:12px; padding-right:12px; width:15%; height:60px;" class="text-center">
+                                                        <td rowspan="2"
+                                                            style="font-size:12px; padding-right:12px; width:15%; height:60px;"
+                                                            class="text-center">
                                                             HSN/SAC
                                                         </td>
-                                                        <td rowspan="2" style="font-size:12px; width:15%;" class="text-center">
+                                                        <td rowspan="2" style="font-size:12px; width:15%;"
+                                                            class="text-center">
                                                             Taxable amount
                                                         </td>
-                                                        <td colspan="2" style="font-size:12px; width:20%;" class="text-center">
+                                                        <td colspan="2" style="font-size:12px; width:20%;"
+                                                            class="text-center">
                                                             CGST
                                                         </td>
-                                                        <td colspan="2" style="font-size:12px; width:20%;" class="text-center">
+                                                        <td colspan="2" style="font-size:12px; width:20%;"
+                                                            class="text-center">
                                                             SGST
                                                         </td>
-                                                        <td rowspan="2" style="font-size:12px; width:15%;" class="text-center">
+                                                        <td rowspan="2" style="font-size:12px; width:15%;"
+                                                            class="text-center">
                                                             Total Tax
                                                         </td>
                                                     </tr>
-                                                    
+
                                                     <!-- Column Headers Row 2 -->
                                                     <tr class="bg-sky text-bold">
-                                                        <td style="font-size:12px; width:10%;" class="text-center">Rate (%)</td>
-                                                        <td style="font-size:12px; width:10%;" class="text-center">Amt (INR)</td>
-                                                        <td style="font-size:12px; width:10%;" class="text-center">Rate (%)</td>
-                                                        <td style="font-size:12px; width:10%;" class="text-center">Amt (INR)</td>
+                                                        <td style="font-size:12px; width:10%;" class="text-center">Rate
+                                                            (%)</td>
+                                                        <td style="font-size:12px; width:10%;" class="text-center">Amt
+                                                            (INR)</td>
+                                                        <td style="font-size:12px; width:10%;" class="text-center">Rate
+                                                            (%)</td>
+                                                        <td style="font-size:12px; width:10%;" class="text-center">Amt
+                                                            (INR)</td>
                                                     </tr>
-                                            
+
                                                     <!-- Data Rows -->
+                                                    @php
+                                                        $totalTaxAmount = array_sum(array_column($response_data, 'tax_amt'));
+                                                        $centralTax = $totalTaxAmount / 2;
+                                                        $stateTax = $totalTaxAmount / 2;
+                                                    @endphp
                                                     @foreach ($response_data as $item)
                                                         <tr>
                                                             <td style="font-size:12px;" class="text-center">
                                                                 {{ $item['hsn_code'] }}
                                                             </td>
                                                             <td style="font-size:12px;" class="text-center">
-                                                                {{ number_format($item['price_per_unit'] * $item['purchase_qty'] , 2) }}
+                                                                {{ number_format($item['price_per_unit'] * $item['purchase_qty'], 2) }}
                                                             </td>
                                                             <td style="font-size:12px;" class="text-center">
                                                                 {{ number_format($item['total_tax_percentage'] / 2, 2) }}
@@ -415,7 +463,7 @@
                                                                 {{ number_format($item['total_tax_percentage'] / 2, 2) }}
                                                             </td>
                                                             <td style="font-size:12px;" class="text-center">
-                                                                
+
                                                                 {{ number_format($item['tax_amt'] / 2, 2) }}
                                                             </td>
                                                             <td style="font-size:12px;" class="text-center">
@@ -423,50 +471,99 @@
                                                             </td>
                                                         </tr>
                                                     @endforeach
+                                                  
                                                 </table>
                                             </div>
 
                                         </td>
-                                       
-                                        <td class="col-xs-6" style="width:100%; text-align:right; position:relative; height: 100%; display:flex; justify-content:center; ">
 
-                                            <table style="width:100%;  position:relative; left:30%;">
+                                        <td class="col-xs-6"
+                                            style="width:100%; text-align:right; position:relative; height: 100%; display:flex; justify-content:center; ">
+
+                                            <table style="width:100%;  position:relative; left:30%; ">
                                                 <tr style="width:100%;">
                                                     <td>
                                                         <div class="bg-sky text-bold"
-                                                            style="width:100%; font-size:12px; ">Sub total
+                                                            style="width:100%; font-size:12px; text-align:left; padding: 5px;">Sub total
 
                                                         </div>
                                                     </td>
                                                     <td>
-                                                        <div class="bg-sky text-bold" style="font-size:12px; "
+                                                        <div class="bg-sky text-bold" style="font-size:12px; padding: 5px;"
                                                             id="subtotal">
 
-                                                          
-                                                                {{ $sale->subtotal }}
-                                                     
+
+                                                            {{ $sale->subtotal }}
+
                                                         </div>
                                                         <script>
                                                             var subtotal = document.getElementById('subtotal').value;
                                                         </script>
                                                     </td>
                                                 </tr>
+                                            
                                                 <tr>
                                                     <td>
                                                         <div colspan="7" class="bg-sky text-bold"
-                                                            style="font-size:12px; padding: 5px;"><b>Total</b></div>
+                                                            style="font-size:12px; padding: 5px; text-align:left;"><b>CGST </b>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div colspan="7" class="bg-sky text-bold"
+                                                            style="font-size:12px; padding: 5px;">
+                                                            <b>{{ number_format($centralTax, 2) }}</b>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <div colspan="7" class="bg-sky text-bold"
+                                                            style="font-size:12px; padding: 5px; text-align:left;"><b>SGST</b>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div colspan="7" class="bg-sky text-bold"
+                                                            style="font-size:12px; padding: 5px; ">
+                                                            <b>{{ number_format($stateTax, 2) }}</b>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                
+                                                <tr>
+                                                    <td>
+                                                        <div colspan="7" class="bg-sky text-bold"
+                                                            style="font-size:12px; padding: 5px; text-align:left;"><b>Round Off</b>
+                                                        </div>
                                                     </td>
                                                     <td>
                                                         <div colspan="7" class="bg-sky text-bold"
                                                             style="font-size:12px; padding: 5px;">
                                                             <b>
-                                                              
-                                                                    <span
-                                                                        id="amountNumeric">{{ round(    $totalAmount ) }}</span>
-                                                                
+                                                                {{ $sale->round_off }}
+
                                                             </b>
                                                         </div>
                                                     </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <div colspan="7" class="bg-sky text-bold"
+                                                            style="font-size:12px; padding: 5px; text-align:left;"><b>Total</b>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div colspan="7" class="bg-sky text-bold"
+                                                            style="font-size:12px; padding: 5px; ">
+                                                            <b>
+
+                                                                <span
+                                                                    id="amountNumeric">{{ $sale->grand_total }}</span>
+
+                                                            </b>
+                                                        </div>
+                                                    </td>
+                                                    
                                                 </tr>
                                                 <tr>
                                                     <td colspan="2" style="font-size:12px;">(<b
@@ -488,7 +585,7 @@
                                                         // Update the element's text with the rounded subtotal
                                                         subtotalElement.textContent = roundedSubtotal;
                                                     </script>
-                                                 
+
                                                 </div>
 
 
@@ -501,10 +598,10 @@
                             </div>
 
                             <div
-                                style="width:100%; border-top:1px solid; margin-top: :20px; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:5px;">
-                                <table cellspacing="0px" cellpadding="2px" style="width:100%; ">
-                                    <tr style=" border-bottom:1px solid;">
-                                        <td style="font-size:12px; margin-top:12px; width:60%;">
+                                style="width:100%;  border-top:1px solid; margin-top: :20px; display:flex;  justify-content:center; align-items:center; gap:5px;">
+                                <table cellspacing="0px" cellpadding="2px" style="width:100%; height:auto;" class="terms_seal">
+                                    <tr style=" border-bottom:1px solid; display:flex; border-right:1px solid;" id="terms_seal">
+                                        <td style="font-size:12px;  width:60%; border-right:1px solid;" id="terms">
                                             <b> Terms & Conditions: </b> <br>
                                             (1) There will be no warranty or replacement for physical or external damages
                                             like:- Lightning,Mishandling,Electric shortcircuit,Warranty seal broken and
@@ -521,7 +618,7 @@
                                             will be applicable for the items sold.
                                         </td>
                                         <td
-                                            style="width:100%; display:flex; justify-content:end; font-size:13px; height:150px; border:1px solid;">
+                                            style="width:50%; display:flex; position:relative; justify-content:end; font-size:13px; height:100%; ">
                                             <b>Seal & Signature</b>
                                         </td>
 
@@ -543,7 +640,7 @@
 
                         </div>
 
-                   
+
                         <div class="card-header" id="buttons" style="display: flex; gap: 10px;">
                             <div class="col-xs-6">
                                 <button class="btn btn-primary" id="download_Btn">
@@ -571,22 +668,34 @@
     </div>
     </div>
     </div>
-                        
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
 
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
     <script>
         function printPreview() {
             // Store buttons element and its original display style
             var buttonsElement = document.getElementById('buttons');
             var originalButtonDisplay = buttonsElement.style.display;
-            
+
             // Hide buttons
             buttonsElement.style.display = 'none';
-            
+
             var printContents = document.getElementById('preview_data').innerHTML;
             var originalContents = document.body.innerHTML;
-            
+
             // Add print styles
             var style = document.createElement('style');
             style.type = 'text/css';
@@ -671,20 +780,20 @@
         }
     }
             `;
-            
+
             document.getElementsByTagName('head')[0].appendChild(style);
             document.body.innerHTML = printContents;
-            
+
             window.print();
-            
+
             // Restore original content
             document.body.innerHTML = originalContents;
-            
+
             // Re-get the buttons element since we replaced the body content
             buttonsElement = document.getElementById('buttons');
             // Restore the buttons display to flex
             buttonsElement.style.display = 'flex';
-            
+
             // Add a fallback in case the display isn't restored
             setTimeout(() => {
                 if (buttonsElement.style.display === 'none') {
@@ -756,30 +865,52 @@
             document.getElementById('amountInWords').innerText = amountInWords;
         }
     </script>
-       <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
-       <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+
     <script>
-        document.getElementById('download_Btn').addEventListener('click', () => {
-var buttonsElement = document.getElementById('buttons');
-            buttonsElement.style.display = "none";
-            const previewData = document.getElementById('preview_data');
-
-            html2canvas(previewData).then(canvas => {
-                const imgData = canvas.toDataURL('image/png');
-                const pdf = new jspdf.jsPDF();
-
-
-                const imgWidth = 190;
-                const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-                pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
-                pdf.save('preview.pdf');
-                setTimeout(() => {
-
-buttonsElement.style.display = "flex";
-
-}, 200);
-            });
+        document.getElementById('download_Btn').addEventListener('click', function() {
+         
+            const buttonsElement = document.getElementById('buttons');
+         
+            buttonsElement.style.display = 'none';
+    
+            const element = document.getElementById('preview_data');
+    
+            // Configure the PDF options
+            const opt = {
+                margin: 1,
+                filename: 'purchase_invoice.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { 
+                    scale: 3,
+                    useCORS: true,
+                    letterRendering: true
+                },
+                jsPDF: { 
+                    unit: 'mm', 
+                    format: 'a4', 
+                    orientation: 'portrait' 
+                }
+            };
+    
+            // Generate PDF
+            html2pdf().from(element).set(opt).save()
+                .then(() => {
+                    // Show buttons after PDF is generated
+                    buttonsElement.style.display = 'flex';
+                  
+                    
+                })
+                .catch(error => {
+                    console.error('Error generating PDF:', error);
+                    buttonsElement.style.display = 'flex';
+                   
+                    
+                });
         });
     </script>
+    
+
 @endsection

@@ -7,6 +7,28 @@
 <link rel="stylesheet" type="text/css" href="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.css">
 @section('content')
 <div class="content-body">
+       
+@if($errors->any())
+<script>
+    swal({
+        title: "Error!",
+        text: "{!! implode('\n', $errors->all()) !!}", 
+        icon: "error",
+        type: "error"
+    });
+</script>
+@endif
+
+@if(session('success'))
+<script>
+    swal({
+        title: "Success!",
+        text: "{{ session('success') }}",
+        icon: "success",
+        type: "success"
+    });
+</script>
+@endif
    
     <!-- row -->
     <div class="container-fluid" style="width:100%; ">
@@ -17,28 +39,7 @@
             style="background-color:white; padding:20px; position:relative;">
 
             <div class="row">
-                
-@if($errors->any())
-        <script>
-            swal({
-                title: "Error!",
-                text: "{!! implode('\n', $errors->all()) !!}", 
-                icon: "error",
-                type: "error"
-            });
-        </script>
-    @endif
-
-    @if(session('success'))
-        <script>
-            swal({
-                title: "Success!",
-                text: "{{ session('success') }}",
-                icon: "success",
-                type: "success"
-            });
-        </script>
-    @endif
+             
                 <div class="col-12">
                     <form action="{{route('item_post')}}" method="post" enctype="multipart/form-data">
 

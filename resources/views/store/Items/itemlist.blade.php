@@ -6,12 +6,7 @@
 <div class="content-body">
     
 
-    <script src="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.css">
-
-
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.css">
+    
 
     <div class="container-fluid">
 
@@ -39,6 +34,36 @@
                 });
             </script>
         @endif
+        <div class="modal fade" id="import">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Import</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal">
+                        </button>
+                    </div>
+                    
+                    <form action="{{route('item_bulkpost')}}" method="post" enctype="multipart/form-data">
+                        @csrf
+                        <div class="modal-body">
+
+                            <div class="form-group col-lg-6">
+                                <label class="form-label">Upload Your Excel File</label>
+                                <input type="file" name="excel_file" class="form-control">
+                                <span style="font-size: 10px;color: #B03838;">Max Width/Height: 1000px * 1000px
+                                    & Size: 1MB</span>
+                            </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger light"
+                                data-bs-dismiss="modal">Close</button>
+                            <button  type="submit" class="btn btn-primary">Upload</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
             <div class="col-12">
                 <div class="card">
 
@@ -49,6 +74,10 @@
                                 class="btn-icon-start text-info"><i class="fa fa-plus color-info"></i>
                             </span>Add Item</a>
                           
+                    <button type="button" class="card-link float-end btn btn-rounded btn-info btn-sm "
+                    data-bs-toggle="modal" data-bs-target="#import"><span class="btn-icon-start text-info"><i
+                            class="fa fa-plus color-info"></i>
+                    </span>Import</button>
                         </div>
                      
                     </div>
@@ -90,7 +119,7 @@
                        <td>{{ $categories->firstWhere('id', $item->category_id)->category_name ?? '' }}</td>
                        <td>{{ $unites->firstWhere('id', $item->unit_id)->unit_name ?? '' }}</td>
                        <td>{{$item->alert_quantity}}</td>
-                       <td>{{ $tax->firstWhere('id', $item->tax_id)->id ?? '' }}</td>
+                       <td>{{ $tax->firstWhere('id', $item->tax_id)->taxname ?? '' }}</td>
                                     <td id="statuschange_{{ $index }}">
                                         <p class="status-cell {{ $item->status === 'active' ? 'active-status' : 'inactive-status' }}"
                                             style="cursor: pointer;"  onclick="statuschange({{ $item->id }}, '{{ $item->status }}')">

@@ -1169,6 +1169,7 @@
 </div>
 
 </div>
+
 <script>
     function calculateTotal() {
         // Fetch values from the inputs
@@ -1310,27 +1311,15 @@
                     htmlRows +=
                         '<td> <input name="tax_amt[]" id="tax_amt_' +
                         count +
-                        '" type="text" class="form-control form-control-sm" value="" readonly style="background-color: #ddd;"></td>';
-                    //htmlRows +=
-                    // '<td> <input name="unit_cost[]" id="unit_cost_' +
-                    // count +
-                    // '" type="text" class="form-control form-control-sm" value="' +
-                    // data.purchase_price +
-                    // '" readonly style="background-color: #ddd;" oninput="total_sum()"></td>';
+                        '" type="text" class="form-control form-control-sm" value="" readonly style="background-color: #ddd;" onclick="dividegst('+count+')"></td>';
+                
                     htmlRows +=
                         '<td> <input name="total_amount[]" id="total_amount_' +
                         count +
                         '" type="text" class="form-control form-control-sm total" value="' +
                         (data.purchase_price ? data.purchase_price : '00')+
                         '" readonly style="background-color: #ddd;" ></td>';
-                    // htmlRows +=
-                    //     '<td> <input name="bach_no[]" id="bach_no_' +
-                    //     count +
-                    //     '" type="text" class="form-control form-control-sm" ></td>';
-                    // htmlRows +=
-                    //     '<td> <input name="expire_date[]" id="expiry_date_' +
-                    //     count +
-                    //     '" type="date" class="form-control form-control-sm"></td>';
+                 
                     htmlRows +=
                         '<td> <button onclick="delete_row(' +
                         count +

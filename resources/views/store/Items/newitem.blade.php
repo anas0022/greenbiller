@@ -1,9 +1,38 @@
 @extends('store//layouts/app')
 
 @section('title', 'Home Page')
-
+<script src="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.css">
 @section('content')
-
+@if(session('error'))
+<script>
+    swal({
+        title: "error!",
+        text: "{{ session('error') }}",
+        icon: "error",  // For SweetAlert version 1, use `type` instead of `icon`
+        type: "error"
+    });
+</script>
+@endif
+@if(session('success'))
+<script>
+    swal({
+        title: "Success!",
+        text: "{{ session('success') }}",
+        icon: "success",  // For SweetAlert version 1, use `type` instead of `icon`
+        type: "success"
+    });
+</script>
+@endif
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 <div class="content-body">
 
     <!-- row -->
@@ -15,26 +44,7 @@
             style="background-color:white; padding:20px; position:relative;">
 
             <div class="row">
-                @if(session('error'))
-                    <script>
-                        swal({
-                            title: "error!",
-                            text: "{{ session('error') }}",
-                            icon: "error",  // For SweetAlert version 1, use `type` instead of `icon`
-                            type: "error"
-                        });
-                    </script>
-                @endif
-                @if(session('success'))
-                    <script>
-                        swal({
-                            title: "Success!",
-                            text: "{{ session('success') }}",
-                            icon: "success",  // For SweetAlert version 1, use `type` instead of `icon`
-                            type: "success"
-                        });
-                    </script>
-                @endif
+               
 
 
                 <div class="col-12">
@@ -54,8 +64,16 @@
                                 <div class="row">
                                     <div class="col-lg-4 mb-2">
                                         <div class="form-group">
-                                            <label class="form-label">Item Code<span class="required">*</span></label>
-                                            <input type="text" name="item_code" class="form-control" value="IT-1-0000">
+                                            <label for="item_code">Item Code</label>
+                                            <input type="text" 
+                                                   class="form-control" 
+                                                   id="item_code" 
+                                                   name="item_code" 
+                                                   value="{{ $item_code }}"  {{-- Or Item::previous_item_code() if using the model method --}}
+                                                   readonly>
+                                            @error('item_code')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
                                         </div>
                                     </div>
                                 </div>
@@ -65,7 +83,10 @@
                                             <label class="form-label">Item Name<span class="required
                                 ">*</span></label>
 
-                                            <input type="text" name="item_name" class="form-control" required="">
+                                            <input type="text" name="item_name" class="form-control @error('item_name') is-invalid @enderror" required="">
+                                            @error('item_name')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                     </div>
                                     <div class="col-lg-4 mb-2">

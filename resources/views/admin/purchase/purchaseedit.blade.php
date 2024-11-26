@@ -393,10 +393,7 @@
                                                                     style="width:7.5%;color: #fff !important;">
                                                                     Total
                                                                     Amount</th>
-                                                                <!--     <th rowspan="2" style="width:10%;color: #fff !important;"> Bach
-                                                                    No</th>
-                                                                <th rowspan="2" style="width:7.5%;color: #fff !important;">
-                                                                    Expire Date</th> -->
+                                                 
                                                                 <th rowspan="2"
                                                                     style="width:5%;color: #fff !important;">
                                                                     Action
@@ -459,7 +456,7 @@
                                                                     </td>
                                                                     <td> <input name="discount_amt[]" id="discount_{{$i}}"
                                                                         type="text" class="form-control form-control-sm"
-                                                                        value="{{$pur->discount_amt}}">
+                                                                        value="{{$pur->discount_amt ?? '00'}}">
                                                                     <select name="discount_type[]"
                                                                         id="item_discount_type_{{$i}}"  onchange="itemTotal({{$i}})">
                                                                         <option value="">select</option>
@@ -577,7 +574,7 @@
                                                         <input type="hidden" name="tax" id="taxInput">
                                                         <select name="othercharges_tax_id" id="othercharges_tax_id"
                                                             class="form-control selectpicker" data-live-search="true"
-                                                            required onchange="othercharge()">
+                                                             onchange="othercharge()">
 
                                                             <option value="">Select Tax</option>
                                                             @foreach ($taxes as $t)
@@ -687,21 +684,21 @@
                                             </script>
 
 
+
                                             <table class="col-md-9">
                                                 <tbody>
                                                     <tr>
                                                         <th class="text-right" style="font-size: 15px;">Subtotal</th>
-                                                        <th class="text-right" style="padding-left:10%;font-size: 15px;">
+                                                        <th class="text-right"
+                                                            style="padding-left:10%;font-size: 15px;">
                                                             <div class="mb-3 row">
                                                                 <label class="col-sm-2 col-form-label"></label>
                                                                 <div class="col-sm-10">
 
-                                                                    <input type="text" id="subtotal_amt"
-                                                                        name="subtotal"
+                                                                    <input type="text" id="subtotal_amt" name="subtotal"
                                                                         class="form-control form-control-sm"
                                                                         style="background-color: #ddd; font-size:18px !important;"
-                                                                        oninput="totalamtsum()"
-                                                                        value="{{ $purchase->subtotal }}" readonly>
+                                                                        oninput="totalamtsum()" value="{{ $purchase->subtotal }}" readonly>
                                                                 </div>
                                                             </div>
                                                         </th>
@@ -709,7 +706,8 @@
                                                     <tr>
                                                         <th class="text-right" style="font-size: 15px;">Other Charges
                                                         </th>
-                                                        <th class="text-right" style="padding-left:10%;font-size: 15px;">
+                                                        <th class="text-right"
+                                                            style="padding-left:10%;font-size: 15px;">
                                                             <div class="mb-3 row">
                                                                 <label class="col-sm-2 col-form-label"></label>
                                                                 <div class="col-sm-10">
@@ -717,8 +715,8 @@
                                                                         name="other_charges_amt"
                                                                         class="form-control form-control-sm"
                                                                         style="background-color: #ddd; font-size:18px !important;"
-                                                                        oninput="totalamtsum()" readonly
-                                                                        value="{{ $purchase->other_charges_amt }}">
+                                                                        oninput="totalamtsum()" 
+                                                                        readonly value="{{ $purchase->other_charges_amt }}">
                                                                 </div>
                                                             </div>
 
@@ -726,19 +724,19 @@
                                                         </th>
                                                     </tr>
                                                     <tr>
-                                                        <th class="text-right" style="font-size: 15px;">Discount on All
+                                                        <th class="text-right" style="font-size: 15px; width: 30%;">Discount on All
                                                         </th>
-                                                        <th class="text-right" style="padding-left:10%;font-size: 15px;">
-                                                            <div class="mb-3 row">
+                                                        <th class="text-right"
+                                                            style="padding-left:10%;font-size: 15px;">
+                                                            <div class="mb-2 row">
                                                                 <label class="col-sm-2 col-form-label"></label>
                                                                 <div class="col-sm-10">
                                                                     <input type="text" id="discount_to_all_amt"
                                                                         name="tot_discount_to_all_amt"
                                                                         class="form-control form-control-sm"
                                                                         style="background-color: #ddd;font-size:18px !important;"
-                                                                        oninput="totalamtsum()" name="all_discount"
-                                                                        readonly
-                                                                        value="{{ $purchase->tot_discount_to_all_amt }}">
+                                                                        oninput="totalamtsum()" 
+                                                                        readonly value="{{ $purchase->tot_discount_to_all_amt }}">
                                                                 </div>
                                                             </div>
 
@@ -759,49 +757,93 @@
                                                             alert(subtotal_amt);
                                                         }
                                                     </script>
-                                                    <tr>
-                                                        <th class="text-right" style="font-size: 15px;">Round Off
-                                                            <i class="hover-q " data-container="body"
-                                                                data-toggle="popover" data-placement="top"
-                                                                data-content="Go to Site Settings-> Site -> Disable the Round Off(Checkbox)."
-                                                                data-html="true" data-trigger="hover"
-                                                                data-original-title="Do you wants to Disable Round Off ?"
-                                                                title="">
-                                                                <i
-                                                                    class="fa fa-info-circle text-maroon text-black hover-q"></i>
-                                                            </i>
-
+                                                       <tr>
+                                                        <th class="text-right" style="font-size: 15px;">GST
                                                         </th>
-                                                        <th class="text-right" style="padding-left:10%;font-size: 15px;">
+                                                        <th class="text-right"
+                                                            style="padding-left:10%;font-size: 15px;">
                                                             <div class="mb-3 row">
                                                                 <label class="col-sm-2 col-form-label"></label>
-                                                                <div class="col-sm-10">
-                                                                    <input type="text" id="round_off_amt"
-                                                                        name="round_off"
+                                                                <div class="col-sm-10" style="display: flex; justify-content: space-between; gap: 2px;">
+                                                                  
+                                                              
+                                                                    <div class="col-sm-6">
+                                                                        
+                                                                        CGST
+                                                                        <input type="text" id="cgst"
+                                                                        name="tot_discount_to_all_amt"
                                                                         class="form-control form-control-sm"
                                                                         style="background-color: #ddd;font-size:18px !important;"
-                                                                        oninput="totalamtsum()" readonly
-                                                                        value="{{ $purchase->round_off }}">
+                                                                    
+                                                                        readonly value="{{ $purchaseItems->firstWhere('purchase_id',$purchase->id)->tax_amt /2 ?? '0' }}">
+                                                                    </div>
+                                                                    <div class="col-sm-6">
+                                                                        SGST
+                                                                        <input type="text" id="sgst"
+                                                                        name="tot_discount_to_all_amt"
+                                                                        class="form-control form-control-sm"
+                                                                        style="background-color: #ddd;font-size:18px !important;"
+                                                                
+                                                                        readonly value="{{ $purchaseItems->firstWhere('purchase_id',$purchase->id)->tax_amt /2 ?? '0'  }}">
+                                                                    </div>
                                                                 </div>
                                                             </div>
+                                                            
                                                         </th>
                                                     </tr>
+                                                  
                                                     <tr>
                                                         <th class="text-right" style="font-size: 15px;">Grand Total</th>
                                                         <th class="text-right" style="padding-left:10%;font-size: 15px;">
                                                             <div class="mb-3 row">
                                                                 <label class="col-sm-2 col-form-label"></label>
                                                                 <div class="col-sm-10">
-                                                                    <input type="text" id="total_amt"
-                                                                        name="grand_total"
+                                                                    <input type="text" id="total_amt" name="grand_total"
                                                                         class="form-control form-control-sm" readonly
-                                                                        style="background-color: #ddd;font-size:18px !important;"
+                                                                        style="background-color: #ddd;font-size:18px !important;" 
+                                                                        oninput="calculateRoundOff()"
                                                                         value="{{ $purchase->grand_total }}">
                                                                 </div>
                                                             </div>
-
                                                         </th>
                                                     </tr>
+                                                    <tr>
+                                                        <th class="text-right" style="font-size: 15px;">Round Off
+                                                            <i class="hover-q " data-container="body" data-toggle="popover" data-placement="top"
+                                                                data-content="Go to Site Settings-> Site -> Disable the Round Off(Checkbox)."
+                                                                data-html="true" data-trigger="hover"
+                                                                data-original-title="Do you wants to Disable Round Off ?" title="">
+                                                                <i class="fa fa-info-circle text-maroon text-black hover-q"></i>
+                                                            </i>
+                                                        </th>
+                                                        <th class="text-right" style="padding-left:10%;font-size: 15px;">
+                                                            <div class="mb-3 row">
+                                                                <label class="col-sm-2 col-form-label"></label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" id="round_off_amt" name="round_off"
+                                                                        class="form-control form-control-sm"
+                                                                        style="background-color: #ddd;font-size:18px !important;" readonly>
+                                                                </div>
+                                                            </div>
+                                                        </th>
+                                                    </tr>
+                                                    
+                                                    <script>
+                                                        function calculateRoundOff() {
+                                                       
+                                                            const grandTotal = parseFloat(document.getElementById('total_amt').value) || 0;
+                                                    
+                                                    
+                                                            const roundOff = Math.round(grandTotal);
+                                                    
+                                                  
+                                                            document.getElementById('round_off_amt').value = roundOff.toFixed(2); // Display up to 2 decimal places
+                                                        }
+                                                    
+                                                        // Example to trigger rounding off calculation when `grand_total` changes
+                                                        document.getElementById('total_amt').addEventListener('input', calculateRoundOff);
+                                                    </script>
+                                                    
                                                 </tbody>
                                             </table>
                                         </div>
@@ -1304,66 +1346,51 @@
     </script>
 
 
-    <script>
-        function othercharge() {
-
-
-
-            var other_charges_input = document.getElementById("other_charges_input").value;
-            document.getElementById("other_charges_amt").value = other_charges_input;
-            var othercharges_tax_id = document.getElementById("othercharges_tax_id").value;
-
-
-            var othercharges_tax_id = document.getElementById("othercharges_tax_id");
-            var otherchargeoption = othercharges_tax_id.options[othercharges_tax_id.selectedIndex];
-            var othertaxvalue = otherchargeoption.getAttribute('data-percentage');
-
-            if (other_charges_input != "") {
-                var tax_amt = ((other_charges_input * othertaxvalue) / 100);
-                var other_charges_amt = parseFloat(other_charges_input) + parseFloat(tax_amt);
-                document.getElementById("other_charges_amt").value = other_charges_amt;
-
-                total_sum();
-
-            } else {
-                //document.getElementById("total_amt").value = 0;
-                var subtotal_amt = document.getElementById("subtotal_amt").value;
-                document.getElementById("total_amt").value = subtotal_amt;
-                total_sum();
-            }
-
-            totalamtsum();
+<script>
+    function total_sum() {
+        var subtotal = 0;
+        var totalTax = 0;
+        
+        // Get all rows in the purchase table
+        var rows = document.getElementById("purchase_table").getElementsByTagName("tr");
+        
+        // Start from index 1 to skip header row
+        for(var i = 1; i < rows.length; i++) {
+            // Get quantity and purchase price for each row
+            var qty = parseFloat(document.getElementById("qty_" + i).value) || 0;
+            var purchase_price = parseFloat(document.getElementById("purchase_price_" + i).value) || 0;
+            var tax_amt = parseFloat(document.getElementById("tax_amt_" + i).value) || 0;
+            
+            // Add to subtotal (price × quantity)
+            subtotal += (purchase_price * qty);
+            // Add to total tax
+            totalTax += tax_amt;
         }
-    </script>
-    <script>
-        function alldiscout() {
-            var discount_to_all_input = document.getElementById("discount_to_all_input").value;
-            document.getElementById("discount_to_all_amt").value = discount_to_all_input;
-            var discount_to_all_type = document.getElementById("discount_to_all_type").value;
+        
+        // Update subtotal field
+        document.getElementById("subtotal_amt").value = subtotal;
 
-
-
-            if (discount_to_all_type == 'Percentage') {
-                var subtotal_amt = document.getElementById("subtotal_amt").value;
-                var discount_peramt = ((subtotal_amt * discount_to_all_input) / 100);
-                document.getElementById("discount_to_all_amt").value = parseFloat(discount_peramt);
-                var subtotal_amt = document.getElementById("subtotal_amt").value;
-                var other_charges_amt = document.getElementById("other_charges_amt").value;
-                var total_amt = (parseFloat(subtotal_amt) + parseFloat(other_charges_amt)) - parseFloat(discount_peramt)
-                document.getElementById("total_amt").value = total_amt;
-            } else {
-                document.getElementById("discount_to_all_amt").value = discount_to_all_input;
-                var subtotal_amt = document.getElementById("subtotal_amt").value;
-                var other_charges_amt = document.getElementById("other_charges_amt").value;
-                var total_amt = (parseFloat(subtotal_amt) + parseFloat(other_charges_amt)) - parseFloat(
-                    discount_to_all_input)
-                document.getElementById("total_amt").value = total_amt;
-            }
-
-            totalamtsum();
-
-        }
-    </script>
+        // Get other charges and discounts
+        var othercharge = parseFloat(document.getElementById("other_charges_amt").value) || 0;
+        var discount_to_all_amt = parseFloat(document.getElementById("discount_to_all_amt").value) || 0;
+        
+        // Calculate grand total including tax without rounding
+        var alltotal = (subtotal + parseFloat(othercharge) + totalTax) - parseFloat(discount_to_all_amt);
+        
+        // Round the grand total to nearest whole number
+        var roundedTotal = Math.round(alltotal);
+        
+        // Calculate the rounding adjustment
+        var roundingAdjustment = roundedTotal - alltotal;
+        
+        // Update the total amount field with rounded value
+        document.getElementById("total_amt").value = roundedTotal;
+        
+        // Update the round off amount field with the adjustment
+        document.getElementById("round_off_amt").value = roundingAdjustment.toFixed(2);
+    }
+    totalamtsum(); 
+</script>
 
 
     <script>
@@ -1393,3 +1420,4 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+@endsection

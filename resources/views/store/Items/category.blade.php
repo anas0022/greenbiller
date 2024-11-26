@@ -3,12 +3,15 @@
 @section('title', 'Home Page')
 
 @section('content')
-<script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js">
-</script>
-<link href="{{asset('admin-assets/css/toast.css')}}" rel="stylesheet">
+
+
 
 <script src="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.min.js"></script>
 <link rel="stylesheet" type="text/css" href="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.css">
+
+
+<link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.css">
 <div class="content-body" style="">
 
     <!-- row --> @if(session('error'))
@@ -102,7 +105,7 @@
                         <div class="table-responsive">
 
 
-                            <table id="list" class="display" style="width:100%;">
+                            <table id="example" class="display" style="width:100%;">
                                 <thead>
                                     <tr>
                                         <th>#</th>
@@ -171,11 +174,9 @@
 
 
                                                             </div>
-                                                            <form style="width:auto; height:auto; box-shadow:none;"
-                                                                action="{{ route('store_category.delete') }}" method="post">
-                                                                @csrf
-                                                                <input type="hidden" name="id" value="{{$cat->id}}">
-                                                                <button type="submit" id="delete"><i
+                                                          
+                                                             
+                                                                <button type="button" id="delete" onclick="deletecat({{$cat->id}})"><i
                                                                         class="fa-solid fa-trash"></i></button>
                                                             </form>
                                                         </td>
@@ -196,19 +197,7 @@
 
                                         }
                                     </script>
-                                    <script>
-                                        // Get all elements with the class 'status-cell'
-                                        document.querySelectorAll('.status-cell').forEach(function (cell, index) {
-                                            cell.addEventListener('click', function () {
-                                                // Find the corresponding form for the current row
-                                                var formUpdate = document.getElementById('form_update_' + index);
-                                                if (formUpdate) {
-                                                    formUpdate.style.display = (formUpdate.style.display === 'none' || formUpdate.style.display === '') ? 'flex' : 'none';
-                                                }
-                                            });
-                                        });
-
-                                    </script>
+                                  
 
                                     <td>
 
@@ -287,76 +276,71 @@
 
 </div>
 
+
+    
 <script>
-    $(document).ready(function () {
-        // Initialize DataTable with options
-        var table = $('#tableID').DataTable({
-            dom: 'Bfrtip', // Default position
-            buttons: [
-                {
-                    extend: 'csvHtml5',
-                    text: 'CSV',
-                    exportOptions: {
-                        modifier: {
-                            page: 'current' // Only print the current page
+    function deletecat(id) {
+        swal({
+                title: "Are you sure?",
+                text: "Do you want to delete this category?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Yes",
+                cancelButtonText: "No",
+                closeOnConfirm: false,
+                closeOnCancel: true
+            },
+            function(isConfirm) {
+                if (isConfirm) {
+                    $.ajax({
+                        url: "{{ route('store_category.delete') }}",
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': "{{ csrf_token() }}",
+                            'Accept': 'application/json'
+                        },
+                        data: {
+                            'id': id
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                swal({
+                                    title: "Deleted!",
+                                    text: "Category deleted successfully",
+                                    type: "success",
+                                    confirmButtonText: "Done",
+                                    confirmButtonColor: "#1dbf73"
+                                }, function(isConfirm) {
+                                    if (isConfirm) {
+                                        // Reload categories instead of full page refresh
+                                        loadCategories();
+                                    }
+                                });
+                            } else {
+                                swal("Error!", response.message || "Failed to delete category", "error");
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Status:', status);
+                            console.error('Error:', error);
+                            console.error('Response:', xhr.responseText);
+                            
+                            let errorMessage = "Failed to delete category";
+                            try {
+                                const response = JSON.parse(xhr.responseText);
+                                errorMessage = response.message || errorMessage;
+                            } catch(e) {
+                                errorMessage += ": " + error;
+                            }
+                            
+                            swal("Error!", errorMessage, "error");
                         }
-                    }
-                },
-                {
-                    extend: 'excelHtml5',
-                    text: 'Excel',
-                    exportOptions: {
-                        modifier: {
-                            page: 'current' // Only print the current page
-                        }
-                    }
-                },
-                {
-                    extend: 'pdfHtml5',
-                    text: 'PDF',
-                    exportOptions: {
-                        modifier: {
-                            page: 'current' // Only print the current page
-                        }
-                    }
-                },
-                {
-                    extend: 'print',
-                    text: 'Print',
-                    exportOptions: {
-                        modifier: {
-                            page: 'current' // Only print the current page
-                        }
-                    }
+                    });
                 }
-            ],
-            paging: true,
-            ordering: true,
-            searching: true,
-            pageLength: 10,
-            lengthChange: true,
-            pagingType: 'full',
-            info: true,
-            initComplete: function () {
-                // Move the buttons to the button container
-                this.api().buttons().container().appendTo('.button-container');
-            }
-        });
-
-        // Handling row count change
-        $('#rowCount').on('change', function () {
-            var newLength = $(this).val();
-            table.page.len(newLength).draw();
-        });
-
-        // Handling search input
-        $('#searchInput').on('keyup', function () {
-            table.search($(this).val()).draw();
-        });
-    });
+            });
+    }
 </script>
-
-
 
 
 @endsection
