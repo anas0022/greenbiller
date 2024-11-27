@@ -1170,24 +1170,7 @@
                                             </div>
                                         </div>
                                         <div class="col-lg-6 mb-2">
-                                            <script>
-                                                function calculateSubtotal() {
-                                                    // Select all input fields with the class 'purchase_total'
-                                                    var purchaseTotals = document.querySelectorAll('.purchase_total');
-                                                    var subtotalInput = document.getElementById('subtotal_amt'); // Select the subtotal input
-                                                    let subtotal = 0;
-
-                                                    // Loop through each input field to calculate the subtotal
-                                                    purchaseTotals.forEach(function (item) {
-                                                        // Parse the value as a float and add to subtotal
-                                                        subtotal += parseFloat(item.value) || 0; // Use || 0 to handle NaN cases
-                                                    });
-
-                                                    // Update the value of the subtotal input field with the calculated subtotal
-                                                    subtotalInput.value = subtotal;
-                                                }
-                                            </script>
-
+                                            
 
                                             <table class="col-md-9">
                                                 <tbody>
@@ -1337,14 +1320,23 @@
                                                             const grandTotal = parseFloat(document.getElementById('total_amt').value) || 0;
                                                     
                                                     
-                                                            const roundOff = Math.round(grandTotal);
+                                                            const roundedTotal = Math.round(grandTotal);
                                                     
                                                   
-                                                            document.getElementById('round_off_amt').value = roundOff.toFixed(2); // Display up to 2 decimal places
+                                                            const roundOff = (roundedTotal - grandTotal).toFixed(2);
+                                                    
+                                                  
+                                                            $('#roundoff_amount').text(roundOff);
+                                                    
+                                                  
+                                                            // Update grand total to rounded value
+                                                            $('#grand_total').text(roundedTotal.toFixed(2));
                                                         }
                                                     
-                                                        // Example to trigger rounding off calculation when `grand_total` changes
-                                                        document.getElementById('total_amt').addEventListener('input', calculateRoundOff);
+                                                        // Call this function whenever grand total is updated
+                                                        $('#grand_total').on('DOMSubtreeModified', function() {
+                                                            calculateRoundOff();
+                                                        });
                                                     </script>
                                                     
                                                 </tbody>
@@ -1477,14 +1469,26 @@
     function searchitem() {
         var search = document.getElementById("search").value;
         var store_id = document.getElementById("store_id").value;
-        //alert(store_id);
+        
         if (store_id == '') {
             alert('Please select the store');
+            return;
         }
+
         if (search == '') {
             document.getElementById("search_rapper").style.display = "none";
             document.getElementById("search_rapper").innerHTML = "";
+            return;
         }
+
+        // Show loading indicator
+        document.getElementById("search_rapper").style.display = "block";
+        document.getElementById("search_rapper").innerHTML = `
+            <div class="loading-text">
+                <div class="loading-spinner"></div>
+                Searching items...
+            </div>
+        `;
 
         $.ajax({
             type: "GET",
@@ -1494,21 +1498,32 @@
                 store_id: store_id
             },
             success: function (response) {
-                //  var data = jQuery.parseJSON(response)
-                // var json_obj = JSON.parse(response);
-                var test = JSON.stringify(response);
-                //  var data = JSON.parse(response);
-                //  alert(test);
-
                 document.getElementById("search_rapper").style.display = "block";
                 document.getElementById("search_rapper").innerHTML = "";
+                
+                if (response.length === 0) {
+                    document.getElementById("search_rapper").innerHTML = `
+                        <div class="loading-text">
+                            No items found
+                        </div>
+                    `;
+                    return;
+                }
+
                 response.forEach(function (test) {
                     var searchs = document.getElementById("search_rapper").innerHTML;
-                    //console.log("ID: " + test.id);  // Accessing the `id` field                 
-                    document.getElementById("search_rapper").innerHTML = searchs + '<a class="dropdown-item" onclick="additem(' + test.id + ')" href="javascript:void(0)" >' + test.item_name + '</a>';
+                    document.getElementById("search_rapper").innerHTML = searchs + 
+                        '<a class="dropdown-item" onclick="additem(' + test.id + ')" href="javascript:void(0)" >' + 
+                        test.item_name + '</a>';
                 });
-
             },
+            error: function(xhr, status, error) {
+                document.getElementById("search_rapper").innerHTML = `
+                    <div class="loading-text text-danger">
+                        Error loading items. Please try again.
+                    </div>
+                `;
+            }
         });
     }
     function additem(item_id) {
@@ -1833,26 +1848,25 @@
             totalTax += tax_amt;
         }
         
-        // Update subtotal field
+
         document.getElementById("subtotal_amt").value = subtotal;
 
-        // Get other charges and discounts
+      
         var othercharge = parseFloat(document.getElementById("other_charges_amt").value) || 0;
         var discount_to_all_amt = parseFloat(document.getElementById("discount_to_all_amt").value) || 0;
         
-        // Calculate grand total including tax without rounding
+
         var alltotal = (subtotal + parseFloat(othercharge) + totalTax) - parseFloat(discount_to_all_amt);
         
-        // Round the grand total to nearest whole number
+      
         var roundedTotal = Math.round(alltotal);
         
-        // Calculate the rounding adjustment
+
         var roundingAdjustment = roundedTotal - alltotal;
         
-        // Update the total amount field with rounded value
+
         document.getElementById("total_amt").value = roundedTotal;
-        
-        // Update the round off amount field with the adjustment
+ 
         document.getElementById("round_off_amt").value = roundingAdjustment.toFixed(2);
     }
     totalamtsum(); 
@@ -1895,7 +1909,7 @@
             total_sum();
 
         } else {
-            //document.getElementById("total_amt").value = 0;
+         
             var subtotal_amt = document.getElementById("subtotal_amt").value;
             document.getElementById("total_amt").value = subtotal_amt;
             total_sum();
@@ -1929,8 +1943,7 @@
             var total_amt = (parseFloat(subtotal_amt) + parseFloat(other_charges_amt)) - parseFloat(discount_to_all_input)
             document.getElementById("total_amt").value = total_amt;
         }
-
-        totalamtsum();
+        total_sum();
 
     }
 </script>
@@ -1947,7 +1960,7 @@
         var purchasePrices = document.querySelectorAll('input[name="purchase_price[]"]');
         var unitCosts = document.querySelectorAll('input[name="unit_cost[]"]');
 
-        // Loop through each purchase price input and calculate the unit cost
+
         purchasePrices.forEach(function (priceInput, index) {
             var priceValue = parseFloat(priceInput.value) || 0; // Get the price value, or 0 if invalid
             var unitCostInput = unitCosts[index]; // Get the corresponding unit cost input

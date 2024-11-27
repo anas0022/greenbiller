@@ -144,7 +144,7 @@ class MakepaymentController extends Controller
 
         $salespayment->purchase_id = $purchase->id;
 
-        $salespayment->payment_date = $purchase->sales_date;
+        $salespayment->payment_date = $purchase->purchase_date;
 
         $salespayment->supplier_id = $purchase->supplier_id;
 

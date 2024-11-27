@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Closing;
 use App\Models\Coresetting;
 use App\Models\Expense;
+use App\Models\Purchasepay;
 use App\Models\Sale;
 use App\Models\salespayment;
 use App\Models\Store;
@@ -13,8 +14,9 @@ use Illuminate\Http\Request;
 
 class ClosingController extends Controller
 {
-    
-    public function closing_list(){
+
+    public function closing_list()
+    {
         if (request()->ajax()) {
             $closing = Closing::all();
             return response()->json([
@@ -27,32 +29,60 @@ class ClosingController extends Controller
             'logo' => $logo
         ]);
     }
-    
+
     public function daily_closing(Request $request)
     {
         if ($request->ajax()) {
             $today_date = $request->input('date');
             $yesterday_date = date('Y-m-d', strtotime($today_date . ' -1 day'));
-            
+
             $sales = Sale::where('sales_date', $today_date)
                 ->select('id', 'prefix', 'sales_code', 'sales_date')
                 ->get();
-            
+
             \Log::info('Sales Data:', $sales->toArray());
-            
+
+            $total_expense = Expense::where('date', $today_date)->get()->sum('amount');
+
+
+            if (empty($total_expense)) {
+                $previous_closing = Closing::latest('id')->first();
+                $total_expense = $previous_closing ? $previous_closing->opening_balance : 0;
+            }
+
+            $purchase_payment = Purchasepay::where('payment_date', $today_date)
+                ->where('payment_type', 'cash')
+                ->get();
+
+            \Log::info('Purchase Payment Data:', [
+                'date' => $today_date,
+                'payments' => $purchase_payment->toArray(),
+                'sum' => $purchase_payment->sum('payment')
+            ]);
+
             return response()->json([
                 'sale_payment' => salespayment::where('payment_date', $today_date)
                     ->where('payment_type', 'cash')
                     ->get()->sum('payment'),
+
                 'sale' => $sales,
                 'sale_amount' => salespayment::where('payment_date', $today_date)
                     ->where('payment_type', 'cash')
                     ->get(),
-                'opening_balance' => Closing::where('date', $yesterday_date)->first(),
+                'payment' => Purchasepay::where('payment_date', $today_date)
+                    ->where('payment_type', 'cash')
+                    ->select('payment')
+                    ->get()
+                    ->map(function($item) {
+                        return [
+                            'payment' => $item->payment
+                        ];
+                    }),
+                'opening_balance' => Closing::latest('id')->first(),
                 'expense' => Expense::where('date', $today_date)->get(),
                 'total_invoice_count' => Sale::where('sales_date', $today_date)->count(),
-                'total_expense' => Expense::where('date', $today_date)->get()->sum('amount'),
-                'expense_amount' => Expense::where('date', $today_date)->get()->sum('amount')
+                'total_expense' => $total_expense,
+                'expense_amount' => $total_expense
             ]);
         }
 
@@ -64,35 +94,40 @@ class ClosingController extends Controller
             ->select('id', 'prefix', 'sales_code', 'sales_date')
             ->get();
 
+
+
         return view('admin.closing.dailyclosing', [
             'logo' => $logo,
             'sale' => $initial_sales,
             'sale_amount' => [],
             'expense' => [],
-            'opening_balance' => Closing::where('date', $yesterday)->first(),
+            'opening_balance' => Closing::latest('id')->first(),
             'total_invoice_count' => 0,
             'sale_payment' => 0,
-            'expense_amount' => 0
+            'expense_amount' => 0,
+            'payment' => [],
+
         ]);
     }
 
-    public function daily_closing_post(Request $request){
+    public function daily_closing_post(Request $request)
+    {
         $year = date('Y');
         $prefix = 'CS-' . $year . '-';
-        
+
         // Get the next ID for the closing code
         $lastId = Closing::max('id');
         $nextId = $lastId ? ($lastId + 1) : 1;
-        $closing_code = sprintf('%04d', $nextId); 
-        
-       
+        $closing_code = sprintf('%04d', $nextId);
+
+
         \Log::info('Closing Code:', [
             'lastId' => $lastId,
             'nextId' => $nextId,
             'closing_code' => $closing_code
         ]);
-        
-   
+
+
         $closing = Closing::create([
             'date' => date('Y-m-d'),
             'invoice_count' => $request->invoice_count,
@@ -107,16 +142,16 @@ class ClosingController extends Controller
         return redirect()->route('closing.bill', ['id' => $closing->id]);
     }
 
-  
+
     public function closingBill($id)
     {
         if (request()->ajax()) {
             $closing = Closing::findOrFail($id);
             $storeId = Auth::user()->store_id;
-            $store = Store::where('id',$storeId)->first();
+            $store = Store::where('id', $storeId)->first();
             return response()->json([
                 'data' => $closing,
-                'store'=>$store,
+                'store' => $store,
             ]);
         }
 

@@ -658,6 +658,55 @@
                                                         </div>
                                                     </td>
                                                 </tr>
+
+                                                <tr>
+                                                    <td>
+                                                        <div colspan="7" class="bg-sky text-bold"
+                                                            style="font-size:12px; padding: 5px; text-align:left;"><b>Other Charges</b>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div colspan="7" class="bg-sky text-bold"
+                                                            style="font-size:12px; padding: 5px; ">
+                                                            <b>{{$sale->other_charges_amt}}</b>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                
+                                                <tr>
+                                                    <td>
+                                                        <div colspan="7" class="bg-sky text-bold"
+                                                            style="font-size:12px; padding: 5px; text-align:left;"><b>Discount Amount</b>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div colspan="7" class="bg-sky text-bold"
+                                                            style="font-size:12px; padding: 5px; ">
+                                                            <b>{{$sale->tot_discount_to_all_amt}}</b>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <div colspan="7" class="bg-sky text-bold"
+                                                            style="font-size:12px; padding: 5px; text-align:left;"><b>Round Off</b>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div colspan="7" class="bg-sky text-bold"
+                                                            style="font-size:12px; padding: 5px;">
+                                                            <b>
+                                                                @php
+                                                                    $grandTotal = isset($sale->grand_total) ? $sale->grand_total : 0;
+                                                                    $roundedTotal = round($grandTotal);
+                                                                    $roundOff = $roundedTotal - $grandTotal;
+                                                                    echo number_format($roundOff, 2);
+                                                                @endphp
+                                                            </b>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                
                                                 <tr>
                                                     <td>
                                                         <div colspan="7" class="bg-sky text-bold"
@@ -673,22 +722,7 @@
                                                         </div>
                                                     </td>
                                                 </tr>
-                                                <tr>
-                                                    <td>
-                                                        <div colspan="7" class="bg-sky text-bold"
-                                                            style="font-size:12px; padding: 5px; text-align:left;"><b>Round Off</b>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div colspan="7" class="bg-sky text-bold"
-                                                            style="font-size:12px; padding: 5px;">
-                                                            <b>
-                                                                {{ round($sale->grand_total, 0) }}
-                                                            </b>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                
+                                           
                                              
                                                 
                                                

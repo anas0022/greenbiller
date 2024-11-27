@@ -22,14 +22,15 @@
                         <div class="card-body" >
                             <div style="display: flex; justify-content: space-between;">
                                 <p>Today Date: <span id="display_date">{{date('d-m-Y')}}</span></p>
-                                <p>Opening Balance: <span id="opening_balance">{{$opening_balance->closing_amount ?? 0 }}</span></p>
-                                <input type="hidden" name="opening" id="opening_input" value="{{$opening_balance->closing_amount ?? 0 }}">
+                                <p>Opening Balance: <span id="opening_balance"></span></p>
+                                <input type="hidden" name="opening" id="opening_input" value="">
                             </div>
                           
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
                                     <th class="text-center">Today's Invoices</th>
+                                    <th class="text-center">Today's Purchase</th>
                                     <th class="text-center">Today's Sales</th>
                                     <th class="text-center">Today's Expenses</th>
                                 </tr>
@@ -41,6 +42,13 @@
                                         @foreach ($sale as $item)
                                             {{$item->prefix}}/{{$item->sales_code}}<br>
                                         @endforeach
+                                    </td>
+                                    <td class="text-center" id="purchase_list">
+                                   
+                                       @foreach ($payment as $item)
+                                            ₹{{number_format($item->payment, 2)}}<br>
+                                        @endforeach
+                              
                                     </td>
                                     <td class="text-center" id="sale_list">
                                         @foreach ($sale_amount as $item)
@@ -61,6 +69,10 @@
                                         <input type="hidden" name="invoice_count" id="invoice_count_input" value="{{$total_invoice_count}}">
                                     </th>
                                     <th class="text-center">
+                                        Total Purchase: ₹<span id="total_purchase">{{number_format(0, 2)}}</span>
+                                        <input type="hidden" name="total_purchase" id="total_purchase_input" value="">
+                                    </th>
+                                    <th class="text-center">
                                         Total Sales: ₹<span id="total_sales">{{number_format($sale_payment, 2)}}</span>
                                         <input type="hidden" name="total_sale" id="total_sale_input" value="{{$sale_payment}}">
                                     </th>
@@ -72,10 +84,10 @@
                                 
                                 <!-- Final Closing Row -->
                                 <tr class="table-success">
-                                    <th colspan="2" class="text-center">Total Closing Balance</th>
+                                    <th colspan="3" class="text-center">Total Closing Balance</th>
                                     <td class="text-center font-weight-bold">
-                                        ₹<span id="closing_balance">{{number_format($sale_payment - $expense_amount, 2)}}</span>
-                                        <input type="hidden" name="closing_amount" id="closing_amount_input" value="{{$sale_payment - $expense_amount}}">
+                                        ₹<span id="closing_balance">{{number_format(($sale_payment - $expense_amount + ($opening_balance->closing_amount ?? 0)), 2)}}</span>
+                                        <input type="hidden" name="closing_amount" id="closing_amount_input" value="{{$sale_payment - $expense_amount + ($opening_balance->closing_amount ?? 0)}}">
                                     </td>
                                 </tr>
                             </tbody>
@@ -133,21 +145,37 @@ $(document).ready(function() {
     }
 
     function updateDisplayWithAnimation(response) {
-        // Update display date
+     
         let displayDate = new Date($('#closing_date').val()).toLocaleDateString('en-GB');
         updateElementWithAnimation('#display_date', displayDate);
 
-        // Update opening balance
-        let openingBalance = response.opening_balance ? response.opening_balance.closing_amount : '0';
+  
+        let openingBalance = parseFloat(response.opening_balance ? response.opening_balance.closing_amount : 0) || 0;
         updateElementWithAnimation('#opening_balance', openingBalance);
         $('#opening_input').val(openingBalance);
 
-        // Update invoice list
+       
         let invoiceHtml = '';
         response.sale.forEach(function(item) {
             invoiceHtml += `${item.prefix}/ ${item.sales_code}<br>`;
         });
         updateElementWithAnimation('#invoice_list', invoiceHtml);
+        let purchaseHtml = '';
+        let totalPurchase = 0;
+
+        if (response.payment && response.payment.length > 0) {
+            response.payment.forEach(function(item) {
+                purchaseHtml += `₹${numberFormat(item.payment)}<br>`;
+                totalPurchase += parseFloat(item.payment || 0);
+            });
+        } else {
+            purchaseHtml = '₹0';
+        }
+
+        // Update the purchase list and total
+        updateElementWithAnimation('#purchase_list', purchaseHtml);
+        updateElementWithAnimation('#total_purchase', numberFormat(totalPurchase));
+        $('#total_purchase_input').val(totalPurchase);
 
         // Update sale list
         let saleHtml = '';
@@ -173,8 +201,23 @@ $(document).ready(function() {
         updateElementWithAnimation('#total_expenses', numberFormat(response.expense_amount));
         $('#total_expense_input').val(response.expense_amount);
 
-        // Update closing balance
-        let closingBalance = response.sale_payment - response.expense_amount;
+      
+
+
+        // Parse all values as floats to ensure proper calculation
+        let salePayment = parseFloat(response.sale_payment) || 0;
+        let expenseAmount = parseFloat(response.expense_amount) || 0;
+
+        // Calculate closing balance
+        let closingBalance = openingBalance + salePayment - expenseAmount - totalPurchase;
+        
+        // For debugging - remove these lines after testing
+        console.log('Opening Balance:', openingBalance);
+        console.log('Sale Payment:', salePayment);
+        console.log('Expense Amount:', expenseAmount);
+        console.log('Closing Balance:', closingBalance);
+
+        // Update display and input
         updateElementWithAnimation('#closing_balance', numberFormat(closingBalance));
         $('#closing_amount_input').val(closingBalance);
     }
