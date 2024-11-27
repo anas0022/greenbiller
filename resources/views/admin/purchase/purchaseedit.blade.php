@@ -775,7 +775,7 @@
                                                                         class="form-control form-control-sm"
                                                                         style="background-color: #ddd;font-size:18px !important;"
                                                                     
-                                                                        readonly value="{{ $purchaseItems->firstWhere('purchase_id',$purchase->id)->tax_amt /2 ?? '0' }}">
+                                                                        readonly value="{{ optional($purchaseItems->firstWhere('purchase_id',$purchase->id))->tax_amt ? $purchaseItems->firstWhere('purchase_id',$purchase->id)->tax_amt/2 : '0' }}">
                                                                     </div>
                                                                     <div class="col-sm-6">
                                                                         SGST
@@ -784,7 +784,7 @@
                                                                         class="form-control form-control-sm"
                                                                         style="background-color: #ddd;font-size:18px !important;"
                                                                 
-                                                                        readonly value="{{ $purchaseItems->firstWhere('purchase_id',$purchase->id)->tax_amt /2 ?? '0'  }}">
+                                                                        readonly value="{{ optional($purchaseItems->firstWhere('purchase_id',$purchase->id))->tax_amt ? $purchaseItems->firstWhere('purchase_id',$purchase->id)->tax_amt/2 : '0' }}">
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -820,9 +820,13 @@
                                                             <div class="mb-3 row">
                                                                 <label class="col-sm-2 col-form-label"></label>
                                                                 <div class="col-sm-10">
-                                                                    <input type="text" id="round_off_amt" name="round_off"
+                                                                    <input type="text" 
+                                                                        id="round_off_amts" 
+                                                                        name="round_off"
                                                                         class="form-control form-control-sm"
-                                                                        style="background-color: #ddd;font-size:18px !important;" readonly>
+                                                                        style="background-color: #ddd;font-size:18px !important;" 
+                                                                        value="0.00"
+                                                                        readonly>
                                                                 </div>
                                                             </div>
                                                         </th>
@@ -830,18 +834,21 @@
                                                     
                                                     <script>
                                                         function calculateRoundOff() {
-                                                       
+                                                            // Get the grand total
                                                             const grandTotal = parseFloat(document.getElementById('total_amt').value) || 0;
-                                                    
-                                                    
-                                                            const roundOff = Math.round(grandTotal);
-                                                    
-                                                  
-                                                            document.getElementById('round_off_amt').value = roundOff.toFixed(2); // Display up to 2 decimal places
+                                                            
+                                                            // Round the grand total to nearest whole number
+                                                            const roundedTotal = Math.round(grandTotal);
+                                                            
+                                                            // Calculate the difference (round off amount)
+                                                            const roundOffAmount = roundedTotal - grandTotal;
+                                                            
+                                                            // Update the round off field
+                                                            document.getElementById('round_off_amts').value = roundOffAmount.toFixed(2);
+                                                            
+                                                            // Update the total amount to show rounded value
+                                                            document.getElementById('total_amt').value = roundedTotal.toFixed(2);
                                                         }
-                                                    
-                                                        // Example to trigger rounding off calculation when `grand_total` changes
-                                                        document.getElementById('total_amt').addEventListener('input', calculateRoundOff);
                                                     </script>
                                                     
                                                 </tbody>
@@ -968,15 +975,34 @@
         function searchitem() {
             var search = document.getElementById("search").value;
             var store_id = document.getElementById("store_id").value;
-            //alert(store_id);
-            if (store_id == '') {
-                alert('Please select the store');
-            }
-            if (search == '') {
-                document.getElementById("search_rapper").style.display = "none";
-                document.getElementById("search_rapper").innerHTML = "";
+            var searchWrapper = document.getElementById("search_rapper");
+            
+            // Check store selection
+            if (!store_id) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Store Required',
+                    text: 'Please select a store first'
+                });
+                return;
             }
 
+            // Clear results if search is empty
+            if (!search) {
+                searchWrapper.style.display = "none";
+                searchWrapper.innerHTML = "";
+                return;
+            }
+
+            // Show loading state
+            searchWrapper.style.display = "block";
+            searchWrapper.innerHTML = `
+                <div class="alert alert-info m-2" role="alert">
+                    <i class="fa fa-spinner fa-spin"></i> Searching...
+                </div>
+            `;
+
+            // Make the AJAX request
             $.ajax({
                 type: "GET",
                 url: "{{ route('search-items') }}",
@@ -985,25 +1011,66 @@
                     store_id: store_id
                 },
                 success: function(response) {
-                    //  var data = jQuery.parseJSON(response)
-                    // var json_obj = JSON.parse(response);
-                    var test = JSON.stringify(response);
-                    //  var data = JSON.parse(response);
-                    //  alert(test);
+                    if (!response.length) {
+                        // Show "No items found" message with item name
+                        searchWrapper.innerHTML = `
+                            <div class="alert alert-danger m-2" role="alert">
+                                <i class="fa fa-exclamation-circle"></i> No items found matching "${search}"
+                            </div>
+                        `;
+                        return;
+                    }
 
-                    document.getElementById("search_rapper").style.display = "block";
-                    document.getElementById("search_rapper").innerHTML = "";
-                    response.forEach(function(test) {
-                        var searchs = document.getElementById("search_rapper").innerHTML;
-                        //console.log("ID: " + test.id);  // Accessing the `id` field                 
-                        document.getElementById("search_rapper").innerHTML = searchs +
-                            '<a class="dropdown-item" onclick="additem(' + test.id +
-                            ')" href="javascript:void(0)" >' + test.item_name + '</a>';
-                    });
+                    // Build results HTML
+                    const resultsHtml = response.map(item => `
+                        <a class="dropdown-item" href="#" onclick="additem(${item.id}); return false;">
+                            ${item.item_name}
+                            ${item.item_code ? `<br><small class="text-muted">${item.item_code}</small>` : ''}
+                        </a>
+                    `).join('');
 
+                    searchWrapper.innerHTML = resultsHtml;
                 },
+                error: function(xhr) {
+                    // Show error message
+                    searchWrapper.innerHTML = `
+                        <div class="alert alert-danger m-2" role="alert">
+                            <i class="fa fa-exclamation-triangle"></i> Error searching for items. Please try again.
+                        </div>
+                    `;
+                }
             });
         }
+
+        // Add these styles to improve the search results appearance
+        const style = document.createElement('style');
+        style.textContent = `
+            #search_rapper {
+                max-height: 300px;
+                overflow-y: auto;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                border: 1px solid #ddd;
+                border-radius: 4px;
+            }
+
+            #search_rapper .dropdown-item:hover {
+                background-color: #f8f9fa;
+            }
+
+            #search_rapper::-webkit-scrollbar {
+                width: 8px;
+            }
+
+            #search_rapper::-webkit-scrollbar-track {
+                background: #f1f1f1;
+            }
+
+            #search_rapper::-webkit-scrollbar-thumb {
+                background: #888;
+                border-radius: 4px;
+            }
+        `;
+        document.head.appendChild(style);
 
         function additem(item_id) {
             document.getElementById("search_rapper").style.display = "none";
@@ -1071,9 +1138,17 @@
 
                         htmlRows += '</td>';
 
-                        htmlRows += '<td> <input name="discount_amt[]" id="discount_' + count +
-                            '" type="text" class="form-control form-control-sm" value="' + (data
-                                .discount ? data.discount : "00") + '"></td>';
+                        htmlRows += '<td>' + 
+                            '<input name="discount_amt[]" id="discount_' + count +
+                            '" type="text" class="form-control form-control-sm" value="' + 
+                            (data.discount ? data.discount : "00") + '">' +
+                            '<select name="discount_type[]" id="item_discount_type_' + count + 
+                            '" class="" onchange="itemTotal(' + count + ')">' +
+                            '<option value="">select</option>' +
+                            '<option value="percent">Percentage</option>' +
+                            '<option value="fixed">Fixed</option>' +
+                            '</select>' +
+                            '</td>';
 
                         htmlRows += '<td>';
 
@@ -1264,7 +1339,7 @@
 
             itemTotal(counts);
             total_sum();
-
+            updateGSTValues();
         }
 
 
@@ -1298,36 +1373,90 @@
         }
     </script>
 
+<script>
+
+    function othercharge() {
+
+
+
+        var other_charges_input = document.getElementById("other_charges_input").value;
+        document.getElementById("other_charges_amt").value = other_charges_input;
+        var othercharges_tax_id = document.getElementById("othercharges_tax_id").value;
+
+
+        var othercharges_tax_id = document.getElementById("othercharges_tax_id");
+        var otherchargeoption = othercharges_tax_id.options[othercharges_tax_id.selectedIndex];
+        var othertaxvalue = otherchargeoption.getAttribute('data-percentage');
+
+        if (other_charges_input != "") {
+            var tax_amt = ((other_charges_input * othertaxvalue) / 100);
+            var other_charges_amt = parseFloat(other_charges_input) + parseFloat(tax_amt);
+            document.getElementById("other_charges_amt").value = other_charges_amt;
+
+            total_sum();
+
+        } else {
+         
+            var subtotal_amt = document.getElementById("subtotal_amt").value;
+            document.getElementById("total_amt").value = subtotal_amt;
+            total_sum();
+        }
+
+        totalamtsum();
+    }
+
+</script>
+<script>
+
+    function alldiscout() {
+        var discount_to_all_input = document.getElementById("discount_to_all_input").value;
+        document.getElementById("discount_to_all_amt").value = discount_to_all_input;
+        var discount_to_all_type = document.getElementById("discount_to_all_type").value;
+
+
+
+        if (discount_to_all_type == 'Percentage') {
+            var subtotal_amt = document.getElementById("subtotal_amt").value;
+            var discount_peramt = ((subtotal_amt * discount_to_all_input) / 100);
+            document.getElementById("discount_to_all_amt").value = parseFloat(discount_peramt);
+            var subtotal_amt = document.getElementById("subtotal_amt").value;
+            var other_charges_amt = document.getElementById("other_charges_amt").value;
+            var total_amt = (parseFloat(subtotal_amt) + parseFloat(other_charges_amt)) - parseFloat(discount_peramt)
+            document.getElementById("total_amt").value = total_amt;
+        } else {
+            document.getElementById("discount_to_all_amt").value = discount_to_all_input;
+            var subtotal_amt = document.getElementById("subtotal_amt").value;
+            var other_charges_amt = document.getElementById("other_charges_amt").value;
+            var total_amt = (parseFloat(subtotal_amt) + parseFloat(other_charges_amt)) - parseFloat(discount_to_all_input)
+            document.getElementById("total_amt").value = total_amt;
+        }
+        total_sum();
+
+    }
+</script>
+
     <script>
         function total_sum() {
-            var othercharge = document.getElementById("other_charges_amt").value;
-            var discount_to_all_amt = document.getElementById("discount_to_all_amt").value;
-
+            var othercharge = document.getElementById("other_charges_amt").value || 0;
+            var discount_to_all_amt = document.getElementById("discount_to_all_amt").value || 0;
             var result = document.getElementById("subtotal_amt");
 
-            var item_total,
-                i = 1,
-                total = 0;
+            var total = 0;
+            var i = 1;
+            var item_total;
+            
             while ((item_total = document.getElementById("total_amount_" + i++))) {
                 item_total.value = item_total.value.replace(/\\D/, "");
-                total = total + parseFloat(item_total.value);
+                total = total + parseFloat(item_total.value || 0);
             }
-            result.value = total;
-            // alert(total);
+            result.value = total.toFixed(2);
 
-
-            if (othercharge == '') {
-                otherchargeamt = 0;
-            } else {
-                otherchargeamt = othercharge;
-            }
-            if (discount_to_all_amt == '') {
-                discount_to_all_amt1 = 0;
-            } else {
-                discount_to_all_amt1 = discount_to_all_amt
-            }
-            var alltotal = (parseFloat(total) + parseFloat(otherchargeamt)) - parseFloat(discount_to_all_amt1)
-            document.getElementById("total_amt").value = alltotal;
+            var alltotal = (parseFloat(total) + parseFloat(othercharge)) - parseFloat(discount_to_all_amt);
+            document.getElementById("total_amt").value = alltotal.toFixed(2);
+            
+            // Calculate round off after setting total
+            calculateRoundOff();
+            updateGSTValues();
         }
         totalamtsum();
     </script>
@@ -1347,49 +1476,27 @@
 
 
 <script>
-    function total_sum() {
-        var subtotal = 0;
-        var totalTax = 0;
+    function updateGSTValues() {
+        let totalTaxAmount = 0;
         
-        // Get all rows in the purchase table
-        var rows = document.getElementById("purchase_table").getElementsByTagName("tr");
-        
-        // Start from index 1 to skip header row
-        for(var i = 1; i < rows.length; i++) {
-            // Get quantity and purchase price for each row
-            var qty = parseFloat(document.getElementById("qty_" + i).value) || 0;
-            var purchase_price = parseFloat(document.getElementById("purchase_price_" + i).value) || 0;
-            var tax_amt = parseFloat(document.getElementById("tax_amt_" + i).value) || 0;
+        // Loop through all rows and sum up tax amounts
+        let i = 1;
+        while (true) {
+            let taxElement = document.getElementById("tax_amt_" + i);
+            if (!taxElement) break;
             
-            // Add to subtotal (price × quantity)
-            subtotal += (purchase_price * qty);
-            // Add to total tax
-            totalTax += tax_amt;
+            totalTaxAmount += parseFloat(taxElement.value || 0);
+            i++;
         }
         
-        // Update subtotal field
-        document.getElementById("subtotal_amt").value = subtotal;
-
-        // Get other charges and discounts
-        var othercharge = parseFloat(document.getElementById("other_charges_amt").value) || 0;
-        var discount_to_all_amt = parseFloat(document.getElementById("discount_to_all_amt").value) || 0;
+        // Split into CGST and SGST
+        let cgstAmount = totalTaxAmount / 2;
+        let sgstAmount = totalTaxAmount / 2;
         
-        // Calculate grand total including tax without rounding
-        var alltotal = (subtotal + parseFloat(othercharge) + totalTax) - parseFloat(discount_to_all_amt);
-        
-        // Round the grand total to nearest whole number
-        var roundedTotal = Math.round(alltotal);
-        
-        // Calculate the rounding adjustment
-        var roundingAdjustment = roundedTotal - alltotal;
-        
-        // Update the total amount field with rounded value
-        document.getElementById("total_amt").value = roundedTotal;
-        
-        // Update the round off amount field with the adjustment
-        document.getElementById("round_off_amt").value = roundingAdjustment.toFixed(2);
+        // Update the GST input fields
+        document.getElementById("cgst").value = cgstAmount.toFixed(2);
+        document.getElementById("sgst").value = sgstAmount.toFixed(2);
     }
-    totalamtsum(); 
 </script>
 
 

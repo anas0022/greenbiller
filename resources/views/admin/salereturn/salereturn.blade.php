@@ -1601,7 +1601,9 @@
             }
 
             searchResults.style.display = "block";
-            searchResults.innerHTML = "Loading...";
+            searchResults.innerHTML = `<div class="alert alert-info m-2" role="alert">
+    <i class="fa fa-spinner fa-spin"></i> Searching...
+</div>`;
 
             // Add CSRF token to headers
             $.ajaxSetup({

@@ -6,50 +6,7 @@
 
 
     <style type="text/css">
-        @media print {
-            @page {
-            size: portrait;
-        }
-            body {
-                -webkit-print-color-adjust: exact;
-                /* Adjusts color to match screen */
-                color-adjust: exact;
-                /* For Firefox */
-                print-color-adjust: exact;
-                font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
-            }
-
-            .item {
-                border-bottom: 1px solid gray !important;
-                /* Forces the border to appear */
-            }
-
-            table {
-                border-collapse: collapse;
-                /* Ensures borders are continuous */
-            }
-        }
-
-        @media print and (orientation: portrait) {
-            td {
-                /* Replace with your desired font */
-                font-size: 8px !important;
-                /* Adjust the size as needed */
-            }
-            p {
-                font-size: 8px !important;
-            }
-            div{
-                font-size: 8px !important;
-                gap: 10px !important;
-            }
-            h5{
-                font-size: 10px !important;
-            }
-            #buttons{
-                display: none !important;
-            }
-        }
+      
 
         .text-bold {
             font-weight: bold;
@@ -86,7 +43,7 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card" id="preview_data">
-                        <div style="padding:10px;">
+                        <div style="padding:10px;" >
                             <h3 style="width: 100%; display:flex; justify-content:center;"> Credit Note</h3>
                             <div style=" width:100%; display:flex; gap:20px; justify-content:end;">
                                 <div style="left: 10px; position: absolute;">
@@ -628,7 +585,7 @@
                                         </td>
                                         <td style="width:100%; text-align:right;  height: 100%;  ">
 
-                                            <table style="width:100%;">
+                                            <table style="width:100%;  ">
                                                 <tr style="width:100%;">
                                                     <td>
                                                         <div class="bg-sky text-bold"
@@ -676,18 +633,31 @@
                                                         </div>
                                                     </td>
                                                 </tr>
+
                                                 <tr>
                                                     <td>
                                                         <div colspan="7" class="bg-sky text-bold"
-                                                            style="font-size:12px; padding: 5px; text-align:left;"><b>Total</b>
+                                                            style="font-size:12px; padding: 5px; text-align:left;"><b>Other Charges</b>
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div colspan="7" class="bg-sky text-bold"
-                                                            style="font-size:12px; padding: 5px;">
-                                                            <b>
-                                                                <span id="amountNumeric">{{ $sale->grand_total }}</span>
-                                                            </b>
+                                                            style="font-size:12px; padding: 5px; ">
+                                                            <b>{{$sale->other_charges_amt}}</b>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                
+                                                <tr>
+                                                    <td>
+                                                        <div colspan="7" class="bg-sky text-bold"
+                                                            style="font-size:12px; padding: 5px; text-align:left;"><b>Discount Amount</b>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div colspan="7" class="bg-sky text-bold"
+                                                            style="font-size:12px; padding: 5px; ">
+                                                            <b>{{$sale->tot_discount_to_all_amt}}</b>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -701,12 +671,33 @@
                                                         <div colspan="7" class="bg-sky text-bold"
                                                             style="font-size:12px; padding: 5px;">
                                                             <b>
-                                                                {{ round($sale->grand_total, 0) }}
+                                                                @php
+                                                                    $grandTotal = isset($sale->grand_total) ? $sale->grand_total : 0;
+                                                                    $roundedTotal = round($grandTotal);
+                                                                    $roundOff = $roundedTotal - $grandTotal;
+                                                                    echo number_format($roundOff, 2);
+                                                                @endphp
                                                             </b>
                                                         </div>
                                                     </td>
                                                 </tr>
                                                 
+                                                <tr>
+                                                    <td>
+                                                        <div colspan="7" class="bg-sky text-bold"
+                                                            style="font-size:12px; padding: 5px; text-align:left;"><b>Total</b>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div colspan="7" class="bg-sky text-bold"
+                                                            style="font-size:12px; padding: 5px;">
+                                                            <b>
+                                                                <span id="amountNumeric">{{round($sale->grand_total) }}</span>
+                                                            </b>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                           
                                              
                                                 
                                                
@@ -812,7 +803,6 @@
     </div>
 
  
-
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
     <script>

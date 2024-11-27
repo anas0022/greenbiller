@@ -1893,29 +1893,70 @@
     </script>
 
     <script>
-        function searchitem() {
-            var search = document.getElementById("search").value;
-            var store_id = document.getElementById("store_id").value;
-            // alert(store_id);
-            if (store_id == '') {
-                // alert('Please select the store');
-                swal("Warning!", "Please select a store", "warning");
-            }
-            if (search == '') {
-                document.getElementById("ui-id-1").style.display = "none";
-                document.getElementById("ui-id-1").innerHTML = response;
+       
+let debounceTimer;
+function searchitem() {
+    clearTimeout(debounceTimer);
+    
+    debounceTimer = setTimeout(() => {
+        const search = document.getElementById("search").value;
+        const store_id = document.getElementById("store_id").value;
 
+        if (!store_id) {
+            swal("Warning!", "Please select a store", "warning");
+            return;
+        }
+
+        if (search === '') {
+            document.getElementById("ui-id-1").style.display = "none";
+            return;
+        }
+
+        document.getElementById("ui-id-1").style.display = "block";
+        document.getElementById("ui-id-1").innerHTML = `<div class="alert alert-info m-2" role="alert">
+    <i class="fa fa-spinner fa-spin"></i> Searching...
+</div>`;
+
+   
+        $.ajax({
+            type: "GET",
+            url: "{{ route('search-items') }}",
+            data: {
+                search: search,
+                store_id: store_id
+            },
+            success: function (response) {
+                const results = response.map(test => {
+                    const stockColor = (test.opening_stock < 10) ? 'red' : 'green';
+                    return `
+                        <li class="ui-menu-item" role="presentation">
+                            <a href="javascript:void(0)" onclick="additem(${test.id})" class="ui-corner-all" tabindex="-1" style="display:flex;">
+                                ${test.item_name} [ ${test.part_no} ] 
+                                <p style="color:${stockColor};">( Stock ${test.opening_stock} )</p>
+                            </a>
+                        </li>`;
+                }).join('');
+
+                document.getElementById("ui-id-1").innerHTML = results || '<li>No results found</li>';
+            },
+            error: function () {
+                document.getElementById("ui-id-1").innerHTML = "Error loading items.";
             }
-            document.getElementById("ui-id-1").style.display = "block";
-            document.getElementById("ui-id-1").innerHTML = "!Loading .....!";
-            $.ajax({
-                type: "GET",
-                url: "{{ route('search-items') }}",
-                data: {
-                    search: search,
-                    store_id: store_id
-                },
-                success: function(response) {
+        });
+    }, 300); // Adjust the delay as necessary
+}
+
+function additem(item_id) {
+    document.getElementById("ui-id-1").style.display = "none";
+    document.getElementById("search").value = "";
+
+    $.ajax({
+        type: "GET",
+        url: "{{ route('add-item') }}",
+        data: {
+            item_id: item_id,
+        },
+        success: function (response) {
                     //  var data = jQuery.parseJSON(response)
                     // var json_obj = JSON.parse(response);
                     var test = JSON.stringify(response);

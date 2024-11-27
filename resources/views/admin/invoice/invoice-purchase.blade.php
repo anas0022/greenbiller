@@ -663,3 +663,4 @@ buttonsElement.style.display = "flex";
             });
         });
     </script>
+@endsection

@@ -1837,7 +1837,10 @@
 
             }
             document.getElementById("ui-id-1").style.display = "block";
-            document.getElementById("ui-id-1").innerHTML = "!Loading .....!";
+            document.getElementById("ui-id-1").innerHTML = `<div class="alert alert-info m-2" role="alert">
+    <i class="fa fa-spinner fa-spin"></i> Searching...
+</div>`;
+
             $.ajax({
                 type: "GET",
                 url: "{{ route('search-items') }}",

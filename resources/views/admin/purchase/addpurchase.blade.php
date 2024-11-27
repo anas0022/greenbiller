@@ -1326,7 +1326,7 @@
                                                             const roundOff = (roundedTotal - grandTotal).toFixed(2);
                                                     
                                                   
-                                                            $('#roundoff_amount').text(roundOff);
+                                                            $('#roundoff_amounts').text(roundOff);
                                                     
                                                   
                                                             // Update grand total to rounded value
@@ -1349,9 +1349,9 @@
 
                                             if (!isNaN(totalAmt)) {
                                                 const roundedOffAmt = Math.round(totalAmt);
-                                                document.getElementById('round_off_amt').value = roundedOffAmt;
+                                                document.getElementById('round_off_amts').value = roundedOffAmt;
                                             } else {
-                                                document.getElementById('round_off_amt').value = '';
+                                                document.getElementById('round_off_amts').value = '';
                                             }
                                         }
 
@@ -1469,27 +1469,34 @@
     function searchitem() {
         var search = document.getElementById("search").value;
         var store_id = document.getElementById("store_id").value;
+        var searchWrapper = document.getElementById("search_rapper");
         
-        if (store_id == '') {
-            alert('Please select the store');
+        // Check store selection
+        if (!store_id) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Store Required',
+                text: 'Please select a store first'
+            });
             return;
         }
 
-        if (search == '') {
-            document.getElementById("search_rapper").style.display = "none";
-            document.getElementById("search_rapper").innerHTML = "";
+        // Clear results if search is empty
+        if (!search) {
+            searchWrapper.style.display = "none";
+            searchWrapper.innerHTML = "";
             return;
         }
 
-        // Show loading indicator
-        document.getElementById("search_rapper").style.display = "block";
-        document.getElementById("search_rapper").innerHTML = `
-            <div class="loading-text">
-                <div class="loading-spinner"></div>
-                Searching items...
+        // Show loading state
+        searchWrapper.style.display = "block";
+        searchWrapper.innerHTML = `
+            <div class="alert alert-info m-2" role="alert">
+                <i class="fa fa-spinner fa-spin"></i> Searching...
             </div>
         `;
 
+        // Make the AJAX request
         $.ajax({
             type: "GET",
             url: "{{ route('search-items') }}",
@@ -1497,35 +1504,70 @@
                 search: search,
                 store_id: store_id
             },
-            success: function (response) {
-                document.getElementById("search_rapper").style.display = "block";
-                document.getElementById("search_rapper").innerHTML = "";
-                
-                if (response.length === 0) {
-                    document.getElementById("search_rapper").innerHTML = `
-                        <div class="loading-text">
-                            No items found
+            success: function(response) {
+                if (!response.length) {
+                    // Show "No items found" message with item name
+                    searchWrapper.innerHTML = `
+                        <div class="alert alert-danger m-2" role="alert">
+                            <i class="fa fa-exclamation-circle"></i> No items found matching "${search}"
                         </div>
                     `;
                     return;
                 }
 
-                response.forEach(function (test) {
-                    var searchs = document.getElementById("search_rapper").innerHTML;
-                    document.getElementById("search_rapper").innerHTML = searchs + 
-                        '<a class="dropdown-item" onclick="additem(' + test.id + ')" href="javascript:void(0)" >' + 
-                        test.item_name + '</a>';
-                });
+                // Build results HTML
+                const resultsHtml = response.map(item => `
+                    <a class="dropdown-item" href="#" onclick="additem(${item.id}); return false;">
+                        ${item.item_name}
+                        ${item.item_code ? `<br><small class="text-muted">${item.item_code}</small>` : ''}
+                    </a>
+                `).join('');
+
+                searchWrapper.innerHTML = resultsHtml;
             },
-            error: function(xhr, status, error) {
-                document.getElementById("search_rapper").innerHTML = `
-                    <div class="loading-text text-danger">
-                        Error loading items. Please try again.
+            error: function(xhr) {
+                // Show error message
+                searchWrapper.innerHTML = `
+                    <div class="alert alert-danger m-2" role="alert">
+                        <i class="fa fa-exclamation-triangle"></i> Error searching for items. Please try again.
                     </div>
                 `;
             }
         });
     }
+
+    // Add these styles to improve the search results appearance
+    const style = document.createElement('style');
+    style.textContent = `
+        #search_rapper {
+            max-height: 300px;
+            overflow-y: auto;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        #search_rapper .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        #search_rapper::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #search_rapper::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        #search_rapper::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+    `;
+    document.head.appendChild(style);
+</script>
+
+<script>
     function additem(item_id) {
         document.getElementById("search_rapper").style.display = "none";
         document.getElementById("search").value = "";
@@ -1586,7 +1628,19 @@
 
                     htmlRows += '</td>';
 
-                    htmlRows += '<td> <input name="discount_amt[]" id="discount_' + count + '" type="text" class="form-control form-control-sm" value="' + (data.discount ? data.discount : "00") + '"></td>';
+                    htmlRows += '<td>' + 
+                        '<div class="d-flex flex-column">' +
+                        '<input name="discount_amt[]" id="discount_' + count + 
+                        '" type="text" class="form-control form-control-sm mb-1" value="' + 
+                        (data.discount ? data.discount : "00") + '" onchange="itemTotal(' + count + ')">' +
+                        '<select name="discount_type[]" id="item_discount_type_' + count + 
+                        '" class="" onchange="itemTotal(' + count + ')">' +
+                        '<option value="">Select Type</option>' +
+                        '<option value="percent">Percentage</option>' +
+                        '<option value="fixed">Fixed</option>' +
+                        '</select>' +
+                        '</div>' +
+                        '</td>';
 
                     htmlRows += '<td>';
 
@@ -1718,6 +1772,7 @@
         var totalitemqty = parseFloat(count) - 1;
         document.getElementById("totalitemqty").innerHTML = totalitemqty;
 
+        
         total_sum();
     }
     //increacing quantity
@@ -1959,6 +2014,7 @@
         // Get all the purchase price and unit cost input elements
         var purchasePrices = document.querySelectorAll('input[name="purchase_price[]"]');
         var unitCosts = document.querySelectorAll('input[name="unit_cost[]"]');
+
 
 
         purchasePrices.forEach(function (priceInput, index) {

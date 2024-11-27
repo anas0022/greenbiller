@@ -717,7 +717,7 @@
                                                         <div colspan="7" class="bg-sky text-bold"
                                                             style="font-size:12px; padding: 5px;">
                                                             <b>
-                                                                <span id="amountNumeric">{{ $sale->grand_total }}</span>
+                                                                <span id="amountNumeric">{{round($sale->grand_total) }}</span>
                                                             </b>
                                                         </div>
                                                     </td>

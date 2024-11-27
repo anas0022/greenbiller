@@ -319,7 +319,7 @@
                                 <td>{{ $item->purchase_status }}</td>
                                 <td>{{ $item->reference_no }}</td>
                                 <td>{{ $suppliers->firstWhere('id', $item->supplier_id)->name ?? 'N/A' }}</td>
-                                <td>{{ $purchaseItems->where('purchase_id', $item->id)->first()->total_cost ?? '0.00' }}</td>
+                                <td>{{ $item->grand_total ?? '0.00' }}</td>
                                 <td>{{ $item->paid_amount ?? '0.00' }}</td>
                                 <td>
                                     @if($item->paid_amount === null || $item->paid_amount == 0)
@@ -341,7 +341,7 @@
                                             
                                             @if ($item->paid_amount == null || $item->paid_amount < $purchaseItems->where('purchase_id', $item->id)->sum('total_cost'))
                                                 <a class="dropdown-item" data-toggle="modal" data-target="#cash-payments-modal"
-                                                    onclick="totals({{ $purchaseItems->where('purchase_id', $item->id)->first()->purchase_qty ?? 0 }}, {{ $purchaseItems->where('purchase_id', $item->id)->first()->total_cost ?? 0 }}, {{ $item->id }},{{ $item->paid_amount ?? 0 }})">
+                                                    onclick="totals({{ $purchaseItems->where('purchase_id', $item->id)->first()->purchase_qty ?? 0 }}, {{ $item->grand_total ?? 0 }}, {{ $item->id }},{{ $item->paid_amount ?? 0 }})">
                                                     <i class="fas fa-money-check-dollar"></i> Make Payments
                                                 </a>
                                             @else
