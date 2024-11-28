@@ -251,5 +251,6 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'role:admin|superadm
     Route::post('/daily-closing-post',[ClosingController::class,'daily_closing_post'])->name('daily.closing.post');
     Route::get('closing/bill/{id}', [ClosingController::class, 'closingBill'])->name('closing.bill');
     Route::get('closing-list',[ClosingController::class,'closing_list'])->name('closing.list');
+    Route::get('/add-receipt',[RecieptController::class,'add_receipt'])->name('add.receipt');
 });
 

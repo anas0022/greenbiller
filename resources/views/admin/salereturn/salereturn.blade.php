@@ -928,6 +928,7 @@
                                                         url: "{{ route('findCustomer') }}",
                                                         data: {
                                                             customer_id: customer_id
+                                                            
                                                         },
                                                         success: function(response) {
                                                             var customerdata = JSON.stringify(response);

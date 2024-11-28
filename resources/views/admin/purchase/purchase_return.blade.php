@@ -675,657 +675,791 @@
                                                 }
                                             </script>
 
+<table class="col-md-9">
+    <tbody>
+        <tr>
+            <th class="text-right" style="font-size: 15px;">Subtotal</th>
+            <th class="text-right"
+                style="padding-left:10%;font-size: 15px;">
+                <div class="mb-3 row">
+                    <label class="col-sm-2 col-form-label"></label>
+                    <div class="col-sm-10">
 
-                                            <table class="col-md-9">
-                                                <tbody>
-                                                    <tr>
-                                                        <th class="text-right" style="font-size: 15px;">Subtotal</th>
-                                                        <th class="text-right" style="padding-left:10%;font-size: 15px;">
-                                                            <div class="mb-3 row">
-                                                                <label class="col-sm-2 col-form-label"></label>
-                                                                <div class="col-sm-10">
-
-                                                                    <input type="text" id="subtotal_amt"
-                                                                        name="subtotal"
-                                                                        class="form-control form-control-sm"
-                                                                        style="background-color: #ddd; font-size:18px !important;"
-                                                                        oninput="totalamtsum()"
-                                                                        value="{{ $purchase->subtotal }}" readonly>
-                                                                </div>
-                                                            </div>
-                                                        </th>
-                                                    </tr>
-                                                    <tr>
-                                                        <th class="text-right" style="font-size: 15px;">Other Charges
-                                                        </th>
-                                                        <th class="text-right" style="padding-left:10%;font-size: 15px;">
-                                                            <div class="mb-3 row">
-                                                                <label class="col-sm-2 col-form-label"></label>
-                                                                <div class="col-sm-10">
-                                                                    <input type="text" id="other_charges_amt"
-                                                                        name="other_charges_amt"
-                                                                        class="form-control form-control-sm"
-                                                                        style="background-color: #ddd; font-size:18px !important;"
-                                                                        oninput="totalamtsum()" readonly
-                                                                        value="{{ $purchase->other_charges_amt }}">
-                                                                </div>
-                                                            </div>
-
-
-                                                        </th>
-                                                    </tr>
-                                                    <tr>
-                                                        <th class="text-right" style="font-size: 15px;">Discount on All
-                                                        </th>
-                                                        <th class="text-right" style="padding-left:10%;font-size: 15px;">
-                                                            <div class="mb-3 row">
-                                                                <label class="col-sm-2 col-form-label"></label>
-                                                                <div class="col-sm-10">
-                                                                    <input type="text" id="discount_to_all_amt"
-                                                                        name="tot_discount_to_all_amt"
-                                                                        class="form-control form-control-sm"
-                                                                        style="background-color: #ddd;font-size:18px !important;"
-                                                                        oninput="totalamtsum()" name="all_discount"
-                                                                        readonly
-                                                                        value="{{ $purchase->tot_discount_to_all_amt }}">
-                                                                </div>
-                                                            </div>
-
-                                                        </th>
-                                                    </tr>
-                                                    <script>
-                                                        function totalamtsum() {
-                                                            alert();
-                                                            var subtotal_amt = document.getElementById("subtotal_amt").value
-                                                            var other_charges_amt = document.getElementById("other_charges_amt").value;
-                                                            var discount_to_all_amt = document.getElementById("discount_to_all_amt").value;
-                                                            var round_off_amt = document.getElementById("round_off_amt").value;
-
-
-
-                                                            document.getElementById("total_amt").value = subtotal_amt;
-
-                                                            alert(subtotal_amt);
-                                                        }
-                                                    </script>
-                                                    <tr>
-                                                        <th class="text-right" style="font-size: 15px;">Round Off
-                                                            <i class="hover-q " data-container="body"
-                                                                data-toggle="popover" data-placement="top"
-                                                                data-content="Go to Site Settings-> Site -> Disable the Round Off(Checkbox)."
-                                                                data-html="true" data-trigger="hover"
-                                                                data-original-title="Do you wants to Disable Round Off ?"
-                                                                title="">
-                                                                <i
-                                                                    class="fa fa-info-circle text-maroon text-black hover-q"></i>
-                                                            </i>
-
-                                                        </th>
-                                                        <th class="text-right" style="padding-left:10%;font-size: 15px;">
-                                                            <div class="mb-3 row">
-                                                                <label class="col-sm-2 col-form-label"></label>
-                                                                <div class="col-sm-10">
-                                                                    <input type="text" id="round_off_amt"
-                                                                        name="round_off"
-                                                                        class="form-control form-control-sm"
-                                                                        style="background-color: #ddd;font-size:18px !important;"
-                                                                        oninput="totalamtsum()" readonly
-                                                                        value="{{ $purchase->round_off }}">
-                                                                </div>
-                                                            </div>
-                                                        </th>
-                                                    </tr>
-                                                    <tr>
-                                                        <th class="text-right" style="font-size: 15px;">Grand Total</th>
-                                                        <th class="text-right" style="padding-left:10%;font-size: 15px;">
-                                                            <div class="mb-3 row">
-                                                                <label class="col-sm-2 col-form-label"></label>
-                                                                <div class="col-sm-10">
-                                                                    <input type="text" id="total_amt"
-                                                                        name="grand_total"
-                                                                        class="form-control form-control-sm" readonly
-                                                                        style="background-color: #ddd;font-size:18px !important;"
-                                                                        value="{{ $purchase->grand_total }}">
-                                                                </div>
-                                                            </div>
-
-                                                        </th>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                    <script>
-                                        function totalamtsum() {
-                                            const totalAmt = parseFloat(document.getElementById('total_amt').value);
-
-                                            if (!isNaN(totalAmt)) {
-                                                const roundedOffAmt = Math.round(totalAmt);
-                                                document.getElementById('round_off_amt').value = roundedOffAmt;
-                                            } else {
-                                                document.getElementById('round_off_amt').value = '';
-                                            }
-                                        }
-
-
-                                        function updateTotalAmt(newValue) {
-                                            document.getElementById('total_amt').value = newValue;
-                                            totalamtsum();
-                                        }
-                                    </script>
-                                  
-
-                                    <script>
-                                        function unitvalue(count) {
-
-                                            var unitInput = document.getElementById("unitInput_" + count);
-                                            var unitselect = document.getElementById("unitselect_" + count);
-
-                                            unitInput.value = unitselect.value;
-                                        }
-                                    </script>
-                                    <hr class="solid">
-                                    <div class="card-header">
-
-                                        <a href="dashboard" class="btn btn-danger ">Close</a>
-                                        <button name="save" type="submit" class="btn btn-primary">Return Item</button>
-                                    </div>
-
-                                </div>
-
-                        </form>
+                        <input type="text" id="subtotal_amt" name="subtotal"
+                            class="form-control form-control-sm"
+                            style="background-color: #ddd; font-size:18px !important;"
+                            oninput="totalamtsum()" value="{{ $purchase->subtotal }}" readonly>
                     </div>
                 </div>
-            </div>
+            </th>
+        </tr>
+        <tr>
+            <th class="text-right" style="font-size: 15px;">Other Charges
+            </th>
+            <th class="text-right"
+                style="padding-left:10%;font-size: 15px;">
+                <div class="mb-3 row">
+                    <label class="col-sm-2 col-form-label"></label>
+                    <div class="col-sm-10">
+                        <input type="text" id="other_charges_amt"
+                            name="other_charges_amt"
+                            class="form-control form-control-sm"
+                            style="background-color: #ddd; font-size:18px !important;"
+                            oninput="totalamtsum()" 
+                            readonly value="{{ $purchase->other_charges_amt }}">
+                    </div>
+                </div>
+
+
+            </th>
+        </tr>
+        <tr>
+            <th class="text-right" style="font-size: 15px; width: 30%;">Discount on All
+            </th>
+            <th class="text-right"
+                style="padding-left:10%;font-size: 15px;">
+                <div class="mb-2 row">
+                    <label class="col-sm-2 col-form-label"></label>
+                    <div class="col-sm-10">
+                        <input type="text" id="discount_to_all_amt"
+                            name="tot_discount_to_all_amt"
+                            class="form-control form-control-sm"
+                            style="background-color: #ddd;font-size:18px !important;"
+                            oninput="totalamtsum()" 
+                            readonly value="{{ $purchase->tot_discount_to_all_amt }}">
+                    </div>
+                </div>
+
+            </th>
+        </tr>
+        <script>
+            function totalamtsum() {
+                alert();
+                var subtotal_amt = document.getElementById("subtotal_amt").value
+                var other_charges_amt = document.getElementById("other_charges_amt").value;
+                var discount_to_all_amt = document.getElementById("discount_to_all_amt").value;
+                var round_off_amt = document.getElementById("round_off_amt").value;
 
-        </div>
-    </div>
 
-    </div>
-    <script>
-        function calculateTotal() {
-            // Fetch values from the inputs
-            var qty = document.getElementById('qty_').value;
-            var unit_cost = document.getElementById('unit_cost_').value;
-            var total = document.getElementById('total_amount_');
 
-            // Perform calculation (convert to numbers before multiplying)
-            total.value = Number(unit_cost) * Number(qty);
-            totalamtsum();
-            calculateTotal();
-        }
-    </script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <script>
-        // searching the item
-        function searchitem() {
-            var search = document.getElementById("search").value;
-            var store_id = document.getElementById("store_id").value;
-            //alert(store_id);
-            if (store_id == '') {
-                alert('Please select the store');
-            }
-            if (search == '') {
-                document.getElementById("search_rapper").style.display = "none";
-                document.getElementById("search_rapper").innerHTML = "";
-            }
-
-            $.ajax({
-                type: "GET",
-                url: "{{ route('search-items') }}",
-                data: {
-                    search: search,
-                    store_id: store_id
-                },
-                success: function(response) {
-                    //  var data = jQuery.parseJSON(response)
-                    // var json_obj = JSON.parse(response);
-                    var test = JSON.stringify(response);
-                    //  var data = JSON.parse(response);
-                    //  alert(test);
-
-                    document.getElementById("search_rapper").style.display = "block";
-                    document.getElementById("search_rapper").innerHTML = "";
-                    response.forEach(function(test) {
-                        var searchs = document.getElementById("search_rapper").innerHTML;
-                        //console.log("ID: " + test.id);  // Accessing the `id` field                 
-                        document.getElementById("search_rapper").innerHTML = searchs +
-                            '<a class="dropdown-item" onclick="additem(' + test.id +
-                            ')" href="javascript:void(0)" >' + test.item_name + '</a>';
-                    });
-
-                },
-            });
-        }
-
-        function additem(item_id) {
-            document.getElementById("search_rapper").style.display = "none";
-            document.getElementById("search").value = "";
-
-            $.ajax({
-                type: "GET",
-                // url: "controller/add-item-purchase.php",
-                url: "{{ route('add-item') }}",
-                data: {
-                    item_id: item_id,
-                },
-                success: function(response) {
-                    // document.getElementById("iteamtable").innerHTML = response;
-                    //var data = jQuery.parseJSON(response);
-                    var data = JSON.stringify(response);
-
-                    response.forEach(function(data) {
-
-                        var count = $(".itemRow").length;
-                        var htmlRows = "";
-                        htmlRows += "<tr>";
-                        htmlRows +=
-                            '<td><input name="item_id[]" type="hidden" id="item_id_' +
-                            count +
-                            '" class="form-control form-control-sm itemRow" value="' +
-                            data.id +
-                            '" > <input type="hidden" value="' + data.item_name +
-                            '" name="item_name[]">' +
-                            data.item_name +
-                            "</td>";
-                        htmlRows +=
-                            '<td><div class="input-group input-group-sm mb-3"><button type="button" onclick="decrement_qty(1,' +
-                            count +
-                            ')" class="input-group-text">-</button><input name="purchase_qty[]" id="qty_' +
-                            count +
-                            '" type="text" class="form-control form-control-sm" value="1" oninput="update_calculation(' +
-                            count +
-                            ')"><button type="button" onclick="increment_qty(1,' +
-                            count +
-                            ')" class="input-group-text">+</button></div></td>';
-                        htmlRows +=
-                            '<td> <input name="purchase_price[]" id="purchase_price_' +
-                            count +
-                            '" type="text"  oninput="update_calculation(' +
-                            count +
-                            ')" class="form-control form-control-sm" value="' +
-                            (data.purchase_price ? data.purchase_price : "00") +
-                            '"></td>';
-                        htmlRows += '<td>';
-
-                        // Unit ID exists in the data, pre-select the option in the dropdown
-                        htmlRows +=
-                            '<select class="form-control form-control-sm" onchange="unitvalue(' +
-                            count + ');" id="unitselect_' + count + '">';
-                        htmlRows += '<option value="" >select</option>';
-                        @foreach ($unit as $unitvalue)
-                            htmlRows += '<option value="{{ $unitvalue->id }}" ' + (data['unit_id'] ==
-                                    {{ $unitvalue->id }} ? 'selected' : '') +
-                                '>{{ $unitvalue->unit_name }}</option>';
-                        @endforeach
-                        htmlRows += '</select>';
-                        htmlRows += '<input type="hidden" name="unit_id[]" id="unitInput_' + count +
-                            '" value="' + data['unit_id'] + '" >';
-
-                        htmlRows += '</td>';
-
-                        htmlRows += '<td> <input name="discount_amt[]" id="discount_' + count +
-                            '" type="text" class="form-control form-control-sm" value="' + (data
-                                .discount ? data.discount : "00") + '"></td>';
-
-                        htmlRows += '<td>';
-
-                        // Tax ID does not exist, show the select dropdown
-                        htmlRows += '<select name="taxid" id="taxid_' + count +
-                            '" class="form-control form-control-sm" onchange="calculatetax(' + count +
-                            ');">';
-                        htmlRows += '<option value="">select</option>';
-                        @foreach ($taxes as $taxvalue)
-                            htmlRows +=
-                                '<option value="{{ $taxvalue->id }}" data-id="{{ $taxvalue->per }}">{{ $taxvalue->taxname }}</option>';
-                        @endforeach
-                        htmlRows += '</select>';
-                        htmlRows += '<input type="text" name="tax_id[]" id="taxInput_' + count +
-                            '"  value="' + data['tax_id'] + '" hidden>';
-
-                        htmlRows += '</td>';
-
-
-
-                        htmlRows +=
-                            '<td> <input name="tax_amt[]" id="tax_amt_' +
-                            count +
-                            '" type="text" class="form-control form-control-sm" value="" readonly style="background-color: #ddd;"></td>';
-                        //htmlRows +=
-                        // '<td> <input name="unit_cost[]" id="unit_cost_' +
-                        // count +
-                        // '" type="text" class="form-control form-control-sm" value="' +
-                        // data.purchase_price +
-                        // '" readonly style="background-color: #ddd;" oninput="total_sum()"></td>';
-                        htmlRows +=
-                            '<td> <input name="total_amount[]" id="total_amount_' +
-                            count +
-                            '" type="text" class="form-control form-control-sm total" value="' +
-                            (data.purchase_price ? data.purchase_price : '00') +
-                            '" readonly style="background-color: #ddd;" ></td>';
-                        // htmlRows +=
-                        //     '<td> <input name="bach_no[]" id="bach_no_' +
-                        //     count +
-                        //     '" type="text" class="form-control form-control-sm" ></td>';
-                        // htmlRows +=
-                        //     '<td> <input name="expire_date[]" id="expiry_date_' +
-                        //     count +
-                        //     '" type="date" class="form-control form-control-sm"></td>';
-                        htmlRows +=
-                            '<td> <button onclick="delete_row(' +
-                            count +
-                            ')" type="button" class="btn btn-danger shadow btn-xs sharp"><i class="fa fa-trash"></i></button>';
-                        htmlRows +=
-                            '<input name="hsn_code[]" id="purchase_price_' +
-                            count +
-                            '" type="hidden"   class="form-control form-control-sm" value="' +
-                            data.hsn_code +
-                            '">';
-                        htmlRows +=
-                            '<input type="hidden" name="available_qty[]" id="available_qty_' +
-                            count +
-                            '" value="' +
-                            data.available_qty +
-                            '" hidden>';
-                        htmlRows +=
-                            '<input name="tax_type[]" type="hidden" id="tax_type_' +
-                            count +
-                            '" value="' +
-                            data.tax_type +
-                            '" hidden>';
-                        htmlRows +=
-                            '<input name="tax_id[]" type="hidden" id="tax_id_' +
-                            count +
-                            '" value="' +
-                            data.tax_id +
-                            ' ">';
-                        htmlRows +=
-                            '<input name="tax_value[]" type="hidden" id="tax_value_' +
-                            count +
-                            '" value="' +
-                            data.tax_value +
-                            '" hidden>';
-                        htmlRows +=
-                            '<input name="description[]" type="hidden" id="description_' +
-                            count +
-                            '" value="' +
-                            data.description +
-                            '" hidden >';
-                        htmlRows +=
-                            '<input name="service_bit[]" type="hidden" id="service_bit_' +
-                            count +
-                            '" value="' +
-                            data.service_bit +
-                            '" hidden>';
-                        htmlRows +=
-                            '<input name="discount_type[]" type="text" id="item_discount_type_' +
-                            count +
-                            '" value="' +
-                            data.discount_type +
-                            '" hidden>';
-                        htmlRows +=
-                            '<input name="" type="hidden" id="item_discount_input_' +
-                            count +
-                            '" value="' +
-                            data.item_discount_input +
-                            '" hidden>';
-                        htmlRows +=
-                            '<input name="profit_margin[]" type="hidden" id="profit_margin_' +
-                            count +
-                            '" value="' +
-                            data.profit_margin +
-                            '" hidden>';
-                        htmlRows += '<input name="discount_input[]" id="discount_' + count +
-                            '" type="text" class="form-control form-control-sm" value="' + data
-                            .discount + '" hidden>';
-                        htmlRows += "</td></tr>";
-
-                        $("#purchase_table").append(htmlRows);
-                        document.getElementById("totalitemqty").value = count;
-
-
-
-                        //  alert(count);
-                        calculatingtax(count);
-                        itemTotal(count);
-                        total_sum();
-                        totalamtsum();
-
-                    });
-                },
-            });
-
-        }
-
-
-
-
-        //delecting a row in table
-        function delete_row(count) {
-            document.getElementById("purchase_table").deleteRow(count);
-            var count = $(".itemRow").length;
-            var totalitemqty = parseFloat(count) - 1;
-            document.getElementById("totalitemqty").innerHTML = totalitemqty;
-
-            total_sum();
-        }
-        //increacing quantity
-        function increment_qty(value, count) {
-            var qty = document.getElementById("qty_" + count).value;
-            document.getElementById("qty_" + count).value = parseFloat(qty) + value;
-            calculatingtax(count);
-            itemTotal(count);
-            update_calculation(count);
-            total_sum();
-
-
-        }
-        //decrecing quantity
-        function decrement_qty(value, count) {
-            var qty = document.getElementById("qty_" + count).value;
-            if (qty != 0) {
-                document.getElementById("qty_" + count).value = parseFloat(qty) - value;
-
-                calculatingtax(count);
-                itemTotal(count);
-
-                update_calculation(count);
-                total_sum();
-
-            }
-
-        }
-
-        function calculatetax(counts) {
-            calculatingtax(counts);
-            itemTotal(counts);
-            total_sum();
-        }
-
-        function calculatingtax(counts) {
-            var taxid = document.getElementById("taxid_" + counts);
-            var taxoption = taxid.options[taxid.selectedIndex];
-            var taxvalue = taxoption.getAttribute('data-id');
-
-            var qty = document.getElementById("qty_" + counts).value;
-
-            var purchase_price = document.getElementById("purchase_price_" + counts).value;
-
-
-            var taxamt = ((parseFloat(purchase_price) * parseFloat(qty)) * parseFloat(taxvalue)) / 100
-            document.getElementById("tax_amt_" + counts).value = taxamt;
-
-            itemTotal(counts);
-            total_sum();
-
-        }
-
-
-        function itemTotal(count) {
-
-            // alert('haii');
-            var qty = document.getElementById("qty_" + count).value;
-            var purchase_price = document.getElementById("purchase_price_" + count).value;
-            var taxamt = document.getElementById("tax_amt_" + count).value;
-            var discount = document.getElementById("discount_" + count).value;
-
-            var item_discount_type = document.getElementById("item_discount_type_" + count).value;
-
-
-            if (item_discount_type == 'percent') {
-                var discount_amt = ((parseFloat(purchase_price) * parseFloat(discount)) / 100);
-            } else {
-                var discount_amt = discount;
-            }
-
-            var itemtotalamt = (((parseFloat(purchase_price) * parseFloat(qty)) + parseFloat(taxamt))) - parseFloat(
-                discount_amt);
-
-
-
-            document.getElementById("total_amount_" + count).value = itemtotalamt.toFixed(3);
-
-            total_sum();
-            discount_per();
-
-        }
-    </script>
-
-    <script>
-        function total_sum() {
-            var othercharge = document.getElementById("other_charges_amt").value;
-            var discount_to_all_amt = document.getElementById("discount_to_all_amt").value;
-
-            var result = document.getElementById("subtotal_amt");
-
-            var item_total,
-                i = 1,
-                total = 0;
-            while ((item_total = document.getElementById("total_amount_" + i++))) {
-                item_total.value = item_total.value.replace(/\\D/, "");
-                total = total + parseFloat(item_total.value);
-            }
-            result.value = total;
-            // alert(total);
-
-
-            if (othercharge == '') {
-                otherchargeamt = 0;
-            } else {
-                otherchargeamt = othercharge;
-            }
-            if (discount_to_all_amt == '') {
-                discount_to_all_amt1 = 0;
-            } else {
-                discount_to_all_amt1 = discount_to_all_amt
-            }
-            var alltotal = (parseFloat(total) + parseFloat(otherchargeamt)) - parseFloat(discount_to_all_amt1)
-            document.getElementById("total_amt").value = alltotal;
-        }
-        totalamtsum();
-    </script>
-    <script>
-        function update_calculation(count) {
-            var qty = document.getElementById("qty_" + count).value;
-            var purchase_price = document.getElementById("purchase_price_" + count).value;
-            var total = parseFloat(purchase_price) * parseFloat(qty);
-            document.getElementById("unit_cost_" + count).value = purchase_price;
-            document.getElementById("total_amount_" + count).value = total;
-            var no = $(".total").length;
-            //alert(no);
-            total_sum();
-            totalamtsum();
-        }
-    </script>
-
-
-    <script>
-        function othercharge() {
-
-
-
-            var other_charges_input = document.getElementById("other_charges_input").value;
-            document.getElementById("other_charges_amt").value = other_charges_input;
-            var othercharges_tax_id = document.getElementById("othercharges_tax_id").value;
-
-
-            var othercharges_tax_id = document.getElementById("othercharges_tax_id");
-            var otherchargeoption = othercharges_tax_id.options[othercharges_tax_id.selectedIndex];
-            var othertaxvalue = otherchargeoption.getAttribute('data-percentage');
-
-            if (other_charges_input != "") {
-                var tax_amt = ((other_charges_input * othertaxvalue) / 100);
-                var other_charges_amt = parseFloat(other_charges_input) + parseFloat(tax_amt);
-                document.getElementById("other_charges_amt").value = other_charges_amt;
-
-                total_sum();
-
-            } else {
-                //document.getElementById("total_amt").value = 0;
-                var subtotal_amt = document.getElementById("subtotal_amt").value;
                 document.getElementById("total_amt").value = subtotal_amt;
-                total_sum();
+
+                alert(subtotal_amt);
             }
-
-            totalamtsum();
-        }
-    </script>
-    <script>
-        function alldiscout() {
-            var discount_to_all_input = document.getElementById("discount_to_all_input").value;
-            document.getElementById("discount_to_all_amt").value = discount_to_all_input;
-            var discount_to_all_type = document.getElementById("discount_to_all_type").value;
-
-
-
-            if (discount_to_all_type == 'Percentage') {
-                var subtotal_amt = document.getElementById("subtotal_amt").value;
-                var discount_peramt = ((subtotal_amt * discount_to_all_input) / 100);
-                document.getElementById("discount_to_all_amt").value = parseFloat(discount_peramt);
-                var subtotal_amt = document.getElementById("subtotal_amt").value;
-                var other_charges_amt = document.getElementById("other_charges_amt").value;
-                var total_amt = (parseFloat(subtotal_amt) + parseFloat(other_charges_amt)) - parseFloat(discount_peramt)
-                document.getElementById("total_amt").value = total_amt;
-            } else {
-                document.getElementById("discount_to_all_amt").value = discount_to_all_input;
-                var subtotal_amt = document.getElementById("subtotal_amt").value;
-                var other_charges_amt = document.getElementById("other_charges_amt").value;
-                var total_amt = (parseFloat(subtotal_amt) + parseFloat(other_charges_amt)) - parseFloat(
-                    discount_to_all_input)
-                document.getElementById("total_amt").value = total_amt;
+        </script>
+           <tr>
+            <th class="text-right" style="font-size: 15px;">GST
+            </th>
+            <th class="text-right"
+                style="padding-left:10%;font-size: 15px;">
+                <div class="mb-3 row">
+                    <label class="col-sm-2 col-form-label"></label>
+                    <div class="col-sm-10" style="display: flex; justify-content: space-between; gap: 2px;">
+                      
+                  
+                        <div class="col-sm-6">
+                            
+                            CGST
+                            <input type="text" id="cgst"
+                            name="tot_discount_to_all_amt"
+                            class="form-control form-control-sm"
+                            style="background-color: #ddd;font-size:18px !important;"
+                        
+                            readonly value="{{ optional($purchaseItems->firstWhere('purchase_id',$purchase->id))->tax_amt ? $purchaseItems->firstWhere('purchase_id',$purchase->id)->tax_amt/2 : '0' }}">
+                        </div>
+                        <div class="col-sm-6">
+                            SGST
+                            <input type="text" id="sgst"
+                            name="tot_discount_to_all_amt"
+                            class="form-control form-control-sm"
+                            style="background-color: #ddd;font-size:18px !important;"
+                    
+                            readonly value="{{ optional($purchaseItems->firstWhere('purchase_id',$purchase->id))->tax_amt ? $purchaseItems->firstWhere('purchase_id',$purchase->id)->tax_amt/2 : '0' }}">
+                        </div>
+                    </div>
+                </div>
+                
+            </th>
+        </tr>
+      
+        <tr>
+            <th class="text-right" style="font-size: 15px;">Grand Total</th>
+            <th class="text-right" style="padding-left:10%;font-size: 15px;">
+                <div class="mb-3 row">
+                    <label class="col-sm-2 col-form-label"></label>
+                    <div class="col-sm-10">
+                        <input type="text" id="total_amt" name="grand_total"
+                            class="form-control form-control-sm" readonly
+                            style="background-color: #ddd;font-size:18px !important;" 
+                            oninput="calculateRoundOff()"
+                            value="{{ $purchase->grand_total }}">
+                    </div>
+                </div>
+            </th>
+        </tr>
+        <tr>
+            <th class="text-right" style="font-size: 15px;">Round Off
+                <i class="hover-q " data-container="body" data-toggle="popover" data-placement="top"
+                    data-content="Go to Site Settings-> Site -> Disable the Round Off(Checkbox)."
+                    data-html="true" data-trigger="hover"
+                    data-original-title="Do you wants to Disable Round Off ?" title="">
+                    <i class="fa fa-info-circle text-maroon text-black hover-q"></i>
+                </i>
+            </th>
+            <th class="text-right" style="padding-left:10%;font-size: 15px;">
+                <div class="mb-3 row">
+                    <label class="col-sm-2 col-form-label"></label>
+                    <div class="col-sm-10">
+                        <input type="text" 
+                            id="round_off_amts" 
+                            name="round_off"
+                            class="form-control form-control-sm"
+                            style="background-color: #ddd;font-size:18px !important;" 
+                            value="0.00"
+                            readonly>
+                    </div>
+                </div>
+            </th>
+        </tr>
+        
+        <script>
+            function calculateRoundOff() {
+                // Get the grand total
+                const grandTotal = parseFloat(document.getElementById('total_amt').value) || 0;
+                
+                // Round the grand total to nearest whole number
+                const roundedTotal = Math.round(grandTotal);
+                
+                // Calculate the difference (round off amount)
+                const roundOffAmount = roundedTotal - grandTotal;
+                
+                // Update the round off field
+                document.getElementById('round_off_amts').value = roundOffAmount.toFixed(2);
+                
+                // Update the total amount to show rounded value
+                document.getElementById('total_amt').value = roundedTotal.toFixed(2);
             }
+        </script>
+        
+    </tbody>
+</table>
+</div>
+</div>
+<script>
+function totalamtsum() {
+const totalAmt = parseFloat(document.getElementById('total_amt').value);
 
-            totalamtsum();
+if (!isNaN(totalAmt)) {
+    const roundedOffAmt = Math.round(totalAmt);
+    document.getElementById('round_off_amt').value = roundedOffAmt;
+} else {
+    document.getElementById('round_off_amt').value = '';
+}
+}
 
-        }
-    </script>
+
+function updateTotalAmt(newValue) {
+document.getElementById('total_amt').value = newValue;
+totalamtsum();
+}
+</script>
+<script>
+function unitvalue(count) {
+
+var unitInput = document.getElementById("unitInput_" + count);
+var unitselect = document.getElementById("unitselect_" + count);
+
+unitInput.value = unitselect.value;
+}
+</script>
+<hr class="solid">
+<div class="card-header">
+
+<a href="" ></a>
+<button name="save" type="submit" class="btn btn-primary">Return Purchase</button>
+</div>
+
+</div>
+
+</form>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<script>
+function calculateTotal() {
+// Fetch values from the inputs
+var qty = document.getElementById('qty_').value;
+var unit_cost = document.getElementById('unit_cost_').value;
+var total = document.getElementById('total_amount_');
+
+// Perform calculation (convert to numbers before multiplying)
+total.value = Number(unit_cost) * Number(qty);
+totalamtsum();
+calculateTotal();
+}
+</script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+// searching the item
+function searchitem() {
+var search = document.getElementById("search").value;
+var store_id = document.getElementById("store_id").value;
+var searchWrapper = document.getElementById("search_rapper");
+
+// Check store selection
+if (!store_id) {
+Swal.fire({
+icon: 'warning',
+title: 'Store Required',
+text: 'Please select a store first'
+});
+return;
+}
+
+// Clear results if search is empty
+if (!search) {
+searchWrapper.style.display = "none";
+searchWrapper.innerHTML = "";
+return;
+}
+
+// Show loading state
+searchWrapper.style.display = "block";
+searchWrapper.innerHTML = `
+<div class="alert alert-info m-2" role="alert">
+<i class="fa fa-spinner fa-spin"></i> Searching...
+</div>
+`;
+
+// Make the AJAX request
+$.ajax({
+type: "GET",
+url: "{{ route('search-items') }}",
+data: {
+search: search,
+store_id: store_id
+},
+success: function(response) {
+if (!response.length) {
+// Show "No items found" message with item name
+searchWrapper.innerHTML = `
+<div class="alert alert-danger m-2" role="alert">
+<i class="fa fa-exclamation-circle"></i> No items found matching "${search}"
+</div>
+`;
+return;
+}
+
+// Build results HTML
+const resultsHtml = response.map(item => `
+<a class="dropdown-item" href="#" onclick="additem(${item.id}); return false;">
+${item.item_name}
+${item.item_code ? `<br><small class="text-muted">${item.item_code}</small>` : ''}
+</a>
+`).join('');
+
+searchWrapper.innerHTML = resultsHtml;
+},
+error: function(xhr) {
+// Show error message
+searchWrapper.innerHTML = `
+<div class="alert alert-danger m-2" role="alert">
+<i class="fa fa-exclamation-triangle"></i> Error searching for items. Please try again.
+</div>
+`;
+}
+});
+}
+
+// Add these styles to improve the search results appearance
+const style = document.createElement('style');
+style.textContent = `
+#search_rapper {
+max-height: 300px;
+overflow-y: auto;
+box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+border: 1px solid #ddd;
+border-radius: 4px;
+}
+
+#search_rapper .dropdown-item:hover {
+background-color: #f8f9fa;
+}
+
+#search_rapper::-webkit-scrollbar {
+width: 8px;
+}
+
+#search_rapper::-webkit-scrollbar-track {
+background: #f1f1f1;
+}
+
+#search_rapper::-webkit-scrollbar-thumb {
+background: #888;
+border-radius: 4px;
+}
+`;
+document.head.appendChild(style);
+
+function additem(item_id) {
+document.getElementById("search_rapper").style.display = "none";
+document.getElementById("search").value = "";
+
+$.ajax({
+type: "GET",
+// url: "controller/add-item-purchase.php",
+url: "{{ route('add-item') }}",
+data: {
+item_id: item_id,
+},
+success: function(response) {
+// document.getElementById("iteamtable").innerHTML = response;
+//var data = jQuery.parseJSON(response);
+var data = JSON.stringify(response);
+
+response.forEach(function(data) {
+
+var count = $(".itemRow").length;
+var htmlRows = "";
+htmlRows += "<tr>";
+htmlRows +=
+'<td><input name="item_id[]" type="hidden" id="item_id_' +
+count +
+'" class="form-control form-control-sm itemRow" value="' +
+data.id +
+'" > <input type="hidden" value="' + data.item_name +
+'" name="item_name[]">' +
+data.item_name +
+"</td>";
+htmlRows +=
+'<td><div class="input-group input-group-sm mb-3"><button type="button" onclick="decrement_qty(1,' +
+count +
+')" class="input-group-text">-</button><input name="purchase_qty[]" id="qty_' +
+count +
+'" type="text" class="form-control form-control-sm" value="1" oninput="update_calculation(' +
+count +
+')"><button type="button" onclick="increment_qty(1,' +
+count +
+')" class="input-group-text">+</button></div></td>';
+htmlRows +=
+'<td> <input name="purchase_price[]" id="purchase_price_' +
+count +
+'" type="text"  oninput="update_calculation(' +
+count +
+')" class="form-control form-control-sm" value="' +
+(data.purchase_price ? data.purchase_price : "00") +
+'"></td>';
+htmlRows += '<td>';
+
+// Unit ID exists in the data, pre-select the option in the dropdown
+htmlRows +=
+'<select class="form-control form-control-sm" onchange="unitvalue(' +
+count + ');" id="unitselect_' + count + '">';
+htmlRows += '<option value="" >select</option>';
+@foreach ($unit as $unitvalue)
+htmlRows += '<option value="{{ $unitvalue->id }}" ' + (data['unit_id'] ==
+{{ $unitvalue->id }} ? 'selected' : '') +
+'>{{ $unitvalue->unit_name }}</option>';
+@endforeach
+htmlRows += '</select>';
+htmlRows += '<input type="hidden" name="unit_id[]" id="unitInput_' + count +
+'" value="' + data['unit_id'] + '" >';
+
+htmlRows += '</td>';
+
+htmlRows += '<td>' + 
+'<input name="discount_amt[]" id="discount_' + count +
+'" type="text" class="form-control form-control-sm" value="' + 
+(data.discount ? data.discount : "00") + '">' +
+'<select name="discount_type[]" id="item_discount_type_' + count + 
+'" class="" onchange="itemTotal(' + count + ')">' +
+'<option value="">select</option>' +
+'<option value="percent">Percentage</option>' +
+'<option value="fixed">Fixed</option>' +
+'</select>' +
+'</td>';
+
+htmlRows += '<td>';
+
+// Tax ID does not exist, show the select dropdown
+htmlRows += '<select name="taxid" id="taxid_' + count +
+'" class="form-control form-control-sm" onchange="calculatetax(' + count +
+');">';
+htmlRows += '<option value="">select</option>';
+@foreach ($taxes as $taxvalue)
+htmlRows +=
+'<option value="{{ $taxvalue->id }}" data-id="{{ $taxvalue->per }}">{{ $taxvalue->taxname }}</option>';
+@endforeach
+htmlRows += '</select>';
+htmlRows += '<input type="text" name="tax_id[]" id="taxInput_' + count +
+'"  value="' + data['tax_id'] + '" hidden>';
+
+htmlRows += '</td>';
 
 
-    <script>
-        function update_calculation(itemId) {
-            // Your existing calculation logic
-            unitcost(); // Call unitcost() as part of this function
-        }
 
-        function unitcost() {
-            // Get all the purchase price and unit cost input elements
-            var purchasePrices = document.querySelectorAll('input[name="purchase_price[]"]');
-            var unitCosts = document.querySelectorAll('input[name="unit_cost[]"]');
+htmlRows +=
+'<td> <input name="tax_amt[]" id="tax_amt_' +
+count +
+'" type="text" class="form-control form-control-sm" value="" readonly style="background-color: #ddd;"></td>';
+//htmlRows +=
+// '<td> <input name="unit_cost[]" id="unit_cost_' +
+// count +
+// '" type="text" class="form-control form-control-sm" value="' +
+// data.purchase_price +
+// '" readonly style="background-color: #ddd;" oninput="total_sum()"></td>';
+htmlRows +=
+'<td> <input name="total_amount[]" id="total_amount_' +
+count +
+'" type="text" class="form-control form-control-sm total" value="' +
+(data.purchase_price ? data.purchase_price : '00') +
+'" readonly style="background-color: #ddd;" ></td>';
+// htmlRows +=
+//     '<td> <input name="bach_no[]" id="bach_no_' +
+//     count +
+//     '" type="text" class="form-control form-control-sm" ></td>';
+// htmlRows +=
+//     '<td> <input name="expire_date[]" id="expiry_date_' +
+//     count +
+//     '" type="date" class="form-control form-control-sm"></td>';
+htmlRows +=
+'<td> <button onclick="delete_row(' +
+count +
+')" type="button" class="btn btn-danger shadow btn-xs sharp"><i class="fa fa-trash"></i></button>';
+htmlRows +=
+'<input name="hsn_code[]" id="purchase_price_' +
+count +
+'" type="hidden"   class="form-control form-control-sm" value="' +
+data.hsn_code +
+'">';
+htmlRows +=
+'<input type="hidden" name="available_qty[]" id="available_qty_' +
+count +
+'" value="' +
+data.available_qty +
+'" hidden>';
+htmlRows +=
+'<input name="tax_type[]" type="hidden" id="tax_type_' +
+count +
+'" value="' +
+data.tax_type +
+'" hidden>';
+htmlRows +=
+'<input name="tax_id[]" type="hidden" id="tax_id_' +
+count +
+'" value="' +
+data.tax_id +
+' ">';
+htmlRows +=
+'<input name="tax_value[]" type="hidden" id="tax_value_' +
+count +
+'" value="' +
+data.tax_value +
+'" hidden>';
+htmlRows +=
+'<input name="description[]" type="hidden" id="description_' +
+count +
+'" value="' +
+data.description +
+'" hidden >';
+htmlRows +=
+'<input name="service_bit[]" type="hidden" id="service_bit_' +
+count +
+'" value="' +
+data.service_bit +
+'" hidden>';
+htmlRows +=
+'<input name="discount_type[]" type="text" id="item_discount_type_' +
+count +
+'" value="' +
+data.discount_type +
+'" hidden>';
+htmlRows +=
+'<input name="" type="hidden" id="item_discount_input_' +
+count +
+'" value="' +
+data.item_discount_input +
+'" hidden>';
+htmlRows +=
+'<input name="profit_margin[]" type="hidden" id="profit_margin_' +
+count +
+'" value="' +
+data.profit_margin +
+'" hidden>';
+htmlRows += '<input name="discount_input[]" id="discount_' + count +
+'" type="text" class="form-control form-control-sm" value="' + data
+.discount + '" hidden>';
+htmlRows += "</td></tr>";
 
-            // Loop through each purchase price input and calculate the unit cost
-            purchasePrices.forEach(function(priceInput, index) {
-                var priceValue = parseFloat(priceInput.value) || 0; // Get the price value, or 0 if invalid
-                var unitCostInput = unitCosts[index]; // Get the corresponding unit cost input
+$("#purchase_table").append(htmlRows);
+document.getElementById("totalitemqty").value = count;
 
-                // Perform your unit cost calculation (replace with actual formula if needed)
-                var unitCostValue = priceValue; // Adjust this if there's a specific calculation needed
 
-                // Set the unit cost value
-                unitCostInput.value = unitCostValue.toFixed(2); // Ensures two decimal points
-            });
-        }
-    </script>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+//  alert(count);
+calculatingtax(count);
+itemTotal(count);
+total_sum();
+totalamtsum();
+
+});
+},
+});
+
+}
+
+
+
+
+//delecting a row in table
+function delete_row(count) {
+document.getElementById("purchase_table").deleteRow(count);
+var count = $(".itemRow").length;
+var totalitemqty = parseFloat(count) - 1;
+document.getElementById("totalitemqty").innerHTML = totalitemqty;
+
+total_sum();
+}
+//increacing quantity
+function increment_qty(value, count) {
+var qty = document.getElementById("qty_" + count).value;
+document.getElementById("qty_" + count).value = parseFloat(qty) + value;
+calculatingtax(count);
+itemTotal(count);
+update_calculation(count);
+total_sum();
+
+
+}
+//decrecing quantity
+function decrement_qty(value, count) {
+var qty = document.getElementById("qty_" + count).value;
+if (qty != 0) {
+document.getElementById("qty_" + count).value = parseFloat(qty) - value;
+
+calculatingtax(count);
+itemTotal(count);
+
+update_calculation(count);
+total_sum();
+
+}
+
+}
+
+function calculatetax(counts) {
+calculatingtax(counts);
+itemTotal(counts);
+total_sum();
+}
+
+function calculatingtax(counts) {
+var taxid = document.getElementById("taxid_" + counts);
+var taxoption = taxid.options[taxid.selectedIndex];
+var taxvalue = taxoption.getAttribute('data-id');
+
+var qty = document.getElementById("qty_" + counts).value;
+
+var purchase_price = document.getElementById("purchase_price_" + counts).value;
+
+
+var taxamt = ((parseFloat(purchase_price) * parseFloat(qty)) * parseFloat(taxvalue)) / 100
+document.getElementById("tax_amt_" + counts).value = taxamt;
+
+itemTotal(counts);
+total_sum();
+updateGSTValues();
+}
+
+
+function itemTotal(count) {
+
+// alert('haii');
+var qty = document.getElementById("qty_" + count).value;
+var purchase_price = document.getElementById("purchase_price_" + count).value;
+var taxamt = document.getElementById("tax_amt_" + count).value;
+var discount = document.getElementById("discount_" + count).value;
+
+var item_discount_type = document.getElementById("item_discount_type_" + count).value;
+
+
+if (item_discount_type == 'percent') {
+var discount_amt = ((parseFloat(purchase_price) * parseFloat(discount)) / 100);
+} else {
+var discount_amt = discount;
+}
+
+var itemtotalamt = (((parseFloat(purchase_price) * parseFloat(qty)) + parseFloat(taxamt))) - parseFloat(
+discount_amt);
+
+
+
+document.getElementById("total_amount_" + count).value = itemtotalamt.toFixed(3);
+
+total_sum();
+discount_per();
+
+}
+</script>
+
+<script>
+
+function othercharge() {
+
+
+
+var other_charges_input = document.getElementById("other_charges_input").value;
+document.getElementById("other_charges_amt").value = other_charges_input;
+var othercharges_tax_id = document.getElementById("othercharges_tax_id").value;
+
+
+var othercharges_tax_id = document.getElementById("othercharges_tax_id");
+var otherchargeoption = othercharges_tax_id.options[othercharges_tax_id.selectedIndex];
+var othertaxvalue = otherchargeoption.getAttribute('data-percentage');
+
+if (other_charges_input != "") {
+var tax_amt = ((other_charges_input * othertaxvalue) / 100);
+var other_charges_amt = parseFloat(other_charges_input) + parseFloat(tax_amt);
+document.getElementById("other_charges_amt").value = other_charges_amt;
+
+total_sum();
+
+} else {
+
+var subtotal_amt = document.getElementById("subtotal_amt").value;
+document.getElementById("total_amt").value = subtotal_amt;
+total_sum();
+}
+
+totalamtsum();
+}
+
+</script>
+<script>
+
+function alldiscout() {
+var discount_to_all_input = document.getElementById("discount_to_all_input").value;
+document.getElementById("discount_to_all_amt").value = discount_to_all_input;
+var discount_to_all_type = document.getElementById("discount_to_all_type").value;
+
+
+
+if (discount_to_all_type == 'Percentage') {
+var subtotal_amt = document.getElementById("subtotal_amt").value;
+var discount_peramt = ((subtotal_amt * discount_to_all_input) / 100);
+document.getElementById("discount_to_all_amt").value = parseFloat(discount_peramt);
+var subtotal_amt = document.getElementById("subtotal_amt").value;
+var other_charges_amt = document.getElementById("other_charges_amt").value;
+var total_amt = (parseFloat(subtotal_amt) + parseFloat(other_charges_amt)) - parseFloat(discount_peramt)
+document.getElementById("total_amt").value = total_amt;
+} else {
+document.getElementById("discount_to_all_amt").value = discount_to_all_input;
+var subtotal_amt = document.getElementById("subtotal_amt").value;
+var other_charges_amt = document.getElementById("other_charges_amt").value;
+var total_amt = (parseFloat(subtotal_amt) + parseFloat(other_charges_amt)) - parseFloat(discount_to_all_input)
+document.getElementById("total_amt").value = total_amt;
+}
+total_sum();
+
+}
+</script>
+
+<script>
+function total_sum() {
+var othercharge = document.getElementById("other_charges_amt").value || 0;
+var discount_to_all_amt = document.getElementById("discount_to_all_amt").value || 0;
+var result = document.getElementById("subtotal_amt");
+
+var total = 0;
+var i = 1;
+var item_total;
+
+while ((item_total = document.getElementById("total_amount_" + i++))) {
+item_total.value = item_total.value.replace(/\\D/, "");
+total = total + parseFloat(item_total.value || 0);
+}
+result.value = total.toFixed(2);
+
+var alltotal = (parseFloat(total) + parseFloat(othercharge)) - parseFloat(discount_to_all_amt);
+document.getElementById("total_amt").value = alltotal.toFixed(2);
+
+// Calculate round off after setting total
+calculateRoundOff();
+updateGSTValues();
+}
+totalamtsum();
+</script>
+<script>
+function update_calculation(count) {
+var qty = document.getElementById("qty_" + count).value;
+var purchase_price = document.getElementById("purchase_price_" + count).value;
+var total = parseFloat(purchase_price) * parseFloat(qty);
+document.getElementById("unit_cost_" + count).value = purchase_price;
+document.getElementById("total_amount_" + count).value = total;
+var no = $(".total").length;
+//alert(no);
+total_sum();
+totalamtsum();
+}
+</script>
+
+
+<script>
+function updateGSTValues() {
+let totalTaxAmount = 0;
+
+// Loop through all rows and sum up tax amounts
+let i = 1;
+while (true) {
+let taxElement = document.getElementById("tax_amt_" + i);
+if (!taxElement) break;
+
+totalTaxAmount += parseFloat(taxElement.value || 0);
+i++;
+}
+
+// Split into CGST and SGST
+let cgstAmount = totalTaxAmount / 2;
+let sgstAmount = totalTaxAmount / 2;
+
+// Update the GST input fields
+document.getElementById("cgst").value = cgstAmount.toFixed(2);
+document.getElementById("sgst").value = sgstAmount.toFixed(2);
+}
+</script>
+
+
+<script>
+function update_calculation(itemId) {
+// Your existing calculation logic
+unitcost(); // Call unitcost() as part of this function
+}
+
+function unitcost() {
+// Get all the purchase price and unit cost input elements
+var purchasePrices = document.querySelectorAll('input[name="purchase_price[]"]');
+var unitCosts = document.querySelectorAll('input[name="unit_cost[]"]');
+
+// Loop through each purchase price input and calculate the unit cost
+purchasePrices.forEach(function(priceInput, index) {
+var priceValue = parseFloat(priceInput.value) || 0; // Get the price value, or 0 if invalid
+var unitCostInput = unitCosts[index]; // Get the corresponding unit cost input
+
+// Perform your unit cost calculation (replace with actual formula if needed)
+var unitCostValue = priceValue; // Adjust this if there's a specific calculation needed
+
+// Set the unit cost value
+unitCostInput.value = unitCostValue.toFixed(2); // Ensures two decimal points
+});
+}
+</script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+@endsection

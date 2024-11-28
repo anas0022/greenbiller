@@ -556,7 +556,7 @@
                                                         <div colspan="7" class="bg-sky text-bold"
                                                             style="font-size:12px; padding: 5px;">
                                                             <b>
-                                                               {{ $sale->other_charges_amt}}
+                                                               {{ $sale->other_charges_amt ?? '00'}}
                                                             </b>
                                                         </div>
                                       
@@ -573,7 +573,7 @@
                                                             <div colspan="7" class="bg-sky text-bold"
                                                                 style="font-size:12px; padding: 5px;">
                                                                 <b>
-                                                                   {{$sale->discount_to_all_input }}
+                                                                   {{$sale->discount_to_all_input ?? '00'}}
                                                                 </b>
                                                             </div>
                                           

@@ -134,7 +134,7 @@ class SalereturnController extends Controller
         try {
             $customerId = $request->customer_id;
             $sales = Sale::where('customer_id', $customerId)
-                ->select('id', 'prefix', 'sales_code', 'sales_type')
+                ->select('id', 'prefix', 'sales_code', 'sales_type','paid_amount','grand_total')
                 ->get();
 
             return response()->json([

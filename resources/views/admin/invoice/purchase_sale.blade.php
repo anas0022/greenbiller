@@ -460,15 +460,17 @@
                                         <td style="width:10%; text-align:center; border-right: 1px solid; ">
                                         </td>
                                         <td style="width:10%; text-align:center; border-right: 1px solid; ">
+                                       
                                         </td>
                                         <td style="width:10%; text-align:center; border-right: 1px solid; ">
+                                            {{ $totalQuantity }}
                                         </td>
                                         <td style="font-size:12px; text-align:center; border-right: 1px solid; ">
-                                            {{ $totalQuantity }}
+                                            {{ $totalLiter }}
                                         </td>
                                         <td
                                             style="width:10%; text-align:center; border-right: 1px solid; font-size: 12px; ">
-                                            {{ $totalLiter }}
+                                        
                                         </td>
                                         <td style="width:10%; text-align:right; border-right: 1px solid; ">
                                         </td>
@@ -521,6 +523,7 @@
                                                         <td style="font-size:12px; width:10%;" class="text-center">Amt (INR)</td>
                                                     </tr>
                                             
+                                                    <!-- Data Rows -->
                                                     @php
                                                     $totalTaxAmount = array_sum(array_column($response_data, 'tax_amt'));
                                                     $centralTax = $totalTaxAmount / 2;
@@ -532,22 +535,25 @@
                                                             {{ $item['hsn_code'] }}
                                                         </td>
                                                         <td style="font-size:12px;" class="text-center">
-                                                        {{ number_format($item['price_per_unit'] * $item['sales_qty'] , 2) }}
-                                                        </td>
-                                                        <td style="font-size:12px;" class="text-center">
-                                                            {{ number_format($item['taxable_amount'] / 2, 2) }}
-                                                        </td>
-                                                        <td style="font-size:12px;" class="text-center">
-                                                            {{ number_format($item['total_tax_percentage'] / 2, 2) }}
-                                                        </td>
-                                                        <td style="font-size:12px;" class="text-center">
-                                                            {{ number_format($item['taxable_amount'] / 2, 2) }}
+                                                            {{ number_format($item['sales_qty'] * $item['price_per_unit'], 2) }}
+
+
                                                         </td>
                                                         <td style="font-size:12px;" class="text-center">
                                                             {{ number_format($item['total_tax_percentage'] / 2, 2) }}
                                                         </td>
                                                         <td style="font-size:12px;" class="text-center">
-                                                            {{ number_format($item['taxable_amount'], 2) }}
+                                                            
+                                                            {{ number_format($item['tax_amt'] / 2, 1) }}
+                                                        </td>
+                                                        <td style="font-size:12px;" class="text-center">
+                                                            {{ number_format($item['total_tax_percentage'] / 2, 2) }}
+                                                        </td>
+                                                        <td style="font-size:12px;" class="text-center">
+                                                            {{ number_format($item['tax_amt'] / 2, 2) }}
+                                                        </td>
+                                                        <td style="font-size:12px;" class="text-center">
+                                                            {{ number_format($item['tax_amt']) }}
                                                         </td>
                                                     </tr>
                                                     @endforeach
@@ -565,17 +571,17 @@
                                                 <tr>
                                                     <td style="font-size:12px;" colspan="2">Previous Balance</td>
                                                     <td style="font-size:12px;">
-                                                        {{ round($old = $customer->firstWhere('id', $sale->customer_id)->previous_due ?? '0', 2) }}
+                                                        {{ round(abs($old = $customer->firstWhere('id', $sale->customer_id)->previous_due ?? '0'), 2) }}
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td style="font-size:12px;" colspan="2">Current Bill</td>
                                                     <td style="font-size:12px; border-bottom:1px solid;">
-                                                        {{ $gg = round( $totalAmount) }}</td>
+                                                        {{ $gg = round(abs($totalAmount)) }}</td>
                                                 </tr>
                                                 <tr>
                                                     <td style="font-size:12px;" colspan="2">Total</td>
-                                                    <td style="font-size:12px;">{{ round($old + $gg, 2) }}</td>
+                                                    <td style="font-size:12px;">{{ round(abs($old + $gg), 2) }}</td>
                                                 </tr>
                                             </table>
                                         </td>
@@ -703,6 +709,7 @@
                                                 </tr>
 
                                             </table>
+
 
                                             <div class="subtotalarea"
                                                 style="width:200px; height:100%; display:flex;  justify-content:center; ">

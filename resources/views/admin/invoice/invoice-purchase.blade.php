@@ -316,32 +316,7 @@
                                         @endforeach
 
                                     </tbody>
-                                    {{-- <tr class="bg-sky text-bold" style="border-bottom:1px solid;">
-                                        <td style="font-size:12px; text-align:center; border-right: 1px solid; ">
-                                            Total
-                                        </td>
-                                        <td style="text-align:right; font-weight:bold; border-right: 1px solid; "></td>
-                                        <td style="width:10%; text-align:center; border-right: 1px solid; ">
-                                        </td>
-                                        <td style="width:10%; text-align:center; border-right: 1px solid; ">
-                                        </td>
-                                        <td style="font-size:12px; text-align:center; border-right: 1px solid; ">
-                                            {{ $totalQuantity }}
-                                        </td>
-                                        <td
-                                            style="width:10%; text-align:center; border-right: 1px solid; font-size: 12px; ">
-                                            {{ $totalLiter }}
-                                        </td>
-                                        <td style="width:10%; text-align:right; border-right: 1px solid; ">
-                                        </td>
-                                        <td style="width:10%; text-align:right; border-right: 1px solid; ">
-                                        </td>
-                                        
-                                        <td
-                                            style=" width:10%; font-size:12px; text-align:center; border-right: 1px solid; ">
-                                            {{ $totalAmount }}
-                                        </td>
-                                    </tr> --}}
+                                
                                     <td style="width:90%;" colspan="5"></td>
                                 </table>
                                 <table>

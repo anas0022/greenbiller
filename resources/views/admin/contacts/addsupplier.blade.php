@@ -427,7 +427,7 @@
         </div>
     </div>
     </div>
-
+@endsection
 
     <!--**********************************
                     Content body end-->

@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use App\Imports\CustomersImport;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Validator;
 
 class CustomerController extends Controller
 {
@@ -108,11 +109,11 @@ return back()->with('error', 'Customer not added');
         
         // Get the customer data
         $customer = Customer::where('id', $request->input('id'))->first();
-    
+    $logo = Coresetting::all();
         // Get the country name of the customer
         $country_select = countrysettings::firstWhere('id', $customer->country);
     
-        return view('admin/contacts/customeredit', compact('customer', 'country', 'country_select'));
+        return view('admin/contacts/customeredit', compact('customer', 'country', 'logo', 'country_select'));
     }
     
     public function customer_edit(Request $request) 
@@ -328,5 +329,53 @@ public function list_supplier(){
             return back()->with('error', 'File not uploaded');
         }
 
+        public function edit(Request $request)
+        {
+            try {
+                // Your validation rules
+                $validator = Validator::make($request->all(), [
+                    'customer_name' => 'required',
+                    'mobile' => 'required',
+                    // ... other validation rules
+                ]);
+
+                if ($validator->fails()) {
+                    return response()->json([
+                        'success' => false,
+                        'errors' => $validator->errors()
+                    ], 422);
+                }
+
+                // Your existing update logic here
+                $customer = Customer::findOrFail($request->id);
+                $customer->update([
+                    'customer_name' => $request->customer_name,
+                    'mobile' => $request->mobile,
+                    // ... other fields
+                ]);
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Customer updated successfully!'
+                ]);
+
+            } catch (\Exception $e) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Something went wrong!'
+                ], 500);
+            }
+        }
+
+        // Optional: Add this method if you want to refresh the customer dropdown
+        public function getCustomers()
+        {
+            $customers = Customer::select('id', 'customer_name', 'mobile', 'email', 'gst_number')
+                ->get();
+            
+            return response()->json([
+                'customers' => $customers
+            ]);
+        }
 
     }

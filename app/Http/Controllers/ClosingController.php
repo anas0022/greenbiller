@@ -91,6 +91,7 @@ class ClosingController extends Controller
         $yesterday = date('Y-m-d', strtotime('-1 day'));
 
         $initial_sales = Sale::where('sales_date', $today)
+
             ->select('id', 'prefix', 'sales_code', 'sales_date')
             ->get();
 

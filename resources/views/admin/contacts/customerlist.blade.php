@@ -232,3 +232,4 @@ document.querySelectorAll('.status-cell').forEach(function (cell, index) {
     }
 });
 </script>
+@endsection

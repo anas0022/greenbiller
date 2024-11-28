@@ -594,7 +594,7 @@
                                                 <tr>
                                                     <td style="font-size:12px;" colspan="2">Previous Balance</td>
                                                     <td style="font-size:12px;">
-                                                        {{ round($old = $customer->firstWhere('id', $sale->customer_id)->previous_due ?? '0', 2) }}
+                                                        {{ round(abs($old = $customer->firstWhere('id', $sale->customer_id)->previous_due ?? '0'), 2) }}
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -604,7 +604,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td style="font-size:12px;" colspan="2">Total</td>
-                                                    <td style="font-size:12px;">{{ round($old + $gg, 2) }}</td>
+                                                    <td style="font-size:12px;">{{ round(abs($old + $gg), 2) }}</td>
                                                 </tr>
                                             </table>
                                         </td>

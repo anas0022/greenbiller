@@ -316,7 +316,7 @@ function pricelevel(){
     </div>
 </div>
 </div>
-
+@endsection
 
 <!--**********************************
             Content body end-->

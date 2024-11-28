@@ -1969,23 +1969,32 @@
 
 
 
-    <script>
 
-        function searchitem() {
-            var search = document.getElementById("search").value;
-            var store_id = document.getElementById("store_id").value;
-      
-            if (store_id == '') {
-              
+<script>
+    let debounceTimer;
+    function searchitem() {
+        clearTimeout(debounceTimer);
+        
+        debounceTimer = setTimeout(() => {
+            const search = document.getElementById("search").value;
+            const store_id = document.getElementById("store_id").value;
+    
+            if (!store_id) {
                 swal("Warning!", "Please select a store", "warning");
+                return;
             }
-            if (search == '') {
+    
+            if (search === '') {
                 document.getElementById("ui-id-1").style.display = "none";
-                document.getElementById("ui-id-1").innerHTML = response;
-
+                return;
             }
+    
             document.getElementById("ui-id-1").style.display = "block";
-            document.getElementById("ui-id-1").innerHTML = "!Loading .....!";
+            document.getElementById("ui-id-1").innerHTML = `<div class="alert alert-info m-2" role="alert">
+        <i class="fa fa-spinner fa-spin"></i> Searching...
+    </div>`;
+    
+       
             $.ajax({
                 type: "GET",
                 url: "{{ route('search-items') }}",
@@ -1994,179 +2003,163 @@
                     store_id: store_id
                 },
                 success: function (response) {
-                    //  var data = jQuery.parseJSON(response)
-                    // var json_obj = JSON.parse(response);
-                    var test = JSON.stringify(response);
-                    //  var data = JSON.parse(response);
-                    // alert(test);
-                    document.getElementById("ui-id-1").style.display = "block";
-                    document.getElementById("ui-id-1").innerHTML = "";
-
-                    response.forEach(function (test) {
-                        var searchs = document.getElementById("ui-id-1").innerHTML;
-                       
-                        var stockColor = (test.opening_stock < 10) ? 'red' : 'green';
-                   
-document.getElementById("ui-id-1").innerHTML = searchs + 
-    '<li class="ui-menu-item" role="presentation" >' +
-    '<a href="javascript:void(0)" onclick="additem(' + test.id + ')" class="ui-corner-all" tabindex="-1" style="display:flex; ">' + 
-    test.item_name + ' [ ' + test.part_no + ' ] ' + 
-     '<p style="color:' + stockColor + ';"  id="stock">( Stock ' + test.opening_stock + ' )</p>' + 
-    '</a></li>';
-
-                    });
-
+                    const results = response.map(test => {
+                        const stockColor = (test.opening_stock < 10) ? 'red' : 'green';
+                        return `
+                            <li class="ui-menu-item" role="presentation">
+                                <a href="javascript:void(0)" onclick="additem(${test.id})" class="ui-corner-all" tabindex="-1" style="display:flex;">
+                                    ${test.item_name} [ ${test.part_no} ] 
+                                    <p style="color:${stockColor};">( Stock ${test.opening_stock} )</p>
+                                </a>
+                            </li>`;
+                    }).join('');
+    
+                    document.getElementById("ui-id-1").innerHTML = results || '<li>No results found</li>';
                 },
-            });
-        }
-        function additem(item_id) {
-            document.getElementById("ui-id-1").style.display = "none";
-            document.getElementById("search").value = "";
-
-            $.ajax({
-                type: "GET",
-                // url: "controller/add-item-purchase.php",
-                url: "{{ route('add-item') }}",
-                data: {
-                    item_id: item_id,
-                },
-                success: function (response) {
-                    var data = JSON.stringify(response);
-                    response.forEach(function (data) {
-                        var count = $(".itemRow").length;
-                        var htmlRows = "";
-                        htmlRows += "<tr>";
-
-                        htmlRows += '<td><input name="item_id[]" type="hidden" id="item_id_' +
-
-                            count +
-                            '" class="form-control form-control-sm itemRow" value="' +
-                            data.id +
-                            '"> ' +
-                            data.item_name + ' <input type="hidden" value="' + data.item_name + '" name="item_name[]"> <input type="hidden" value="' + data.hsn_code + '" name="hsn_code[]"> <input type="hidden" value="' + data.part_no + '" name="part_no[]"> </td>';
-
-                        htmlRows += '<td> <div class="input-group input-group-sm"><span class="input-group-btn"> <button type="button" onclick="decrement_qty(1,' + count + ')" class="btn btn-default btn-flat"><i class="fa fa-minus text-danger"></i></button></span> <input name="sales_qty[]" type="text" id="qty_' + count + '" class="form-control no-padding text-center min_width" value="1"  >  <span class="input-group-btn">  <button type="button" onclick="increment_qty(1,' + count + ')" class="btn btn-default btn-flat"><i class="fa fa-plus text-success"></i> </button>  </span> </div> </td>';
-                        htmlRows += '<td>';
-
-                        // Unit ID exists in the data, pre-select the option in the dropdown
-                        htmlRows += '<select class="form-control form-control-sm"  name="unit_id[]" >';
-                        htmlRows += '<option value="">select</option>';
-                        @if($unit->isNotEmpty())
-                            @foreach ($unit as $unitvalue)
-                                htmlRows += '<option value="{{ $unitvalue->id }}" data-name="{{ $unitvalue->unit_name }}">{{ $unitvalue->unit_name }}</option>';
-                            @endforeach
-                        @else
-                            htmlRows += '<option value="">No units available</option>';
-                        @endif
-                           
-                        htmlRows +=
-                '<td> <input name="rate_inc_tax[]" id="rate_inc_tax_' +
-                count +
-                '" type="text" class="form-control form-control-sm" value="" oninput="cal_division(' + count + ')"></td>';
-
-            htmlRows +=
-                '<td> <input name="purchase_price[]" id="purchase_price_' +
-                count +
-                '" type="text"  oninput="update_calculation(' +
-                count +
-                ')" class="form-control form-control-sm" value="' +
-                (data.purchase_price ? data.purchase_price : "00") +
-                '"></td>';
-            htmlRows += '<td> <input name="discount_amt[]" id="discount_' + count + '" type="text" oninput="cal_division(' + count + ')" class="form-control form-control-sm" value="' + (data.discount ? data.discount : "00") + '"><select class="underselect" name="item_discount_type[]" id="item_discount_type_' + count + '" onchange="cal_division(' + count + ')"><option value="percent">Percent</option><option value="fixed">Fixed</option></select></td>';
-            htmlRows += '<td>';
-
-            // Tax ID does not exist, show the select dropdown
-            htmlRows += '<select name="tax_id[]" id="taxid_' + count + '" class="form-control form-control-sm" onchange="calculatetax(' + count + ');">';
-            htmlRows += '<option value="">select</option>';
-            @foreach ($tax as $taxvalue)
-                htmlRows += '<option ';
-                if (data['tax_id'] == {{$taxvalue->id}}) {
-                    htmlRows += 'selected ';
+                error: function () {
+                    document.getElementById("ui-id-1").innerHTML = "Error loading items.";
                 }
-                htmlRows += 'value="{{$taxvalue->id}}" data-id="{{$taxvalue->per}}">{{$taxvalue->taxname}}</option>';
-            @endforeach
-            htmlRows += '</select>';
-            htmlRows += '<input type="text"  id="taxInput_' + count + '"  value="' + data['tax_id'] + '" hidden>';
-
-            htmlRows += '</td>';
-            htmlRows +=
-                '<td> <input name="tax_amt[]" id="tax_amt_' +
-                count +
-                '" type="text" class="form-control form-control-sm" value="00" readonly style="background-color: #ddd;"></td>';
-
-            htmlRows +=
-                '<td><input type="text" id="mrp_' +
-                count +
-                '" value="' +
-                (data.mrp ? data.mrp : "00") +
-                '" name="mrp[]" class="form-control form-control-sm"></td>'
-
-            htmlRows +=
-                '<td> <input name="total_amount[]" id="total_amount_' +
-                count +
-                '" type="text" class="form-control form-control-sm total" value="' +
-                (data.purchase_price ? data.purchase_price : '000') +
-                '" readonly style="background-color: #ddd;" oninput="total_sum()" ></td>';
-            // htmlRows +=
-            //     '<td> <input name="bach_no[]" id="bach_no_' +
-            //     count +
-            //     '" type="text" class="form-control form-control-sm" ></td>';
-            // htmlRows +=
-            //     '<td> <input name="expire_date[]" id="expiry_date_' +
-            //     count +
-            //     '" type="date" class="form-control form-control-sm"></td>';
-            htmlRows +=
-                '<td> <button onclick="delete_row(' +
-                count +
-                ')" type="button" class="btn btn-danger shadow btn-xs sharp"><i class="fa fa-trash"></i></button></td></tr>';
-
-            $("#purchase_table").append(htmlRows);
-            document.getElementById("totalitemqty").value = (parseFloat(count) + 1);
-            document.getElementById('totalitemqty_1').value = (parseFloat(count) + 1);
-            totalamtsum()
-            calculatingtax(count);
-            itemTotal(count);
-            total_sum();
-            alldiscout();
-            
-
-        });
-                },
             });
-
-        }
-
-
-
-        //delecting a row in table
-        function delete_row(count) {
-
-            var delcol = (parseFloat(count) + 1)
-            document.getElementById("purchase_table").deleteRow(delcol);
-            var count = $(".itemRow").length;
-            var totalitemqty = parseFloat(count) - 1;
-            document.getElementById("totalitemqty").innerHTML = totalitemqty;
-            document.getElementById("totalitemqty").innerHTML = totalitemqty;
-            cal_division(count);
-            total_sum();
-            alldiscout();
-        }
-        //increacing quantity
-        function increment_qty(value, count) {
-            var qty = document.getElementById("qty_" + count).value;
-            document.getElementById("qty_" + count).value = parseFloat(qty) + value;
-            cal_division(count);
-            calculatingtax(count);
-            itemTotal(count);
-            update_calculation(count);
-            total_sum();
-            alldiscout();
-        }
-        //decrecing quantity
-        function decrement_qty(value, count) {
-            var qty = document.getElementById("qty_" + count).value;
-            if (qty != 0) {
-                document.getElementById("qty_" + count).value = parseFloat(qty) - value;
+        }, 300); // Adjust the delay as necessary
+    }
+    
+    function additem(item_id) {
+        document.getElementById("ui-id-1").style.display = "none";
+        document.getElementById("search").value = "";
+    
+        $.ajax({
+            type: "GET",
+            url: "{{ route('add-item') }}",
+            data: {
+                item_id: item_id,
+            },
+            success: function (response) {
+                const count = $(".itemRow").length;
+                let htmlRows = "";
+    
+                response.forEach(data => {
+                            var count = $(".itemRow").length;
+                            var htmlRows = "";
+                            htmlRows += "<tr>";
+    
+                            htmlRows += '<td><input name="item_id[]" type="hidden" id="item_id_' +
+    
+                                count +
+                                '" class="form-control form-control-sm itemRow" value="' +
+                                data.id +
+                                '"> ' +
+                                data.item_name + ' <input type="hidden" value="' + data.item_name + '" name="item_name[]"> <input type="hidden" value="' + data.hsn_code + '" name="hsn_code[]"> <input type="hidden" value="' + data.part_no + '" name="part_no[]"> </td>';
+    
+                            htmlRows += '<td> <div class="input-group input-group-sm"><span class="input-group-btn"> <button type="button" onclick="decrement_qty(1,' + count + ')" class="btn btn-default btn-flat"><i class="fa fa-minus text-danger"></i></button></span> <input name="sales_qty[]" type="text" id="qty_' + count + '" class="form-control no-padding text-center min_width" value="1"  >  <span class="input-group-btn">  <button type="button" onclick="increment_qty(1,' + count + ')" class="btn btn-default btn-flat"><i class="fa fa-plus text-success"></i> </button>  </span> </div> </td>';
+                            htmlRows += '<td>';
+    
+                            // Unit ID exists in the data, pre-select the option in the dropdown
+                            htmlRows += '<select class="form-control form-control-sm"  name="unit_id[]" >';
+                            htmlRows += '<option value="">select</option>';
+                            @if($unit->isNotEmpty())
+                                @foreach ($unit as $unitvalue)
+                                    htmlRows += '<option value="{{ $unitvalue->id }}" data-name="{{ $unitvalue->unit_name }}">{{ $unitvalue->unit_name }}</option>';
+                                @endforeach
+                            @else
+                                htmlRows += '<option value="">No units available</option>';
+                            @endif
+                               
+                            htmlRows +=
+                    '<td> <input name="rate_inc_tax[]" id="rate_inc_tax_' +
+                    count +
+                    '" type="text" class="form-control form-control-sm" value="" oninput="cal_division(' + count + ')"></td>';
+    
+                htmlRows +=
+                    '<td> <input name="purchase_price[]" id="purchase_price_' +
+                    count +
+                    '" type="text"  oninput="update_calculation(' +
+                    count +
+                    ')" class="form-control form-control-sm" value="' +
+                    (data.purchase_price ? data.purchase_price : "00") +
+                    '"></td>';
+                htmlRows += '<td> <input name="discount_amt[]" id="discount_' + count + '" type="text" oninput="cal_division(' + count + ')" class="form-control form-control-sm" value="' + (data.discount ? data.discount : "00") + '"><select class="underselect" name="item_discount_type[]" id="item_discount_type_' + count + '" onchange="cal_division(' + count + ')"><option value="percent">Percent</option><option value="fixed">Fixed</option></select></td>';
+                htmlRows += '<td>';
+    
+                // Tax ID does not exist, show the select dropdown
+                htmlRows += '<select name="tax_id[]" id="taxid_' + count + '" class="form-control form-control-sm" onchange="calculatetax(' + count + ');">';
+                htmlRows += '<option value="">select</option>';
+                @foreach ($tax as $taxvalue)
+                    htmlRows += '<option ';
+                    if (data['tax_id'] == {{$taxvalue->id}}) {
+                        htmlRows += 'selected ';
+                    }
+                    htmlRows += 'value="{{$taxvalue->id}}" data-id="{{$taxvalue->per}}">{{$taxvalue->taxname}}</option>';
+                @endforeach
+                htmlRows += '</select>';
+                htmlRows += '<input type="text"  id="taxInput_' + count + '"  value="' + data['tax_id'] + '" hidden>';
+    
+                htmlRows += '</td>';
+                htmlRows +=
+                    '<td> <input name="tax_amt[]" id="tax_amt_' +
+                    count +
+                    '" type="text" class="form-control form-control-sm" value="00" readonly style="background-color: #ddd;"></td>';
+    
+                htmlRows +=
+                    '<td><input type="text" id="mrp_' +
+                    count +
+                    '" value="' +
+                    (data.mrp ? data.mrp : "00") +
+                    '" name="mrp[]" class="form-control form-control-sm"></td>'
+    
+                htmlRows +=
+                    '<td> <input name="total_amount[]" id="total_amount_' +
+                    count +
+                    '" type="text" class="form-control form-control-sm total" value="' +
+                    (data.purchase_price ? data.purchase_price : '000') +
+                    '" readonly style="background-color: #ddd;" oninput="total_sum()" ></td>';
+                // htmlRows +=
+                //     '<td> <input name="bach_no[]" id="bach_no_' +
+                //     count +
+                //     '" type="text" class="form-control form-control-sm" ></td>';
+                // htmlRows +=
+                //     '<td> <input name="expire_date[]" id="expiry_date_' +
+                //     count +
+                //     '" type="date" class="form-control form-control-sm"></td>';
+                htmlRows +=
+                    '<td> <button onclick="delete_row(' +
+                    count +
+                    ')" type="button" class="btn btn-danger shadow btn-xs sharp"><i class="fa fa-trash"></i></button></td></tr>';
+    
+                $("#purchase_table").append(htmlRows);
+                document.getElementById("totalitemqty").value = (parseFloat(count) + 1);
+                document.getElementById('totalitemqty_1').value = (parseFloat(count) + 1);
+                totalamtsum()
+                calculatingtax(count);
+                itemTotal(count);
+                total_sum();
+                alldiscout();
+                
+    
+            });
+                    },
+                });
+    
+            }
+    
+    
+    
+            //delecting a row in table
+            function delete_row(count) {
+    
+                var delcol = (parseFloat(count) + 1)
+                document.getElementById("purchase_table").deleteRow(delcol);
+                var count = $(".itemRow").length;
+                var totalitemqty = parseFloat(count) - 1;
+                document.getElementById("totalitemqty").innerHTML = totalitemqty;
+                document.getElementById("totalitemqty").innerHTML = totalitemqty;
+                cal_division(count);
+                total_sum();
+                alldiscout();
+            }
+            //increacing quantity
+            function increment_qty(value, count) {
+                var qty = document.getElementById("qty_" + count).value;
+                document.getElementById("qty_" + count).value = parseFloat(qty) + value;
                 cal_division(count);
                 calculatingtax(count);
                 itemTotal(count);
@@ -2174,338 +2167,350 @@ document.getElementById("ui-id-1").innerHTML = searchs +
                 total_sum();
                 alldiscout();
             }
-
-        }
-
-        function cal_division(counts) {
-            var amt_inc_tax = document.getElementById("rate_inc_tax_" + counts).value;
-            var taxid = document.getElementById("taxid_" + counts);
-            var taxoption = taxid.options[taxid.selectedIndex];
-            var taxvalue = taxoption.getAttribute('data-id');
-            var qty = document.getElementById("qty_" + counts).value;
-            var purchase_price = (parseFloat(amt_inc_tax) * 100) / (100 + parseFloat(taxvalue));
-            document.getElementById("purchase_price_" + counts).value = purchase_price;
-            calculatingtax(counts);
-            itemTotal(counts);
-            total_sum();
-            totalamtsum();
-            alldiscout();
-
-        }
-
-        function calculatetax(counts) {
-            calculatingtax(counts);
-            itemTotal(counts);
-            total_sum();
-            totalamtsum();
-            alldiscout();
-        }
-
-        function calculatingtax(counts) {
-            var taxid = document.getElementById("taxid_" + counts);
-            var taxoption = taxid.options[taxid.selectedIndex];
-            var taxvalue = taxoption.getAttribute('data-id');
-            var qty = document.getElementById("qty_" + counts).value;
-            var purchase_price = document.getElementById("purchase_price_" + counts).value;
-            var taxamt = ((parseFloat(purchase_price) * parseFloat(qty)) * parseFloat(taxvalue)) / 100
-            document.getElementById("tax_amt_" + counts).value = taxamt;
-            itemTotal(counts);
-            alldiscout();
-            total_sum();
-            totalamtsum();
-
-        }
-
-
-        function itemTotal(count) {
-
-            // alert('haii');
-            var qty = document.getElementById("qty_" + count).value;
-            var purchase_price = document.getElementById("purchase_price_" + count).value;
-            var taxamt = document.getElementById("tax_amt_" + count).value;
-            var discount = document.getElementById("discount_" + count).value;
-            var item_discount_type = document.getElementById("item_discount_type_" + count).value;
-            if (item_discount_type == 'percent') {
-                var discount_amt = ((parseFloat(purchase_price) * parseFloat(discount)) / 100);
-            } else {
-                var discount_amt = discount;
+            //decrecing quantity
+            function decrement_qty(value, count) {
+                var qty = document.getElementById("qty_" + count).value;
+                if (qty != 0) {
+                    document.getElementById("qty_" + count).value = parseFloat(qty) - value;
+                    cal_division(count);
+                    calculatingtax(count);
+                    itemTotal(count);
+                    update_calculation(count);
+                    total_sum();
+                    alldiscout();
+                }
+    
             }
-            var itemtotalamt = (((parseFloat(purchase_price) * parseFloat(qty)) + parseFloat(taxamt))) - parseFloat(discount_amt);
-            document.getElementById("total_amount_" + count).value = itemtotalamt.toFixed(3);
-            total_sum();
-            alldiscout();
-            totalamtsum();
-        }
-
-
-        // geting total sum
-        function total_sum() {
-            // alert('haii');
-            var result = document.getElementById("subtotal_amt");
-            var item_total,
-                i = 0,
-                total = 0;
-            while ((item_total = document.getElementById("total_amount_" + i++))) {
-                item_total.value = item_total.value.replace(/\\D/, "");
-                total = total + parseFloat(item_total.value);
-            }
-            result.value = total;
-            //alert(total);
-            document.getElementById("grand_total").value = total;
-            //document.getElementById("subtotal_amt-s").innerHTML = total;
-            document.getElementById("subtotal_amt").value = total;
-            //totaldicount();
-            alldiscout();
-        }
-
-
-
-        function othercharge() {
-
-            var other_charges_input = document.getElementById("other_charges_input").value;
-            document.getElementById("other_charges_amt").value = other_charges_input;
-            var othercharges_tax_id = document.getElementById("othercharges_tax_id").value;
-            var othercharges_tax_id = document.getElementById("othercharges_tax_id");
-            var otherchargeoption = othercharges_tax_id.options[othercharges_tax_id.selectedIndex];
-            var othertaxvalue = otherchargeoption.getAttribute('data-percentage');
-
-            if (other_charges_input != "") {
-                var tax_amt = ((other_charges_input * othertaxvalue) / 100);
-                var other_charges_amt = parseFloat(other_charges_input) + parseFloat(tax_amt);
-                document.getElementById("other_charges_amt").value = other_charges_amt;
-
+    
+            function cal_division(counts) {
+                var amt_inc_tax = document.getElementById("rate_inc_tax_" + counts).value;
+                var taxid = document.getElementById("taxid_" + counts);
+                var taxoption = taxid.options[taxid.selectedIndex];
+                var taxvalue = taxoption.getAttribute('data-id');
+                var qty = document.getElementById("qty_" + counts).value;
+                var purchase_price = (parseFloat(amt_inc_tax) * 100) / (100 + parseFloat(taxvalue));
+                document.getElementById("purchase_price_" + counts).value = purchase_price;
+                calculatingtax(counts);
+                itemTotal(counts);
                 total_sum();
-
-            } else {
-                //document.getElementById("total_amt").value = 0;
-                var subtotal_amt = document.getElementById("subtotal_amt").value;
-                document.getElementById("total_amt").value = subtotal_amt;
-                total_sum();
+                totalamtsum();
+                alldiscout();
+    
             }
-
-            alldiscout();
-            totalamtsum();
-        }
-
-
-        function alldiscout() {
-
-
-
-            var discount_to_all_input = document.getElementById("discount_to_all_amt").value;
-            document.getElementById("total_discount_amt").value = discount_to_all_input;
-            var discount_to_all_type = document.getElementById("discount_to_all_type").value;
-
-            // alert(discount_to_all_type);
-
-            if (discount_to_all_type == 'Percentage') {
-                var subtotal_amt = document.getElementById("subtotal_amt").value;
-                var discount_peramt = ((subtotal_amt * discount_to_all_input) / 100);
-                document.getElementById("total_discount_amt").value = parseFloat(discount_peramt);
-                var subtotal_amt = document.getElementById("subtotal_amt").value;
-                var other_charges_amt = document.getElementById("other_charges_amt").value;
-                var total_amt = (parseFloat(subtotal_amt) + parseFloat(other_charges_amt)) - parseFloat(discount_peramt)
-                document.getElementById("grand_total").value = total_amt;
-            } else {
+    
+            function calculatetax(counts) {
+                calculatingtax(counts);
+                itemTotal(counts);
+                total_sum();
+                totalamtsum();
+                alldiscout();
+            }
+    
+            function calculatingtax(counts) {
+                var taxid = document.getElementById("taxid_" + counts);
+                var taxoption = taxid.options[taxid.selectedIndex];
+                var taxvalue = taxoption.getAttribute('data-id');
+                var qty = document.getElementById("qty_" + counts).value;
+                var purchase_price = document.getElementById("purchase_price_" + counts).value;
+                var taxamt = ((parseFloat(purchase_price) * parseFloat(qty)) * parseFloat(taxvalue)) / 100
+                document.getElementById("tax_amt_" + counts).value = taxamt;
+                itemTotal(counts);
+                alldiscout();
+                total_sum();
+                totalamtsum();
+    
+            }
+    
+    
+            function itemTotal(count) {
+    
+                // alert('haii');
+                var qty = document.getElementById("qty_" + count).value;
+                var purchase_price = document.getElementById("purchase_price_" + count).value;
+                var taxamt = document.getElementById("tax_amt_" + count).value;
+                var discount = document.getElementById("discount_" + count).value;
+                var item_discount_type = document.getElementById("item_discount_type_" + count).value;
+                if (item_discount_type == 'percent') {
+                    var discount_amt = ((parseFloat(purchase_price) * parseFloat(discount)) / 100);
+                } else {
+                    var discount_amt = discount;
+                }
+                var itemtotalamt = (((parseFloat(purchase_price) * parseFloat(qty)) + parseFloat(taxamt))) - parseFloat(discount_amt);
+                document.getElementById("total_amount_" + count).value = itemtotalamt.toFixed(3);
+                total_sum();
+                alldiscout();
+                totalamtsum();
+            }
+    
+    
+            // geting total sum
+            function total_sum() {
+                // alert('haii');
+                var result = document.getElementById("subtotal_amt");
+                var item_total,
+                    i = 0,
+                    total = 0;
+                while ((item_total = document.getElementById("total_amount_" + i++))) {
+                    item_total.value = item_total.value.replace(/\\D/, "");
+                    total = total + parseFloat(item_total.value);
+                }
+                result.value = total;
+                //alert(total);
+                document.getElementById("grand_total").value = total;
+                //document.getElementById("subtotal_amt-s").innerHTML = total;
+                document.getElementById("subtotal_amt").value = total;
+                //totaldicount();
+                alldiscout();
+            }
+    
+    
+    
+            function othercharge() {
+    
+                var other_charges_input = document.getElementById("other_charges_input").value;
+                document.getElementById("other_charges_amt").value = other_charges_input;
+                var othercharges_tax_id = document.getElementById("othercharges_tax_id").value;
+                var othercharges_tax_id = document.getElementById("othercharges_tax_id");
+                var otherchargeoption = othercharges_tax_id.options[othercharges_tax_id.selectedIndex];
+                var othertaxvalue = otherchargeoption.getAttribute('data-percentage');
+    
+                if (other_charges_input != "") {
+                    var tax_amt = ((other_charges_input * othertaxvalue) / 100);
+                    var other_charges_amt = parseFloat(other_charges_input) + parseFloat(tax_amt);
+                    document.getElementById("other_charges_amt").value = other_charges_amt;
+    
+                    total_sum();
+    
+                } else {
+                    //document.getElementById("total_amt").value = 0;
+                    var subtotal_amt = document.getElementById("subtotal_amt").value;
+                    document.getElementById("total_amt").value = subtotal_amt;
+                    total_sum();
+                }
+    
+                alldiscout();
+                totalamtsum();
+            }
+    
+    
+            function alldiscout() {
+    
+    
+    
+                var discount_to_all_input = document.getElementById("discount_to_all_amt").value;
                 document.getElementById("total_discount_amt").value = discount_to_all_input;
-                var subtotal_amt = document.getElementById("subtotal_amt").value;
+                var discount_to_all_type = document.getElementById("discount_to_all_type").value;
+    
+                // alert(discount_to_all_type);
+    
+                if (discount_to_all_type == 'Percentage') {
+                    var subtotal_amt = document.getElementById("subtotal_amt").value;
+                    var discount_peramt = ((subtotal_amt * discount_to_all_input) / 100);
+                    document.getElementById("total_discount_amt").value = parseFloat(discount_peramt);
+                    var subtotal_amt = document.getElementById("subtotal_amt").value;
+                    var other_charges_amt = document.getElementById("other_charges_amt").value;
+                    var total_amt = (parseFloat(subtotal_amt) + parseFloat(other_charges_amt)) - parseFloat(discount_peramt)
+                    document.getElementById("grand_total").value = total_amt;
+                } else {
+                    document.getElementById("total_discount_amt").value = discount_to_all_input;
+                    var subtotal_amt = document.getElementById("subtotal_amt").value;
+                    var other_charges_amt = document.getElementById("other_charges_amt").value;
+                    var total_amt = (parseFloat(subtotal_amt) + parseFloat(other_charges_amt)) - parseFloat(discount_to_all_input)
+                    document.getElementById("grand_total").value = total_amt;
+                }
+    
+                document.getElementById('total_amount_print').value = document.getElementById('grand_total').value;
+                totalamtsum()
+    
+            }
+    
+    
+    
+        </script>
+    
+    
+        <script>
+            function update_calculation(count) {
+                var qty = document.getElementById("qty_" + count).value;
+                var purchase_price = document.getElementById("purchase_price_" + count).value;
+                var total = parseFloat(purchase_price) * parseFloat(qty);
+                document.getElementById("unit_cost_" + count).value = purchase_price;
+                document.getElementById("total_amount_" + count).value = total;
+                var no = $(".total").length;
+                //alert(no);
+                total_sum();
+                totalamtsum()
+            }
+        </script>
+    
+    
+    
+        <script>
+            function totalamtsum() {
+    
+            }
+        </script>
+    
+        <script>
+    
+            function unitvalue(count) {
+    
+                var unitSelect = document.getElementById('unitselect_' + count);
+    
+                var selectedOption = unitSelect.options[unitSelect.selectedIndex];
+    
+    
+                var gotAttri = selectedOption.getAttribute('data-name');
+    
+    
+                if (gotAttri === 'Ltr') {
+                    document.getElementById('totallitters_' + count + '').style.display = "block";
+                    document.getElementById('totalnos_' + count + '').style.display = "none";
+                }
+                else if (gotAttri === 'Nos') {
+                    document.getElementById('totalnos_' + count + '').style.display = "block";
+                    document.getElementById('totallitters_' + count + '').style.display = "none";
+                }
+                else {
+                    document.getElementById('totalnos_' + count + '').style.display = "none";
+                    document.getElementById('totallitters_' + count + '').style.display = "none";
+                }
+            }
+    
+        </script>
+        <!-- <script>
+            function totalamtsum() {
+                // alert();
+                var subtotal_amt = document.getElementById("subtotal_amt").value
                 var other_charges_amt = document.getElementById("other_charges_amt").value;
-                var total_amt = (parseFloat(subtotal_amt) + parseFloat(other_charges_amt)) - parseFloat(discount_to_all_input)
-                document.getElementById("grand_total").value = total_amt;
+                var discount_to_all_amt = document.getElementById("discount_to_all_amt").value;
+                var round_off_amt = document.getElementById("round_off_amt").value;
+    
+    
+    
+                document.getElementById("total_amt").value = subtotal_amt;
+    
+                alert(subtotal_amt);
             }
-
-            document.getElementById('total_amount_print').value = document.getElementById('grand_total').value;
-            totalamtsum()
-
-        }
-
-
-
-    </script>
-
-
-    <script>
-        function update_calculation(count) {
-            var qty = document.getElementById("qty_" + count).value;
-            var purchase_price = document.getElementById("purchase_price_" + count).value;
-            var total = parseFloat(purchase_price) * parseFloat(qty);
-            document.getElementById("unit_cost_" + count).value = purchase_price;
-            document.getElementById("total_amount_" + count).value = total;
-            var no = $(".total").length;
-            //alert(no);
-            total_sum();
-            totalamtsum()
-        }
-    </script>
-
-
-
-    <script>
-        function totalamtsum() {
-
-        }
-    </script>
-
-    <script>
-
-        function unitvalue(count) {
-
-            var unitSelect = document.getElementById('unitselect_' + count);
-
-            var selectedOption = unitSelect.options[unitSelect.selectedIndex];
-
-
-            var gotAttri = selectedOption.getAttribute('data-name');
-
-
-            if (gotAttri === 'Ltr') {
-                document.getElementById('totallitters_' + count + '').style.display = "block";
-                document.getElementById('totalnos_' + count + '').style.display = "none";
+        </script> -->
+        <script>
+            function calculateTotalLiters() {
+                const quantity = parseFloat(document.getElementById("quantity").value);
+                const litersPerItem = parseFloat(document.getElementById("litersPerItem").value);
+    
+                if (!isNaN(quantity) && !isNaN(litersPerItem)) {
+                    const totalLiters = quantity * litersPerItem;
+                    document.getElementById("totalLiters").value = totalLiters.toFixed(2);
+                } else {
+                    document.getElementById("totalLiters").value = "";
+                }
             }
-            else if (gotAttri === 'Nos') {
-                document.getElementById('totalnos_' + count + '').style.display = "block";
-                document.getElementById('totallitters_' + count + '').style.display = "none";
+    
+            document.getElementById("quantity").addEventListener("input", calculateTotalLiters);
+            document.getElementById("litersPerItem").addEventListener("input", calculateTotalLiters);
+        </script>
+        <script>
+            function payselect() {
+                var selectElement = document.getElementById('accountSelect');
+                var inputElement = document.getElementById('accountInput');
+                var selectedType = selectElement.options[selectElement.selectedIndex].value;
+    
+                // Set the selected discount type into the input field
+                inputElement.value = selectedType;
             }
-            else {
-                document.getElementById('totalnos_' + count + '').style.display = "none";
-                document.getElementById('totallitters_' + count + '').style.display = "none";
+        </script>
+    
+        <script>
+            function accountsselect() {
+                var selectElement = document.getElementById('accountsSelect');
+                var inputElement = document.getElementById('accountsInput');
+                var selectedType = selectElement.options[selectElement.selectedIndex].value;
+    
+                // Set the selected discount type into the input field
+                inputElement.value = selectedType;
             }
-        }
-
-    </script>
-    <!-- <script>
-        function totalamtsum() {
-            // alert();
-            var subtotal_amt = document.getElementById("subtotal_amt").value
-            var other_charges_amt = document.getElementById("other_charges_amt").value;
-            var discount_to_all_amt = document.getElementById("discount_to_all_amt").value;
-            var round_off_amt = document.getElementById("round_off_amt").value;
-
-
-
-            document.getElementById("total_amt").value = subtotal_amt;
-
-            alert(subtotal_amt);
-        }
-    </script> -->
-    <script>
-        function calculateTotalLiters() {
-            const quantity = parseFloat(document.getElementById("quantity").value);
-            const litersPerItem = parseFloat(document.getElementById("litersPerItem").value);
-
-            if (!isNaN(quantity) && !isNaN(litersPerItem)) {
-                const totalLiters = quantity * litersPerItem;
-                document.getElementById("totalLiters").value = totalLiters.toFixed(2);
-            } else {
-                document.getElementById("totalLiters").value = "";
-            }
-        }
-
-        document.getElementById("quantity").addEventListener("input", calculateTotalLiters);
-        document.getElementById("litersPerItem").addEventListener("input", calculateTotalLiters);
-    </script>
-    <script>
-        function payselect() {
-            var selectElement = document.getElementById('accountSelect');
-            var inputElement = document.getElementById('accountInput');
-            var selectedType = selectElement.options[selectElement.selectedIndex].value;
-
-            // Set the selected discount type into the input field
-            inputElement.value = selectedType;
-        }
-    </script>
-
-    <script>
-        function accountsselect() {
-            var selectElement = document.getElementById('accountsSelect');
-            var inputElement = document.getElementById('accountsInput');
-            var selectedType = selectElement.options[selectElement.selectedIndex].value;
-
-            // Set the selected discount type into the input field
-            inputElement.value = selectedType;
-        }
-    </script>
-
-    <script>
-        document.getElementById('total_amount_print').value =
-            document.getElementById('grand_total').value;
-    </script>
-
-    <!-- Bootstrap 3.3.6 -->
-    <script src="{{ asset('pos_assets/js/bootstrap.min.js') }}"></script>
-
-
-    <!-- SlimScroll -->
-    <script src="{{ asset('pos_assets/js/jquery.slimscroll.min.js') }}"></script>
-    <!-- FastClick -->
-    <script src="{{ asset('pos_assets/js/fastclick.js') }}"></script>
-    <!-- Shortcut Keys -->
-    <script src="{{ asset('pos_assets/js/shortcuts.js') }}"></script>
-    <!-- Select2 -->
-    <script src="{{ asset('pos_assets/js/select2.full.min.js') }}"></script>
-
-
-    <!-- <script src="pos_assets/js/app.js"></script>  -->
-
-    <!--Toastr notification -->
-    <script src="{{ asset('pos_assets/js/toastr.js') }}"></script>
-    <script src="{{ asset('pos_assets/js/toastr_custom.js') }}"></script>
-    <!--Toastr notification end-->
-    <!-- bootstrap datepicker -->
-    <script src="{{ asset('pos_assets/js/moment.min.js') }}"></script>
-    <script src="{{ asset('pos_assets/js/daterangepicker.js') }}"></script>
-    <!-- bootstrap datepicker -->
-    <script src="{{ asset('pos_assets/js/bootstrap-datepicker.js') }}"></script>
-    <!-- Autocomplete -->
-    <script src="{{ asset('pos_assets/js/autocomplete.js') }}"></script>
-    <!-- Custom JS -->
-    <script src="{{ asset('pos_assets/js/special_char_check.js') }}"></script>
-    <script src="{{ asset('pos_assets/js/custom.js') }}"></script>
-
-    <!-- Pace Loader -->
-    <script src="{{ asset('pos_assets/js/pace.min.js') }}"></script>
-    <!-- <script type="text/javascript">
-        $(document).ajaxStart(function () {
-            Pace.restart();
-        });
-    </script> -->
-    <!-- Sweet alert -->
-    <script src="{{ asset('pos_assets/js/sweetalert.min.js') }}"></script>
-
-    <!-- iCheck -->
-    <script src="{{ asset('pos_assets/js/icheck.min.js') }}"></script>
-
-    <!-- Initialize Select2 Elements -->
-    <script type="text/javascript">
-        $(".select2").select2();
-    </script>
-    <!-- Initialize toggler -->
-
-    <!-- Initialize date with its Format -->
-
-
-
-    <!-- iCheck -->
-    <script src="{{ asset('pos_assets/js/icheck.min.js') }}"></script>
-
-    <script src="{{ asset('pos_assets/js/fullscreen.js') }}"></script>
-    <script src="{{ asset('pos_assets/js/modals.js') }}"></script>
-    <script src="{{ asset('pos_assets/js/modal_item.js') }}"></script>
-    <!-- <script src="{{ asset('pos_assets/js/customer_select_ajax.js') }}"></script> -->
-
-    <!-- DROP DOWN -->
-    <script src="{{ asset('pos_assets/js/bootstrap3-typeahead.min.js') }}"></script>
-    <!-- DROP DOWN END-->
-
-    <script type="text/javascript">
-        var warehouse_module = false;
-        warehouse_module = true;
-        var store_module = false;
-    </script>
-    <!-- <script src="pos_assets/js/pos.js"></script> -->
-    <ul class="ui-autocomplete ui-front ui-menu ui-widget ui-widget-content ui-corner-all" id="ui-id-1" tabindex="0"
-        style="display: none"></ul>
-
-</body>
-
-</html>
+        </script>
+    
+        <script>
+            document.getElementById('total_amount_print').value =
+                document.getElementById('grand_total').value;
+        </script>
+    
+        <!-- Bootstrap 3.3.6 -->
+        <script src="{{ asset('pos_assets/js/bootstrap.min.js') }}"></script>
+    
+    
+        <!-- SlimScroll -->
+        <script src="{{ asset('pos_assets/js/jquery.slimscroll.min.js') }}"></script>
+        <!-- FastClick -->
+        <script src="{{ asset('pos_assets/js/fastclick.js') }}"></script>
+        <!-- Shortcut Keys -->
+        <script src="{{ asset('pos_assets/js/shortcuts.js') }}"></script>
+        <!-- Select2 -->
+        <script src="{{ asset('pos_assets/js/select2.full.min.js') }}"></script>
+    
+    
+        <!-- <script src="pos_assets/js/app.js"></script>  -->
+    
+        <!--Toastr notification -->
+        <script src="{{ asset('pos_assets/js/toastr.js') }}"></script>
+        <script src="{{ asset('pos_assets/js/toastr_custom.js') }}"></script>
+        <!--Toastr notification end-->
+        <!-- bootstrap datepicker -->
+        <script src="{{ asset('pos_assets/js/moment.min.js') }}"></script>
+        <script src="{{ asset('pos_assets/js/daterangepicker.js') }}"></script>
+        <!-- bootstrap datepicker -->
+        <script src="{{ asset('pos_assets/js/bootstrap-datepicker.js') }}"></script>
+        <!-- Autocomplete -->
+        <script src="{{ asset('pos_assets/js/autocomplete.js') }}"></script>
+        <!-- Custom JS -->
+        <script src="{{ asset('pos_assets/js/special_char_check.js') }}"></script>
+        <script src="{{ asset('pos_assets/js/custom.js') }}"></script>
+    
+        <!-- Pace Loader -->
+        <script src="{{ asset('pos_assets/js/pace.min.js') }}"></script>
+        <!-- <script type="text/javascript">
+            $(document).ajaxStart(function () {
+                Pace.restart();
+            });
+        </script> -->
+        <!-- Sweet alert -->
+        <script src="{{ asset('pos_assets/js/sweetalert.min.js') }}"></script>
+    
+        <!-- iCheck -->
+        <script src="{{ asset('pos_assets/js/icheck.min.js') }}"></script>
+    
+        <!-- Initialize Select2 Elements -->
+        <script type="text/javascript">
+            $(".select2").select2();
+        </script>
+        <!-- Initialize toggler -->
+    
+        <!-- Initialize date with its Format -->
+    
+    
+    
+        <!-- iCheck -->
+        <script src="{{ asset('pos_assets/js/icheck.min.js') }}"></script>
+    
+        <script src="{{ asset('pos_assets/js/fullscreen.js') }}"></script>
+        <script src="{{ asset('pos_assets/js/modals.js') }}"></script>
+        <script src="{{ asset('pos_assets/js/modal_item.js') }}"></script>
+        <!-- <script src="{{ asset('pos_assets/js/customer_select_ajax.js') }}"></script> -->
+    
+        <!-- DROP DOWN -->
+        <script src="{{ asset('pos_assets/js/bootstrap3-typeahead.min.js') }}"></script>
+        <!-- DROP DOWN END-->
+    
+        <script type="text/javascript">
+            var warehouse_module = false;
+            warehouse_module = true;
+            var store_module = false;
+        </script>
+        <!-- <script src="pos_assets/js/pos.js"></script> -->
+        <ul class="ui-autocomplete ui-front ui-menu ui-widget ui-widget-content ui-corner-all" id="ui-id-1" tabindex="0"
+            style="display: none"></ul>
+    
+    </body>
+    
+    </html>

@@ -825,7 +825,7 @@
                                             <h4 class="modal-title text-center">Edit Customer</h4>
                                         </div>
 
-                                        <form id="customer_edit">
+                                        <form id="customerEditForm">
                                             @csrf
                                             <input type="hidden" id="id" name="id">
                                             <div class="modal-body" style="padding: 80px;">
@@ -1040,7 +1040,7 @@
                                                                             document.getElementById("pricelevelInput").value = document.getElementById('pricelevelSelect').value;
                                                                         }
                                                                     </script>
-                                                                    <input type="text" name="price_level_type_value"
+                                                                    <input type="hidden" name="price_level_type_value"
                                                                         id="pricelevelInput">
                                                                     <select name="price_level_type"
                                                                         id="pricelevelSelect"
@@ -1069,11 +1069,74 @@
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-warning"
                                                     data-dismiss="modal">Close</button>
-                                                <button type="submit" class="btn btn-primary">Save</button>
+                                                <button type="submit" id="" class="btn btn-primary">Save</button>
                                             </div>
 
                                         </form>
+                                  
 
+                                        <script>
+                                        $(document).ready(function() {
+                                            $('#customerEditForm').on('submit', function(e) {
+                                           
+                                                e.preventDefault();
+                                                
+                                                $.ajax({
+                                                    type: 'POST',
+                                                    url: "{{ route('customer_edit') }}",
+                                                    data: $(this).serialize(),
+                                                    success: function(response) {
+                                                        if(response.success) {
+                                                            // Show success message
+                                                            swal({
+                                                                title: "Success!",
+                                                                text: response.message,
+                                                                icon: "success",
+                                                                type: "success"
+                                                            });
+                                                            
+                                                            // Close modal
+                                                            $('#customer-modal').modal('hide');
+                                                            
+                                                            // Optionally refresh the customer select if needed
+                                                            if (typeof refreshCustomerSelect === 'function') {
+                                                                refreshCustomerSelect(response.customer);
+                                                            }
+                                                        }
+                                                    },
+                                                    error: function(xhr) {
+                                                        let errorMessage = 'Something went wrong!';
+                                                        
+                                                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                                                            errorMessage = xhr.responseJSON.message;
+                                                        }
+                                                        
+                                                        swal({
+                                                            title: "Error!",
+                                                            text: errorMessage,
+                                                            icon: "error",
+                                                            type: "error"
+                                                        });
+                                                    }
+                                                });
+                                            });
+                                        });
+                                        
+                                        // Optional: Function to refresh customer select if needed
+                                        function refreshCustomerSelect(customer) {
+                                            var select = $('#customer_id'); // Adjust selector as needed
+                                            var option = select.find('option[value="' + customer.id + '"]');
+                                            
+                                            if (option.length) {
+                                                option.text(customer.customer_name);
+                                            }
+                                            
+                                            // If using bootstrap-select, refresh it
+                                            if (select.hasClass('selectpicker')) {
+                                                select.selectpicker('refresh');
+                                            }
+                                        }
+                                        </script>
                                         <!-- edit customer -->
 
 
@@ -1646,68 +1709,7 @@
                                                             style=" font-size: 16px;font-weight: bold;overflow: scroll;"
                                                             id="item-results">
 
-                                                            <!--  <tr>
-                                                                <td><input name="item_id[]" type="hidden" id="item_id_"
-                                                                        class="form-control form-control-sm itemRow"
-                                                                        value="">
-                                                                    €Item Name
-                                                                </td>
-
-                                                                <td>
-                                                                    <div class="input-group input-group-sm">
-                                                                        <span class="input-group-btn">
-                                                                            <button type="button"
-                                                                                class="btn btn-default btn-flat"><i
-                                                                                    class="fa fa-minus text-danger"></i></button>
-                                                                        </span>
-                                                                        <input name="qty[]" type="text"
-                                                                            class="form-control no-padding text-center min_width"
-                                                                            value="" oninput="">
-                                                                        <span class="input-group-btn">
-                                                                            <button type="button" onclick=""
-                                                                                class="btn btn-default btn-flat">
-                                                                                <i class="fa fa-plus text-success"></i>
-                                                                            </button>
-                                                                        </span>
-                                                                    </div>
-                                                                </td>
-                                                                <td class="text-right"> 
-                                                                    
-                                                                    <select name="" id="" class="form-control no-padding min_width">
-                                                                        <option value="">1</option>
-                                                                    </select>
-                                                                </td>
-                                                                <td class="text-right"> 
-                                                                    <input id="" oninput="" name="sales_price[]" type="text" class="form-control no-padding min_width" value="" /> 
-                                                                </td>
-                                                                <td class="text-right"> 
-                                                                    <input id="" name="item_discount_amt[]" type="text" class="form-control no-padding min_width pointer" value="" />
-                                                                 </td>
-                                                                <td> 
-                                                                    <input id="" name="tax_amt[]" type="text" class="form-control no-padding pointer min_width"  value="" /> 
-                                                                </td>
-                                                                <td class="text-right"> 
-                                                                <select name="" id="" class="form-control no-padding min_width">
-                                                                        <option value="">1</option>
-                                                                    </select>
-                                                                </td>
-                                                                <td class="text-right"> 
-                                                                    <input id="" name="item_discount_amt[]" type="text" class="form-control no-padding min_width pointer" value="" />
-                                                                 </td>
-                                                                 <td class="text-right"> 
-                                                                    <input id="" name="item_discount_amt[]" type="text" class="form-control no-padding min_width pointer" value="" />
-                                                                 </td>
-                                                                 <td class="text-right"> 
-                                                                    <input id="" name="item_discount_amt[]" type="text" class="form-control no-padding min_width pointer" value="" />
-                                                                 </td>
-
-                                                               
-                                                                <td> <a class="fa fa-fw fa-trash-o text-red"
-                                                                        style="cursor: pointer; font-size: 20px"
-                                                                        onclick="" title="Delete Item?"></a> </td>
-                                                            </tr> -->
-
-
+                                                           
                                                         </tbody>
 
                                                     </table>
@@ -1868,23 +1870,7 @@
 
                                     <div class="row" style="margin-top: 10px !important;">
                                         <div class="col-md-12 text-right">
-                                            <!-- <div class="col-sm-3">
-                                                <button type="button"
-                                                    class="btn bg-maroon btn-block btn-flat btn-lg btnhold"
-                                                    title="Hold Invoice [Alt+H]" onclick="hold()">
-                                                    <i class="fa fa-hand-paper-o" aria-hidden="true"></i>
-                                                    Hold
-                                                </button>
-                                            </div> -->
-                                            <!-- <div class="col-sm-3">
-                                                <button type="button" id="" name=""
-                                                    class="btn btn-primary btnhold btn-block btn-flat btn-lg show_payments_modal"
-                                                    title="Multiple Payments [Alt+M]" data-toggle="modal"
-                                                    data-target="#cash-payments-modal">
-                                                    <i class="fa fa-credit-card" aria-hidden="true"></i>
-                                                    Multiple
-                                                </button>
-                                            </div> -->
+                                         
                                             <div class="col-sm-3" style="float: right;">
                                                 <button type="button"
                                                     class="btn btnhold btn-success btn-block btn-flat btn-lg Alt_c"
@@ -2023,38 +2009,7 @@
                                                                         <!-- col-md-12 -->
                                                                     </div>
 
-                                                                    <!-- <div class="row">
-                                                                                <div class="col-md-12">
-                                                                                    <div class="col-md-12">
-                                                                                        <div class="col-md-12">
-                                                                                            <button type="button" class="btn btn-primary btn-block" id="add_payment_row">
-                                                                                                Add Payment Row
-                                                                                            </button>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div> -->
-
-                                                                    <!--  <div class="row">
-                                                                        <div class="col-md-12">
-                                                                            <div class="col-md-12">
-                                                                                <div class="col-md-12">
-                                                                                    <div class="">
-                                                                                        <label
-                                                                                            for="sales_note">Note</label>
-                                                                                        <textarea type="text"
-                                                                                            class="form-control"
-                                                                                            id="sales_note"
-                                                                                            name="sales_note"
-                                                                                            placeholder=""></textarea>
-                                                                                        <span id="sales_note_msg"
-                                                                                            style="display: none"
-                                                                                            class="text-danger"></span>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div> -->
+                                                                 
                                                                 </div>
                                                                 <!-- col-md-9 -->
                                                                 <style>
@@ -2129,14 +2084,7 @@
                                                             </div>
                                                             <!-- /.modal-dialog -->
                                                         </div>
-                                                        <!-- **********************MODALS***************** -->
-
-                                                        <!-- <div class="col-sm-3">
-                                        <button type="button" id="pay_all" name="" class="btn bg-purple btnhold btn-block btn-flat btn-lg Alt_a" title="By Cash &amp; Save [Alt+A]">
-                                            <i class="fa fa-money" aria-hidden="true"></i>
-                                            Pay All
-                                        </button>
-                                    </div> -->
+                                                    
 
 
 
