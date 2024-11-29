@@ -209,7 +209,7 @@ $(document).ready(function() {
         let expenseAmount = parseFloat(response.expense_amount) || 0;
 
         // Calculate closing balance
-        let closingBalance = openingBalance + salePayment - expenseAmount - totalPurchase;
+        let closingBalance = salePayment + expenseAmount - totalPurchase;
         
         // For debugging - remove these lines after testing
         console.log('Opening Balance:', openingBalance);
