@@ -30,12 +30,15 @@
                             <thead>
                                 <tr>
                                     <th class="text-center">Today's Invoices</th>
-                                    <th class="text-center">Today's Purchase</th>
+                                   
                                     <th class="text-center">Today's Sales</th>
+                                    <th class="text-center">Today's Purchase Bill</th>
+                                    <th class="text-center">Today's Purchase</th>
                                     <th class="text-center">Today's Expenses</th>
                                 </tr>
                             </thead>
                             <tbody>
+
                                 <!-- Details Row -->
                                 <tr>
                                     <td class="text-center" id="invoice_list">
@@ -43,19 +46,25 @@
                                             {{$item->prefix}}/{{$item->sales_code}}<br>
                                         @endforeach
                                     </td>
-                                    <td class="text-center" id="purchase_list">
                                    
-                                       @foreach ($payment as $item)
-                                            ₹{{number_format($item->payment, 2)}}<br>
-                                        @endforeach
-                              
-                                    </td>
-                                    <td class="text-center" id="sale_list">
+                                    <td class="text-center  flash-cell " id="sale_list">
                                         @foreach ($sale_amount as $item)
                                             ₹{{number_format($item->payment, 2)}}<br>
                                         @endforeach
                                     </td>
-                                    <td class="text-center" id="expense_list">
+                                    <td class="text-center flash-cell table-info" id="purchase_bill_list">
+                                        @foreach ($purchases as $item)
+                                            <div class="amount-line">{{$item->prefix}}/{{$item->purchase_code}}</div>
+                                        @endforeach
+                                    </td>
+                                    <td class="text-center flash-cell " id="purchase_list">
+                                   
+                                        @foreach ($payment as $item)
+                                             ₹{{number_format($item->payment, 2)}}<br>
+                                         @endforeach
+                               
+                                     </td>
+                                    <td class="text-center flash-cell " id="expense_list">
                                         @foreach ($expense as $item)
                                             ₹{{number_format($item->amount, 2)}}<br>
                                         @endforeach
@@ -65,17 +74,22 @@
                                 <!-- Totals Row -->
                                 <tr class="table-info">
                                     <th class="text-center">
-                                        Total Invoices: <span id="total_invoices">{{number_format($total_invoice_count, 0)}}</span>
-                                        <input type="hidden" name="invoice_count" id="invoice_count_input" value="{{$total_invoice_count}}">
-                                    </th>
-                                    <th class="text-center">
-                                        Total Purchase: ₹<span id="total_purchase">{{number_format(0, 2)}}</span>
-                                        <input type="hidden" name="total_purchase" id="total_purchase_input" value="">
+                                        Total Invoices: <span id="total_invoices">{{number_format($sale->count(), 0)}}</span>
+                                        <input type="hidden" name="invoice_count" id="invoice_count_input" value="{{$sale->count()}}">
                                     </th>
                                     <th class="text-center">
                                         Total Sales: ₹<span id="total_sales">{{number_format($sale_payment, 2)}}</span>
                                         <input type="hidden" name="total_sale" id="total_sale_input" value="{{$sale_payment}}">
                                     </th>
+                                    <th class="text-center">
+                                        Total Purchase Bills: <span id="total_purchase_bills">{{number_format($purchase_count, 0)}}</span>
+                                        <input type="hidden" name="total_purchase_bills" id="total_purchase_bills_input" value="{{$purchase_count}}">
+                                    </th>
+                                    <th class="text-center">
+                                        Total Purchase: ₹<span id="total_purchase">{{number_format(0, 2)}}</span>
+                                        <input type="hidden" name="total_purchase" id="total_purchase_input" value="{{number_format(0, 2)}}">
+                                    </th>
+                                    
                                     <th class="text-center">
                                         Total Expenses: ₹<span id="total_expenses">{{number_format($expense_amount, 2)}}</span>
                                         <input type="hidden" name="total_expense" id="total_expense_input" value="{{$expense_amount}}">
@@ -85,9 +99,10 @@
                                 <!-- Final Closing Row -->
                                 <tr class="table-success">
                                     <th colspan="3" class="text-center">Total Closing Balance</th>
+                                    <td class="text-center font-weight-bold"></td>
                                     <td class="text-center font-weight-bold">
-                                        ₹<span id="closing_balance">{{number_format(($sale_payment - $expense_amount + ($opening_balance->closing_amount ?? 0)), 2)}}</span>
-                                        <input type="hidden" name="closing_amount" id="closing_amount_input" value="{{$sale_payment - $expense_amount + ($opening_balance->closing_amount ?? 0)}}">
+                                        ₹<span id="closing_balance">{{number_format($sale_payment - $expense_amount - ($payment_total ?? 0), 2)}}</span>
+                                        <input type="hidden" name="closing_amount" id="closing_amount_input" value="{{$sale_payment - $expense_amount - ($payment_total ?? 0)}}">
                                     </td>
                                 </tr>
                             </tbody>
@@ -209,7 +224,7 @@ $(document).ready(function() {
         let expenseAmount = parseFloat(response.expense_amount) || 0;
 
         // Calculate closing balance
-        let closingBalance = salePayment + expenseAmount - totalPurchase;
+        let closingBalance = salePayment - expenseAmount - totalPurchase;
         
         // For debugging - remove these lines after testing
         console.log('Opening Balance:', openingBalance);
@@ -220,6 +235,17 @@ $(document).ready(function() {
         // Update display and input
         updateElementWithAnimation('#closing_balance', numberFormat(closingBalance));
         $('#closing_amount_input').val(closingBalance);
+
+        // Update purchase bill list with animation
+        let purchaseBillHtml = '';
+        response.purchases.forEach(function(item) {
+            purchaseBillHtml += `<div class="amount-line">${item.prefix}/${item.purchase_code}</div>`;
+        });
+        updateElementWithAnimation('#purchase_bill_list', purchaseBillHtml);
+
+        // Update purchase bills count
+        updateElementWithAnimation('#total_purchase_bills', numberFormat(response.purchases.length, 0));
+        $('#total_purchase_bills_input').val(response.purchases.length);
     }
 
     function updateElementWithAnimation(selector, newValue) {
@@ -227,9 +253,14 @@ $(document).ready(function() {
         const currentValue = element.html();
         if (currentValue !== newValue) {
             element.fadeOut(100, function() {
-                $(this).html(newValue).fadeIn(100)
-                    .css('background-color', '#fff3cd')
-                    .animate({ backgroundColor: 'transparent' }, 1000);
+                $(this).html(newValue)
+                       .fadeIn(100)
+                       .addClass('highlight table-info');
+            
+                setTimeout(function() {
+                    element.removeClass('highlight')
+                          .addClass('table-info');
+                }, 1000);
             });
         }
     }
@@ -265,5 +296,29 @@ td, th {
     0% { background-color: #fff3cd; }
     100% { background-color: transparent; }
 }
+
+.amount-line {
+    padding: 2px 0;
+    margin: 2px 0;
+}
+
+.flash-cell {
+    background-color: transparent;
+    transition: background-color 0.5s ease;
+}
+
+.flash-cell.highlight {
+    background-color: #fff3cd !important;
+}
+
+/* Add spacing between lines */
+.amount-line:not(:last-child) {
+    border-bottom: 1px solid #eee;
+}
+
+.custom-bg {
+    background-color: #fff3cd !important;  /* This is Bootstrap's warning background color */
+}
 </style>
 @endsection
+

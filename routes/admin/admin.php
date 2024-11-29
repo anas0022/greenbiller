@@ -88,7 +88,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'role:admin|superadm
     Route::post('/customer_post', [CustomerController::class, 'customer_post'])->name('add.cu.admin');
     Route::get('/customer_list', [CustomerController::class, 'customer_list'])->name('customer_list');
     Route::post('/customer_status', [CustomerController::class, 'customer_status'])->name('customer.status');
-    Route::post('/customer_edit', [CustomerController::class, 'editcustomer'])->name('edit.customer');
+    
     Route::post('/customer_editpost', [CustomerController::class, 'customer_edit'])->name('customer_edit');
     Route::post('/deletecu', [CustomerController::class, 'deletecu'])->name('deletecu');
     Route::get('/add_supplier', [CustomerController::class, 'add_supplier'])->name('add_supplier');

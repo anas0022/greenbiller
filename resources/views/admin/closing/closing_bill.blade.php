@@ -39,6 +39,10 @@
                                                 <td class="text-right" id="total_sale" style="font-size: 12px;">0.00</td>
                                         </tr>
                                         <tr>
+                                            <th  class="bg-light" style="font-size: 12px;">Total Purchase</th>
+                                            <td class="text-right" id="total_purchase" style="font-size: 12px;">0.00</td>
+                                        </tr>
+                                        <tr>
                                             <th class="bg-light" style="font-size: 12px;">Total Expenses</th>
                                             <td class="text-right" id="total_expense" style="font-size: 12px;">0.00</td>
                                         </tr>
@@ -53,8 +57,12 @@
                                             <td class="text-right" id="invoice_count" style="font-size: 12px;">0</td>
                                         </tr>
                                         <tr>
+                                            <th class="bg-light" style="width: 50%; font-size: 12px;">Total Purchase</th>
+                                            <td class="text-right" id="purchase_count" style="font-size: 12px;">0</td>
+                                        </tr>
+                                        <tr>
                                             <th class="bg-light" style="font-size: 12px;">Cash Payments</th>
-                                                <td class="text-right" id="cash_payments" style="font-size: 15px;">0.00</td>
+                                                <td class="text-right" id="cash_payments" style="font-size: 15px;">0</td>
                                         </tr>
                                         <tr class="table-active font-weight-bold">
                                             <th class="bg-light" style="font-size: 12px;">Closing Amount</th>
@@ -199,6 +207,8 @@ $(document).ready(function() {
                 $('#opening_balance').text(formatNumber(closing.opening_balance));
                 $('#statement_number').text(closing.prefix+closing.closing_code);
                 $('#total_sale').text(formatNumber(closing.total_sale));
+                $('#total_purchase').text(formatNumber(closing.total_purchase));
+                $('#purchase_count').text(formatNumber(closing.purchase_count));
                 $('#cash_payments').text(formatNumber(closing.total_sale));
                 $('#total_expense').text(formatNumber(closing.total_expense));
                 $('#invoice_count').text(closing.invoice_count);

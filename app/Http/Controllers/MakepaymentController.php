@@ -25,7 +25,7 @@ class MakepaymentController extends Controller
         $sale = Sale::where('id', $request->input('id'))->first();
        
         $storeIds = Store::where('id', $sale->store_id)->first();
-       
+        $today_date = date('Y-m-d');
 
         $sales_payment_init = $storeIds->pluck('sales_payment_init')->first();
 
@@ -33,6 +33,7 @@ class MakepaymentController extends Controller
         $salepay = $sale->paid_amount;
        
         $sale->paid_amount = $request->input('paid_amount')+$salepay;
+        $sale->sales_date = $today_date;
         $sale->update();
         $salespayment = new salespayment();
 
@@ -49,7 +50,7 @@ class MakepaymentController extends Controller
         $salespayment->payment_code = 'PAY-' . $payment_code;
 
         $salespayment->store_id = $sale->store_id;
-
+        $salespayment -> payment_date = $today_date;
 
         $salespayment->sales_id = $sale->id;
 
@@ -77,7 +78,7 @@ class MakepaymentController extends Controller
              
                 $existingLedger->invoice_purchase_no = 'PAY/'.$sale->sales_code;
                
-                $existingLedger->date = $sale->sales_date;
+                $existingLedger->date = $today_date;
           
                 $existingLedger->save();
                 return redirect()->route('reciept.view', ['id' => $existingLedger->id]);
@@ -86,7 +87,7 @@ class MakepaymentController extends Controller
                 $ledger->sale_id = $sale->id;
                 $ledger->customer_id = $sale->customer_id;
                 $ledger->store_id = $sale->store_id;
-                $ledger->date = $sale->sales_date;
+                $ledger->date = $today_date;
                 $ledger->invoice_purchase_no = 'PAY/'.$sale->sales_code;
                 $ledger->title = 'Cash';
                 $ledger->credit = $request->input('paid_amount');
@@ -108,6 +109,7 @@ class MakepaymentController extends Controller
             'account_id' => 'required',
             'payment_note_1' => 'required'
         ]);
+        $today_date = date('Y-m-d');
 
         $purchase = Purchase::where('id', $request->input('id'))->first();
      
@@ -117,14 +119,14 @@ class MakepaymentController extends Controller
 
         $payment_code = $sales_payment_init . '/' . sprintf("%04d", $purchase->id + 1);
 
-      
        
         $purchasepay = $purchase->paid_amount;
       
-
+        
         $purchase->paid_amount = $request->input('paid_amount')+$purchasepay;
-    
+        $purchase->purchase_date = $today_date;
         $purchase->update();
+    
         $salespayment = new Purchasepay();
 
         $salespayment->payment = $request->input('paid_amount');
@@ -144,7 +146,7 @@ class MakepaymentController extends Controller
 
         $salespayment->purchase_id = $purchase->id;
 
-        $salespayment->payment_date = $purchase->purchase_date;
+        $salespayment->payment_date = $today_date;
 
         $salespayment->supplier_id = $purchase->supplier_id;
 
@@ -157,7 +159,7 @@ class MakepaymentController extends Controller
             $ledger->purchase_id = $purchase->id;
             $ledger->customer_id = $purchase->supplier_id;
             $ledger->store_id = $purchase->store_id;
-            $ledger->date = $purchase->purchase_date;
+            $ledger->date = $today_date;
 
             
             $ledger->invoice_purchase_no = $payment_code;

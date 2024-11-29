@@ -624,35 +624,35 @@
                             </table>
                         </div>
 
-                        <div style="width:100%; border-top:1px solid; margin-top: :20px; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-                            <table cellspacing="0px" cellpadding="2px" style="width:100%; ">
-                                <tr style=" border-bottom:1px solid;">
-                                   <td style="font-size:12px; margin-top:12px; width:60%;">
-                                        <b> Terms & Conditions: </b> <br>
-                                        (1) There will be no warranty or replacement for physical or external damages
-                                        like:- Lightning,Mishandling,Electric shortcircuit,Warranty seal broken and
-                                        cover
-                                        broken,damages caused by the courier service.(2) After the payment due date,
-                                        interest @24% per month will be charged on
-                                        the amount overdue .(3) Rs.500 will be charged per cheque if it is bounced.(4)
-                                        The cheque has to be given within 5 days of purchase. If the cheque is not
-                                        given, the
-                                        account will be blocked by the accounts section.(5) Items sold will not be taken
-                                        back or exchanged.(6) It is the responsibility of the customer to check whether
-                                        the
-                                        item is damaged or not.(7) Only the warranty as per manufactures warranty policy
-                                        will be applicable for the items sold.
-                                    </td>
-                                    <td  style="width:100%; display:flex; justify-content:end; font-size:13px;" >
-                                                <b>Seal & Signature</b>
-                                    </td>
-                                  
-                                </tr>
-                               
-                            </table>
+                        <div style="width:100%; border-top:1px solid; margin-top:20px; display:flex; justify-content:center; align-items:stretch;">
+                            <div cellspacing="0px" cellpadding="2px" style="width:100%;">
+                                <div style="border-bottom:1px solid; display:flex; min-height:150px;">
+                                    <div style="font-size:12px; padding:12px; width:60%; border-right:1px solid;">
+                                        <b>Terms & Conditions:</b><br>
+                                        <div style="margin-top:5px; line-height:1.4;">
+                                            (1) There will be no warranty or replacement for physical or external damages
+                                            like:- Lightning, Mishandling, Electric shortcircuit, Warranty seal broken and
+                                            cover broken, damages caused by the courier service.<br>
+                                            (2) After the payment due date, interest @24% per month will be charged on
+                                            the amount overdue.<br>
+                                            (3) Rs.500 will be charged per cheque if it is bounced.<br>
+                                            (4) The cheque has to be given within 5 days of purchase. If the cheque is not
+                                            given, the account will be blocked by the accounts section.<br>
+                                            (5) Items sold will not be taken back or exchanged.<br>
+                                            (6) It is the responsibility of the customer to check whether the
+                                            item is damaged or not.<br>
+                                            (7) Only the warranty as per manufactures warranty policy
+                                            will be applicable for the items sold.
+                                        </div>
+                                    </div>
+                                    <div style="width:40%; display:flex; flex-direction:column; justify-content:flex-end; align-items:center; padding:20px;">
+                                        <div style="width:100%; border-top:1px solid; padding-top:10px; text-align:center;">
+                                            <b style="font-size:13px;">Seal & Signature</b>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-
-                        <!-- T&C & Bank Details & signatories End -->
 
                         <td colspan="16" style="text-align: center;font-size: 11px; margin-top:60px;    ">
                             <center>

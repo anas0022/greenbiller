@@ -3,9 +3,31 @@
 @section('title', 'Home Page')
 
 <link href="{{asset('admin-assets/css/toast.css')}}" rel="stylesheet">
+<script src="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.css">
 @section('content')
 
+@if($errors->any())
+    <script>
+        swal({
+            title: "Error!",
+            text: "{!! implode('\n', $errors->all()) !!}",
+            icon: "error",
+            type: "error"
+        });
+    </script>
+@endif
 
+@if(session('success'))
+    <script>
+        swal({
+            title: "Success!",
+            text: "{{ session('success') }}",
+            icon: "success",
+            type: "success"
+        });
+    </script>
+@endif
 
 <div class="modal fade" id="additemModal" tabindex="-1">
 
@@ -27,6 +49,9 @@
                     <div class="card-body">
 
                         <div class="row">
+
+
+
                             <div class="col-lg-4 mb-2">
                                 <div class="form-group">
                                     <label class="form-label">Item Code<span class="required">*</span></label>
@@ -166,7 +191,7 @@
                                                 <option value="{{$s->id}}" data-name="{{$s->id}}">
                                                     {{$s->store_name}}
                                                 </option>
-                                                <!-- Assuming you have an 'id' field -->
+                                              
                                             @endforeach
                                         </select>
                                     </div>
@@ -409,15 +434,168 @@
     </div>
 </div>
 
+<div class="modal fade" id="supplierModel" tabindex="-1">
 
+
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <form id="supplier_post">
+
+                @csrf
+
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-text d-inline">Add Suppliers </h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-6 mb-2">
+                                <div class="form-group">
+                                    <label class="form-label">Supplier Name<span class="required">*</span></label>
+                                    <input type="text" name="supplier_name" class="form-control" required="">
+                                    <input type="text" name="supplier_code" class="form-control" readonly value=""
+                                        hidden>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 mb-2">
+                                <div class="form-group">
+                                    <label class="form-label">Mobile<span class="required">*</span></label>
+                                    <input type="text" name="mobile" class="form-control" required="">
+                                </div>
+                            </div>
+                            <div class="col-lg-6 mb-2">
+                                <div class="form-group">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" name="email" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-lg-6 mb-2">
+                                <div class="form-group">
+                                    <label class="form-label">Phone</label>
+                                    <input type="text" name="phone" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-lg-6 mb-2">
+                                <div class="form-group">
+                                    <label class="form-label">GST Number</label>
+                                    <input type="text" name="gstin" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-lg-6 mb-2">
+                                <div class="form-group">
+                                    <label class="form-label">TAX Number</label>
+                                    <input type="text" name="tax_number" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-lg-6 mb-2">
+                                <div class="form-group">
+                                    <label class="form-label">Opening Balance</label>
+                                    <input type="text" name="opening_balance" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-lg-6 mb-2">
+                                <div class="form-group">
+                                    <label class="form-label">Address</label>
+                                    <textarea name="address" class="form-control"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 mb-2">
+                                <div class="form-group">
+                                    <label class="form-label">City</label>
+                                    <input type="text" name="city" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-lg-6 mb-2">
+                                <div class="form-group">
+                                    <label class="form-label">Postcode</label>
+                                    <input type="text" name="postcode" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-lg-6 mb-2">
+                                <div class="form-group">
+                                    <label class="form-label">State</label>
+                                    <input type="text" name="state" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-lg-6 mb-2">
+                                <div class="form-group">
+                                    <input type="hidden" name="country" id="countryInput">
+                                    <label class="form-label">Store</label>
+
+                                    <select  onchange="countryselecting()" name="store_id"
+                                        class="form-control selectpicker" data-live-search="true">
+                                        <option value="">-Select-</option>
+                                        @foreach ($store as $c)
+
+                                            <option value="{{$c->id}}">{{$c->store_name}}</option>
+
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 mb-2">
+                                <script>
+                                    function countryselecting() {
+                                        var countryInput = document.getElementById('countryInput');
+                                        var countryselect = document.getElementById('countryselect');
+
+                                        countryInput.value = countryselect.value;
+                                    }
+                                </script>
+                                <div class="form-group">
+                                    <input type="hidden" name="country" id="countryInput">
+                                    <label class="form-label">Country</label>
+
+                                    <select id="countryselect" onchange="countryselecting()" name="country_id"
+                                        class="form-control selectpicker" data-live-search="true">
+                                        <option value="">-Select-</option>
+                                        @foreach ($country as $c)
+
+                                            <option value="{{$c->id}}">{{$c->name}}</option>
+
+                                        @endforeach
+                                    </select>
+                                </div>
+
+
+                            </div>
+
+
+
+
+                        </div>
+
+
+
+                    </div>
+                    <hr class="solid">
+                    <div class="card-header">
+
+                        <a href="dashboard" class="btn btn-danger ">Close</a>
+                        <button name="save" type="submit" class="btn btn-primary">Save</button>
+                    </div>
+
+                </div>
+
+            </form>
+
+
+            <!-- edit customer -->
+
+
+        </div>
+        <!-- /.modal-content -->
+    </div>
+</div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
     $('#item_post').on('submit', function (e) {
-        e.preventDefault(); // Prevent the default form submission
+        e.preventDefault();
 
         $.ajax({
             url: "{{ route('item_post') }}",
-            type: "POST", // Use POST method
+            type: "POST",
             data: $(this).serialize(),
             success: function (response) {
                 alert('Data updated successfully');
@@ -425,7 +603,28 @@
             },
             error: function (xhr) {
                 alert('An error occurred');
-                console.error(xhr.responseText); // Log the error for debugging
+                console.error(xhr.responseText);
+            }
+        });
+    });
+</script>
+
+<script>
+    $('#supplier_post').on('submit', function (e) {
+        e.preventDefault();
+
+        $.ajax({
+            url: "{{ route('add.su') }}",
+            type: "POST",
+            data: $(this).serialize(),
+            success: function (response) {
+
+                alert('Data updated successfully');
+                location.reload();
+            },
+            error: function (xhr) {
+                alert('An error occurred');
+                console.error(xhr.responseText);
             }
         });
     });
@@ -519,6 +718,7 @@
 
 </script>
 
+
 <div>
     <div class="content-body">
 
@@ -548,38 +748,76 @@
 
                                             <!-- Make it readonly -->
                                             <div class="input-group mb-3">
-                                                <select id="store_id" name="store_id" class="form-control "
-                                                    required onchange="storeselect()">
-                                                   
+                                                <select id="store_id" name="store_id" class="form-control selectpicker"
+                                                    data-live-search="true" required onchange="storeselect()">
+                                                    <option value="">-Select-</option>
                                                     @foreach ($store as $s)
-                                                        <option value="{{$s->id}}" data-name="{{$s->id}}">
-                                                            {{$s->store_name}}
+                                                        <option value="{{$s->id}}" data-name="{{$s->id}}">{{$s->store_name}}
                                                         </option>
-                                                        <!-- Assuming you have an 'id' field -->
                                                     @endforeach
                                                 </select>
                                             </div>
 
 
 
-
                                         </div>
-                                    </div>
+                                    </div><!-- 
+                                    <script>
+                                        /*   function selectall() {
+                                              function storeselect();
+                                              function supplierselect();
+                                          } */
+                                        function supplierselect() {
+                                            var storeId = document.getElementById('store_id').value;
+
+
+                                            if (!storeId) {
+                                                alert('Please select a store.');
+                                                return;
+                                            }
+
+                                            $.ajax({
+                                                url: `{{ route('get.suppliers') }}`,
+                                                type: 'GET',
+                                                data: { store_id: storeId },
+                                                alert('dfs');
+                                                success: function (data) {
+                                                    alert(data)
+                                                    var data = jQuery.parseJSON(data);
+                                                    let supplierSelect = $('#suppSelect');
+                                                    supplierSelect.empty();
+                                                    supplierSelect.append('<option value="">-Select-</option>');
+
+
+                                                    $.each(data, function (key, supplier) {
+                                                        supplierSelect.append(`<option value="${supplier.id}">${supplier.name}</option>`);
+                                                    });
+
+                                                    supplierSelect.selectpicker('refresh');
+                                                },
+                                                error: function (xhr) {
+                                                    console.error("Error occurred:", xhr.responseText);
+                                                    alert('An error occurred while fetching suppliers.');
+                                                }
+                                            });
+                                        }
+
+                                    </script> -->
                                     <script>
                                         function storeselect() {
 
                                             var store_id = document.getElementById('store_id').value;
 
-                                       
+
                                             $.ajax({
                                                 type: "GET",
-                                                url: "{{ route('store.purchasecode') }}",
+                                                url: "{{ route('purchasecode') }}",
                                                 data: {
                                                     store_id: store_id
                                                 },
                                                 success: function (response) {
-                                                
-                                                     var data = jQuery.parseJSON(response);
+
+                                                    var data = jQuery.parseJSON(response);
                                                     // // var data = JSON.stringify(response);
                                                     // // alert(data.newSalescode);
                                                     if (data.newSalesCode == '') {
@@ -617,21 +855,20 @@
 
                                             <div class="input-group mb-3">
                                                 <select class="form-control selectpicker" data-live-search="true"
-                                                    required id="suppSelect" onchange="updateSupplierName()"
-                                                    name="supplier_id">
+                                                    required id="suppSelect" name="supplier_id">
                                                     <option value="">-Select-</option>
-                                                    @foreach ($supplier as $s)
-                                                        <option value="{{$s->id}}">{{$s->name}}</option>
+                                                    @foreach ($supplier as $su )
 
+                                                    <option value="{{$su->id}}">{{$su->name}}</option>
+                                                    
                                                     @endforeach
                                                 </select>
-
                                                 <button class="btn btn-primary" type="button" data-bs-toggle="modal"
-                                                    data-bs-target="#supplierModal"> + </button>
+                                                    data-bs-target="#supplierModel"> + </button>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-lg-6 mb-2">
+                                    <!--     <div class="col-lg-6 mb-2">
                                         <div class="form-group">
                                             <label class="form-label">Purchase Code <span
                                                     class="required">*</span></label>
@@ -643,7 +880,7 @@
                                             </div>
                                         </div>
                                     </div>
-
+ -->
 
 
                                     <script>
@@ -674,14 +911,22 @@
 
                                     <div class="col-lg-6 mb-2">
                                         <div class="form-group">
-                                            <label class="form-label">Purchase Date<span class="required">*</span></label>
+                                            <label class="form-label">Purchase Date<span
+                                                    class="required">*</span></label>
                                             <input type="date" name="purchase_date" class="form-control form-control-sm"
-                                            value="<?php echo date("Y-m-d"); ?>">
+                                                value="">
                                         </div>
                                     </div>
                                     <style>
 
                                     </style>
+
+                                    <div class="col-lg-6 mb-2">
+                                        <div class="form-group">
+                                            <label class="form-label">Reference No</label>
+                                            <input type="text" name="re_no" class="form-control form-control-sm">
+                                        </div>
+                                    </div>
                                     <div class="col-lg-6 mb-2">
                                         <div class="form-group">
                                             <label class="form-label">Bill Number</label>
@@ -705,7 +950,7 @@
                                                     let bill_no = $('input[name="bill_no"]').val();
 
                                                     $.ajax({
-                                                        url: "{{ route('billno_exist') }}",
+                                                        url: "{{ route('store.billno_exist') }}",
                                                         type: "POST",
                                                         data: {
                                                             _token: "{{ csrf_token() }}",
@@ -733,13 +978,6 @@
                                         </script>
 
                                     </div>
-                                    <div class="col-lg-6 mb-2">
-                                        <div class="form-group">
-                                            <label class="form-label">Reference No</label>
-                                            <input type="text" name="re_no" class="form-control form-control-sm">
-                                        </div>
-                                    </div>
-
                                 </div>
 
 
@@ -842,7 +1080,7 @@
                                                         <input type="hidden" name="tax" id="taxInput">
                                                         <select name="othercharges_tax_id" id="othercharges_tax_id"
                                                             class="form-control selectpicker" data-live-search="true"
-                                                            required onchange="othercharge()">
+                                                             onchange="othercharge()">
 
                                                             <option value="">Select Tax</option>
                                                             @foreach ($tax as $t)
@@ -893,6 +1131,7 @@
                                                             type="text" class="form-control form-control-sm"
                                                             oninput="alldiscout()" value="0">
                                                     </div>
+                                                    
                                                     <div class="col-sm-4 mt-2 mt-sm-0">
                                                         <select name="discount_to_all_type"
                                                             class="form-control form-control-sm"
@@ -931,24 +1170,7 @@
                                             </div>
                                         </div>
                                         <div class="col-lg-6 mb-2">
-                                            <script>
-                                                function calculateSubtotal() {
-                                                    // Select all input fields with the class 'purchase_total'
-                                                    var purchaseTotals = document.querySelectorAll('.purchase_total');
-                                                    var subtotalInput = document.getElementById('subtotal_amt'); // Select the subtotal input
-                                                    let subtotal = 0;
-
-                                                    // Loop through each input field to calculate the subtotal
-                                                    purchaseTotals.forEach(function (item) {
-                                                        // Parse the value as a float and add to subtotal
-                                                        subtotal += parseFloat(item.value) || 0; // Use || 0 to handle NaN cases
-                                                    });
-
-                                                    // Update the value of the subtotal input field with the calculated subtotal
-                                                    subtotalInput.value = subtotal.toFixed(2); // Format to two decimal places
-                                                }
-                                            </script>
-
+                                            
 
                                             <table class="col-md-9">
                                                 <tbody>
@@ -980,7 +1202,7 @@
                                                                         name="other_charges_amt"
                                                                         class="form-control form-control-sm"
                                                                         style="background-color: #ddd; font-size:18px !important;"
-                                                                        oninput="totalamtsum()" name="other_charge"
+                                                                        oninput="totalamtsum()" 
                                                                         readonly>
                                                                 </div>
                                                             </div>
@@ -989,18 +1211,18 @@
                                                         </th>
                                                     </tr>
                                                     <tr>
-                                                        <th class="text-right" style="font-size: 15px;">Discount on All
+                                                        <th class="text-right" style="font-size: 15px; width: 30%;">Discount on All
                                                         </th>
                                                         <th class="text-right"
                                                             style="padding-left:10%;font-size: 15px;">
-                                                            <div class="mb-3 row">
+                                                            <div class="mb-2 row">
                                                                 <label class="col-sm-2 col-form-label"></label>
                                                                 <div class="col-sm-10">
                                                                     <input type="text" id="discount_to_all_amt"
                                                                         name="tot_discount_to_all_amt"
                                                                         class="form-control form-control-sm"
                                                                         style="background-color: #ddd;font-size:18px !important;"
-                                                                        oninput="totalamtsum()" name="all_discount"
+                                                                        oninput="totalamtsum()" 
                                                                         readonly>
                                                                 </div>
                                                             </div>
@@ -1022,48 +1244,101 @@
                                                             alert(subtotal_amt);
                                                         }
                                                     </script>
-                                                    <tr>
-                                                        <th class="text-right" style="font-size: 15px;">Round Off
-                                                            <i class="hover-q " data-container="body"
-                                                                data-toggle="popover" data-placement="top"
-                                                                data-content="Go to Site Settings-> Site -> Disable the Round Off(Checkbox)."
-                                                                data-html="true" data-trigger="hover"
-                                                                data-original-title="Do you wants to Disable Round Off ?"
-                                                                title="">
-                                                                <i
-                                                                    class="fa fa-info-circle text-maroon text-black hover-q"></i>
-                                                            </i>
-
+                                                       <tr>
+                                                        <th class="text-right" style="font-size: 15px;">GST
                                                         </th>
                                                         <th class="text-right"
                                                             style="padding-left:10%;font-size: 15px;">
                                                             <div class="mb-3 row">
                                                                 <label class="col-sm-2 col-form-label"></label>
-                                                                <div class="col-sm-10">
-                                                                    <input type="text" id="round_off_amt"
-                                                                        name="round_off"
+                                                                <div class="col-sm-10" style="display: flex; justify-content: space-between; gap: 2px;">
+                                                                  
+                                                              
+                                                                    <div class="col-sm-6">
+                                                                        
+                                                                        CGST
+                                                                        <input type="text" id="cgst"
+                                                                        name="tot_discount_to_all_amt"
                                                                         class="form-control form-control-sm"
                                                                         style="background-color: #ddd;font-size:18px !important;"
-                                                                        oninput="totalamtsum()" readonly>
+                                                                    
+                                                                        readonly>
+                                                                    </div>
+                                                                    <div class="col-sm-6">
+                                                                        SGST
+                                                                        <input type="text" id="sgst"
+                                                                        name="tot_discount_to_all_amt"
+                                                                        class="form-control form-control-sm"
+                                                                        style="background-color: #ddd;font-size:18px !important;"
+                                                                
+                                                                        readonly>
+                                                                    </div>
                                                                 </div>
                                                             </div>
+                                                            
                                                         </th>
                                                     </tr>
+                                                  
                                                     <tr>
                                                         <th class="text-right" style="font-size: 15px;">Grand Total</th>
-                                                        <th class="text-right"
-                                                            style="padding-left:10%;font-size: 15px;">
+                                                        <th class="text-right" style="padding-left:10%;font-size: 15px;">
                                                             <div class="mb-3 row">
                                                                 <label class="col-sm-2 col-form-label"></label>
                                                                 <div class="col-sm-10">
                                                                     <input type="text" id="total_amt" name="grand_total"
                                                                         class="form-control form-control-sm" readonly
-                                                                        style="background-color: #ddd;font-size:18px !important;">
+                                                                        style="background-color: #ddd;font-size:18px !important;" 
+                                                                        oninput="calculateRoundOff()">
                                                                 </div>
                                                             </div>
-
                                                         </th>
                                                     </tr>
+                                                    <tr>
+                                                        <th class="text-right" style="font-size: 15px;">Round Off
+                                                            <i class="hover-q " data-container="body" data-toggle="popover" data-placement="top"
+                                                                data-content="Go to Site Settings-> Site -> Disable the Round Off(Checkbox)."
+                                                                data-html="true" data-trigger="hover"
+                                                                data-original-title="Do you wants to Disable Round Off ?" title="">
+                                                                <i class="fa fa-info-circle text-maroon text-black hover-q"></i>
+                                                            </i>
+                                                        </th>
+                                                        <th class="text-right" style="padding-left:10%;font-size: 15px;">
+                                                            <div class="mb-3 row">
+                                                                <label class="col-sm-2 col-form-label"></label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" id="round_off_amt" name="round_off"
+                                                                        class="form-control form-control-sm"
+                                                                        style="background-color: #ddd;font-size:18px !important;" readonly>
+                                                                </div>
+                                                            </div>
+                                                        </th>
+                                                    </tr>
+                                                    
+                                                    <script>
+                                                        function calculateRoundOff() {
+                                                       
+                                                            const grandTotal = parseFloat(document.getElementById('total_amt').value) || 0;
+                                                    
+                                                    
+                                                            const roundedTotal = Math.round(grandTotal);
+                                                    
+                                                  
+                                                            const roundOff = (roundedTotal - grandTotal).toFixed(2);
+                                                    
+                                                  
+                                                            $('#roundoff_amounts').text(roundOff);
+                                                    
+                                                  
+                                                            // Update grand total to rounded value
+                                                            $('#grand_total').text(roundedTotal.toFixed(2));
+                                                        }
+                                                    
+                                                        // Call this function whenever grand total is updated
+                                                        $('#grand_total').on('DOMSubtreeModified', function() {
+                                                            calculateRoundOff();
+                                                        });
+                                                    </script>
+                                                    
                                                 </tbody>
                                             </table>
                                         </div>
@@ -1074,9 +1349,9 @@
 
                                             if (!isNaN(totalAmt)) {
                                                 const roundedOffAmt = Math.round(totalAmt);
-                                                document.getElementById('round_off_amt').value = roundedOffAmt;
+                                                document.getElementById('round_off_amts').value = roundedOffAmt;
                                             } else {
-                                                document.getElementById('round_off_amt').value = '';
+                                                document.getElementById('round_off_amts').value = '';
                                             }
                                         }
 
@@ -1119,20 +1394,20 @@
                                         </script>
                                         <div class="mb-3 col-md-4">
                                             <label class="form-label" for="accountInput">Account</label>
-                                     
-                                            <select name="account" class="form-control selectpicker"
-                                                id="accountsSelect" data-live-search="true" onchange="accountsselect()">
+
+                                            <select name="account" class="form-control selectpicker" id="accountsSelect"
+                                                data-live-search="true" onchange="accountsselect()">
                                                 <option value="0" data-ttokens="-CREATE ACCOUNT HEAD-">-None-</option>
                                                 @foreach ($account as $a)
-                                                <option value="{{$a->id}}">{{$a->account_name}}</option>
+                                                    <option value="{{$a->id}}">{{$a->account_name}}</option>
                                                 @endforeach
-                                                
+
 
                                             </select>
 
                                         </div>
 
-                                     
+
                                         <div class="mb-3 col-md-12">
                                             <label class="form-label">Payment Note</label>
                                             <textarea name="payment_note"
@@ -1177,13 +1452,14 @@
         var unit_cost = document.getElementById('unit_cost_').value;
         var total = document.getElementById('total_amount_');
 
-        // Perform calculation (convert to numbers before multiplying)
+     
+
         total.value = Number(unit_cost) * Number(qty);
         totalamtsum();
         calculateTotal();
     }
 
-   
+
 </script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -1193,40 +1469,105 @@
     function searchitem() {
         var search = document.getElementById("search").value;
         var store_id = document.getElementById("store_id").value;
-        //alert(store_id);
-        if (store_id == '') {
-            alert('Please select the store');
-        }
-        if (search == '') {
-            document.getElementById("search_rapper").style.display = "none";
-            document.getElementById("search_rapper").innerHTML = "";
+        var searchWrapper = document.getElementById("search_rapper");
+        
+        // Check store selection
+        if (!store_id) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Store Required',
+                text: 'Please select a store first'
+            });
+            return;
         }
 
+        // Clear results if search is empty
+        if (!search) {
+            searchWrapper.style.display = "none";
+            searchWrapper.innerHTML = "";
+            return;
+        }
+
+        // Show loading state
+        searchWrapper.style.display = "block";
+        searchWrapper.innerHTML = `
+            <div class="alert alert-info m-2" role="alert">
+                <i class="fa fa-spinner fa-spin"></i> Searching...
+            </div>
+        `;
+
+        // Make the AJAX request
         $.ajax({
             type: "GET",
-            url: "{{ route('search-items') }}",
+            url: "{{ route('search-items.store') }}",
             data: {
                 search: search,
                 store_id: store_id
             },
-            success: function (response) {
-                //  var data = jQuery.parseJSON(response)
-                // var json_obj = JSON.parse(response);
-                var test = JSON.stringify(response);
-                //  var data = JSON.parse(response);
-                //  alert(test);
+            success: function(response) {
+                if (!response.length) {
+                    // Show "No items found" message with item name
+                    searchWrapper.innerHTML = `
+                        <div class="alert alert-danger m-2" role="alert">
+                            <i class="fa fa-exclamation-circle"></i> No items found matching "${search}"
+                        </div>
+                    `;
+                    return;
+                }
 
-                document.getElementById("search_rapper").style.display = "block";
-                document.getElementById("search_rapper").innerHTML = "";
-                response.forEach(function (test) {
-                    var searchs = document.getElementById("search_rapper").innerHTML;
-                    //console.log("ID: " + test.id);  // Accessing the `id` field                 
-                    document.getElementById("search_rapper").innerHTML = searchs + '<a class="dropdown-item" onclick="additem(' + test.id + ')" href="javascript:void(0)" >' + test.item_name + '</a>';
-                });
+                // Build results HTML
+                const resultsHtml = response.map(item => `
+                    <a class="dropdown-item" href="#" onclick="additem(${item.id}); return false;">
+                        ${item.item_name}
+                        ${item.item_code ? `<br><small class="text-muted">${item.item_code}</small>` : ''}
+                    </a>
+                `).join('');
 
+                searchWrapper.innerHTML = resultsHtml;
             },
+            error: function(xhr) {
+                // Show error message
+                searchWrapper.innerHTML = `
+                    <div class="alert alert-danger m-2" role="alert">
+                        <i class="fa fa-exclamation-triangle"></i> Error searching for items. Please try again.
+                    </div>
+                `;
+            }
         });
     }
+
+    // Add these styles to improve the search results appearance
+    const style = document.createElement('style');
+    style.textContent = `
+        #search_rapper {
+            max-height: 300px;
+            overflow-y: auto;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        #search_rapper .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        #search_rapper::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #search_rapper::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        #search_rapper::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+    `;
+    document.head.appendChild(style);
+</script>
+
+<script>
     function additem(item_id) {
         document.getElementById("search_rapper").style.display = "none";
         document.getElementById("search").value = "";
@@ -1234,7 +1575,7 @@
         $.ajax({
             type: "GET",
             // url: "controller/add-item-purchase.php",
-            url: "{{ route('add-item') }}",
+            url: "{{ route('add-item.store') }}",
             data: {
                 item_id: item_id,
             },
@@ -1272,22 +1613,34 @@
                         '" type="text"  oninput="update_calculation(' +
                         count +
                         ')" class="form-control form-control-sm" value="' +
-                        (data.purchase_price ? data.purchase_price : "00")+
+                        (data.purchase_price ? data.purchase_price : "00") +
                         '"></td>';
                     htmlRows += '<td>';
-                  
-                        // Unit ID exists in the data, pre-select the option in the dropdown
-                        htmlRows += '<select class="form-control form-control-sm" onchange="unitvalue(' + count + ');" id="unitselect_' + count + '">';
-                        htmlRows += '<option value="" >select</option>';
-                        @foreach ($unit as $unitvalue)
-                            htmlRows += '<option value="{{$unitvalue->id}}" ' + (data['unit_id'] == {{$unitvalue->id}} ? 'selected' : '') + '>{{$unitvalue->unit_name}}</option>';
-                        @endforeach
-                        htmlRows += '</select>';
-                        htmlRows += '<input type="hidden" name="unit_id[]" id="unitInput_' + count + '" value="' + data['unit_id'] + '" >';
-                   
+
+                    // Unit ID exists in the data, pre-select the option in the dropdown
+                    htmlRows += '<select class="form-control form-control-sm" onchange="unitvalue(' + count + ');" id="unitselect_' + count + '">';
+                    htmlRows += '<option value="" >select</option>';
+                    @foreach ($unit as $unitvalue)
+                        htmlRows += '<option value="{{$unitvalue->id}}" ' + (data['unit_id'] == {{$unitvalue->id}} ? 'selected' : '') + '>{{$unitvalue->unit_name}}</option>';
+                    @endforeach
+                    htmlRows += '</select>';
+                    htmlRows += '<input type="hidden" name="unit_id[]" id="unitInput_' + count + '" value="' + data['unit_id'] + '" >';
+
                     htmlRows += '</td>';
 
-                    htmlRows += '<td> <input name="discount_amt[]" id="discount_' + count + '" type="text" class="form-control form-control-sm" value="' + (data.discount ? data.discount : "00")  + '"></td>';
+                    htmlRows += '<td>' + 
+                        '<div class="d-flex flex-column">' +
+                        '<input name="discount_amt[]" id="discount_' + count + 
+                        '" type="text" class="form-control form-control-sm mb-1" value="' + 
+                        (data.discount ? data.discount : "00") + '" onchange="itemTotal(' + count + ')">' +
+                        '<select name="discount_type[]" id="item_discount_type_' + count + 
+                        '" class="" onchange="itemTotal(' + count + ')">' +
+                        '<option value="">Select Type</option>' +
+                        '<option value="percent">Percentage</option>' +
+                        '<option value="fixed">Fixed</option>' +
+                        '</select>' +
+                        '</div>' +
+                        '</td>';
 
                     htmlRows += '<td>';
 
@@ -1311,15 +1664,22 @@
                     htmlRows +=
                         '<td> <input name="tax_amt[]" id="tax_amt_' +
                         count +
-                        '" type="text" class="form-control form-control-sm" value="" readonly style="background-color: #ddd;" onclick="dividegst('+count+')"></td>';
-                
+                        '" type="text" class="form-control form-control-sm" value="" readonly style="background-color: #ddd;" onchange="dividegst('+count+')"></td>';
+           
                     htmlRows +=
                         '<td> <input name="total_amount[]" id="total_amount_' +
                         count +
                         '" type="text" class="form-control form-control-sm total" value="' +
-                        (data.purchase_price ? data.purchase_price : '00')+
+                        (data.purchase_price ? data.purchase_price : '00') +
                         '" readonly style="background-color: #ddd;" ></td>';
-                 
+                    // htmlRows +=
+                    //     '<td> <input name="bach_no[]" id="bach_no_' +
+                    //     count +
+                    //     '" type="text" class="form-control form-control-sm" ></td>';
+                    // htmlRows +=
+                    //     '<td> <input name="expire_date[]" id="expiry_date_' +
+                    //     count +
+                    //     '" type="date" class="form-control form-control-sm"></td>';
                     htmlRows +=
                         '<td> <button onclick="delete_row(' +
                         count +
@@ -1412,6 +1772,7 @@
         var totalitemqty = parseFloat(count) - 1;
         document.getElementById("totalitemqty").innerHTML = totalitemqty;
 
+        
         total_sum();
     }
     //increacing quantity
@@ -1453,18 +1814,46 @@
         var taxvalue = taxoption.getAttribute('data-id');
 
         var qty = document.getElementById("qty_" + counts).value;
-
         var purchase_price = document.getElementById("purchase_price_" + counts).value;
 
-
-        var taxamt = ((parseFloat(purchase_price) * parseFloat(qty)) * parseFloat(taxvalue)) / 100
+        var taxamt = ((parseFloat(purchase_price) * parseFloat(qty)) * parseFloat(taxvalue)) / 100;
         document.getElementById("tax_amt_" + counts).value = taxamt;
 
+        // Call dividegst after calculating tax
+        dividegst(counts);
+        
         itemTotal(counts);
         total_sum();
-
     }
 
+    function dividegst(count) {
+
+        var taxAmount = parseFloat(document.getElementById("tax_amt_" + count).value) || 0;
+        
+
+        var halfTax = taxAmount / 2;
+       
+        updateGSTTotals();
+    }
+
+    function updateGSTTotals() {
+        // Get all tax amount inputs
+        var taxInputs = document.querySelectorAll('input[name="tax_amt[]"]');
+        var totalTax = 0;
+        
+        // Sum up all tax amounts
+        taxInputs.forEach(function(input) {
+            totalTax += parseFloat(input.value) || 0;
+        });
+        
+        // Divide total tax into CGST and SGST
+        var cgstAmount = totalTax / 2;
+        var sgstAmount = totalTax / 2;
+        
+        // Update CGST and SGST fields
+        document.getElementById('cgst').value = cgstAmount.toFixed(2);
+        document.getElementById('sgst').value = sgstAmount.toFixed(2);
+    }
 
     function itemTotal(count) {
 
@@ -1495,34 +1884,45 @@
 
 <script>
     function total_sum() {
-        var othercharge = document.getElementById("other_charges_amt").value;
-        var discount_to_all_amt = document.getElementById("discount_to_all_amt").value;
-
-        var result = document.getElementById("subtotal_amt");
-
-        var item_total,
-            i = 1,
-            total = 0;
-        while ((item_total = document.getElementById("total_amount_" + i++))) {
-            item_total.value = item_total.value.replace(/\\D/, "");
-            total = total + parseFloat(item_total.value);
+        var subtotal = 0;
+        var totalTax = 0;
+        
+        // Get all rows in the purchase table
+        var rows = document.getElementById("purchase_table").getElementsByTagName("tr");
+        
+        // Start from index 1 to skip header row
+        for(var i = 1; i < rows.length; i++) {
+            // Get quantity and purchase price for each row
+            var qty = parseFloat(document.getElementById("qty_" + i).value) || 0;
+            var purchase_price = parseFloat(document.getElementById("purchase_price_" + i).value) || 0;
+            var tax_amt = parseFloat(document.getElementById("tax_amt_" + i).value) || 0;
+            
+            // Add to subtotal (price × quantity)
+            subtotal += (purchase_price * qty);
+            // Add to total tax
+            totalTax += tax_amt;
         }
-        result.value = total;
-        // alert(total);
+        
 
+        document.getElementById("subtotal_amt").value = subtotal;
 
-        if (othercharge == '') {
-            otherchargeamt = 0;
-        } else {
-            otherchargeamt = othercharge;
-        }
-        if (discount_to_all_amt == '') {
-            discount_to_all_amt1 = 0;
-        } else {
-            discount_to_all_amt1 = discount_to_all_amt
-        }
-        var alltotal = (parseFloat(total) + parseFloat(otherchargeamt)) - parseFloat(discount_to_all_amt1)
-        document.getElementById("total_amt").value = alltotal;
+      
+        var othercharge = parseFloat(document.getElementById("other_charges_amt").value) || 0;
+        var discount_to_all_amt = parseFloat(document.getElementById("discount_to_all_amt").value) || 0;
+        
+
+        var alltotal = (subtotal + parseFloat(othercharge) + totalTax) - parseFloat(discount_to_all_amt);
+        
+      
+        var roundedTotal = Math.round(alltotal);
+        
+
+        var roundingAdjustment = roundedTotal - alltotal;
+        
+
+        document.getElementById("total_amt").value = roundedTotal;
+ 
+        document.getElementById("round_off_amt").value = roundingAdjustment.toFixed(2);
     }
     totalamtsum(); 
 </script>
@@ -1564,7 +1964,7 @@
             total_sum();
 
         } else {
-            //document.getElementById("total_amt").value = 0;
+         
             var subtotal_amt = document.getElementById("subtotal_amt").value;
             document.getElementById("total_amt").value = subtotal_amt;
             total_sum();
@@ -1598,8 +1998,7 @@
             var total_amt = (parseFloat(subtotal_amt) + parseFloat(other_charges_amt)) - parseFloat(discount_to_all_input)
             document.getElementById("total_amt").value = total_amt;
         }
-
-        totalamtsum();
+        total_sum();
 
     }
 </script>
@@ -1616,7 +2015,8 @@
         var purchasePrices = document.querySelectorAll('input[name="purchase_price[]"]');
         var unitCosts = document.querySelectorAll('input[name="unit_cost[]"]');
 
-        // Loop through each purchase price input and calculate the unit cost
+
+
         purchasePrices.forEach(function (priceInput, index) {
             var priceValue = parseFloat(priceInput.value) || 0; // Get the price value, or 0 if invalid
             var unitCostInput = unitCosts[index]; // Get the corresponding unit cost input
@@ -1632,3 +2032,4 @@
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+@endsection

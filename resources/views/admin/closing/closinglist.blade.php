@@ -27,6 +27,8 @@
                                             <th style="text-align: center;">Date</th>
                                             <th style="text-align: center;">Invoice Count</th>
                                             <th style="text-align: center;">Total Sale</th>
+                                            <th style="text-align: center;">Purchase Count</th>
+                                            <th style="text-align: center;">Total Purchase</th>
                                             <th style="text-align: center;">Total Expense</th>
                                             <th style="text-align: center;">Closing Amount</th>
                                             <th style="text-align: center;">Action</th>
@@ -72,6 +74,14 @@ $(document).ready(function() {
             },
             { 
                 data: 'total_sale',
+                className: 'text-center'
+            },
+            { 
+                data: 'purchase_count',
+                className: 'text-center'
+            },
+            { 
+                data: 'total_purchase',
                 className: 'text-center'
             },
             { 

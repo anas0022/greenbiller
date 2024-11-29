@@ -36,7 +36,7 @@
                             <table id="example" class="display" style="100%;">
                                 <thead>
                                     <tr>
-                                       
+                                        <th>#</th>
                                         <th>Date</th>
                                         <th>Category</th>
                                         <th>Reference No</th>
@@ -49,7 +49,21 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                  
+                                  @foreach ($expense as $index=> $ex)
+
+                                  <tr>
+                                    <td>
+                                        {{$index+1}}
+                                    </td>
+                                    <td>
+                                        {{$ex->date}}
+                                    </td>
+                                    <td>
+                                        {{}}
+                                    </td>
+                                  </tr>
+                                      
+                                  @endforeach
                                 </tbody>
                             </table>
                         </div>

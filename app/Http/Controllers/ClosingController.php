@@ -9,8 +9,10 @@ use App\Models\Purchasepay;
 use App\Models\Sale;
 use App\Models\salespayment;
 use App\Models\Store;
+use App\Models\Purchase;
 use Auth;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class ClosingController extends Controller
 {
@@ -35,10 +37,18 @@ class ClosingController extends Controller
         if ($request->ajax()) {
             $today_date = $request->input('date');
             $yesterday_date = date('Y-m-d', strtotime($today_date . ' -1 day'));
+            $sales_payments = salespayment::where('payment_date', $today_date)
+            ->pluck('sales_id'); 
+            $purchase_payments = Purchasepay::where('payment_date', $today_date)
+                ->pluck('purchase_id');
 
-            $sales = Sale::where('sales_date', $today_date)
-                ->select('id', 'prefix', 'sales_code', 'sales_date')
+            $purchases = Purchase::whereIn('id', $purchase_payments)
+                ->select('id', 'prefix', 'purchase_code', 'purchase_date')
                 ->get();
+
+            $sales = Sale::whereIn('id', $sales_payments)  
+            ->select('id', 'prefix', 'sales_code', 'sales_date')
+            ->get();
 
             \Log::info('Sales Data:', $sales->toArray());
 
@@ -58,6 +68,20 @@ class ClosingController extends Controller
                 'date' => $today_date,
                 'payments' => $purchase_payment->toArray(),
                 'sum' => $purchase_payment->sum('payment')
+            ]);
+
+            $purchase_payment_ids = Purchasepay::where('payment_date', $today_date)
+                ->where('payment_type', 'cash')
+                ->pluck('purchase_id');
+
+            $purchases = Purchase::whereIn('id', $purchase_payment_ids)
+                ->select('id', 'prefix', 'purchase_code', 'purchase_date')
+                ->get();
+
+            \Log::info('Purchase Payment Data:', [
+                'date' => $today_date,
+                'payments' => $purchase_payment_ids->toArray(),
+                'purchases' => $purchases->toArray()
             ]);
 
             return response()->json([
@@ -80,7 +104,8 @@ class ClosingController extends Controller
                     }),
                 'opening_balance' => Closing::latest('id')->first(),
                 'expense' => Expense::where('date', $today_date)->get(),
-                'total_invoice_count' => Sale::where('sales_date', $today_date)->count(),
+                'total_invoice_count' => $sales->count(),
+                'purchase_bill_count'=>$purchases->count(),
                 'total_expense' => $total_expense,
                 'expense_amount' => $total_expense
             ]);
@@ -91,11 +116,20 @@ class ClosingController extends Controller
         $yesterday = date('Y-m-d', strtotime('-1 day'));
 
         $initial_sales = Sale::where('sales_date', $today)
-
             ->select('id', 'prefix', 'sales_code', 'sales_date')
             ->get();
 
+        $purchase_payments = Purchasepay::where('payment_date', $today)
+            ->where('payment_type', 'cash')
+            ->pluck('purchase_id');
 
+        $purchases = Purchase::whereIn('id', $purchase_payments)
+            ->select('id', 'prefix', 'purchase_code', 'purchase_date')
+            ->get();
+
+        $payment_total = Purchasepay::where('payment_date', $today)
+            ->where('payment_type', 'cash')
+            ->sum('payment');
 
         return view('admin.closing.dailyclosing', [
             'logo' => $logo,
@@ -104,10 +138,13 @@ class ClosingController extends Controller
             'expense' => [],
             'opening_balance' => Closing::latest('id')->first(),
             'total_invoice_count' => 0,
+            'purchase_bill_count'=>0,
             'sale_payment' => 0,
             'expense_amount' => 0,
             'payment' => [],
-
+            'payment_total' => $payment_total,
+            'purchases' => $purchases,
+            'purchase_count' => $purchases->count(),
         ]);
     }
 
@@ -136,6 +173,8 @@ class ClosingController extends Controller
             'total_expense' => $request->total_expense,
             'closing_amount' => $request->closing_amount,
             'opening_balance' => $request->opening,
+            'purchase_count'=>$request->total_purchase_bills,
+            'total_purchase'=>$request->total_purchase,
             'prefix' => $prefix,
             'closing_code' => $closing_code
         ]);

@@ -9,19 +9,14 @@
     <div class="container-fluid">
 
 
-        <!-- <div class="row page-titles">
-					<ol class="breadcrumb">
-						<li class="breadcrumb-item active"><a href="javascript:void(0)">Form</a></li>
-						<li class="breadcrumb-item"><a href="javascript:void(0)">Validation</a></li>
-					</ol>
-                </div> -->
+       
 
         <div class="row">
 
             
 
             <div class="col-xl-12">
-                <form action="{{route('customer_edit')}}" method="post" enctype="multipart/form-data">
+                <form action="{{route('customer_edit.store')}}" method="post" enctype="multipart/form-data">
                     <input type="hidden" name="id" id="" value="{{$customer->id}}">
                     @csrf
                     <div class="card">
@@ -139,21 +134,17 @@
                                                                 countryInput.value =countrySelect.value;
                                                             }
                                                         </script>
-                                                        <input type="hidden" name="country_name" id="countryInput" value="cust->country}}">
+                                                        <input type="hidden" name="country_name" id="countryInput" value="{{$customer->country}}">
                                                         <label class="form-label">Country</label>
                                                         <select name="country_id" id="countrySelect" class="form-control form-control-sm selectpicker" data-live-search="true" onchange="countryname()">
-    <!-- Display the currently selected country -->
-    <option value="{{ $customer->country }}">
-        {{ $country_name ? $country_name->name : 'Country not found' }}
-    </option>
+                                                        <option>{{ $country_select->firstWhere('id', $customer->country)->name ?? 'N/A' }}</option>
 
-    <!-- Loop through countries, skipping the selected country -->
-    @foreach ($country as $c)
-        @if ($c->id !==$customer->country)
-            <option value="{{ $c->id }}">{{ $c->name }}</option>
-        @endif
-    @endforeach
-</select>
+                                                            @foreach ($country as $c)
+                                                            <option value="{{$c->id}}">{{$c->name}}</option>
+                                                            
+                                                            @endforeach
+                                                            
+                                                        </select>
 
 
 
@@ -191,7 +182,7 @@
                                                 <div class="col-lg-6 mb-2">
                                                     <div class="form-group">
                                                         <label class="form-label">City</label>
-                                                        <input type="text" name="city_shipping" id="city_shipping" class="form-control form-control-sm" value="{{$customer->city}}">
+                                                        <input type="text" name="city_shipping" id="city_shipping" class="form-control form-control-sm" value="{{$customer->ship_city}}">
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-6 mb-2">
@@ -215,22 +206,15 @@
                                                                 scountryInput.value =scountrySelect.value;
                                                             }
                                                         </script>
-                                                        <input type="hidden" name="shipping_country" id="scountryInput" value="cust->ship_country}}">
+                                                        <input type="hidden" name="shipping_country" id="scountryInput" value="{{$customer->ship_country}}">
                                                         <label class="form-label">Country</label>
-                                                        <select name="country_id" id="countrySelect" class="form-control form-control-sm selectpicker" data-live-search="true" onchange="countryname()">
-    <!-- Display the currently selected country -->
-    <option value="{{ $customer->country }}">
-        {{ $country_name ? $country_name->name : 'Country not found' }}
-    </option>
-
-    <!-- Loop through countries, skipping the selected country -->
-    @foreach ($country as $c)
-        @if ($c->id !==$customer->country)
-            <option value="{{ $c->id }}">{{ $c->name }}</option>
-        @endif
-    @endforeach
-</select>
-
+                                                        <select name="country_id_shipping" id="scountrySelect" class="form-control form-control-sm selectpicker" data-live-search="true" onchange="countrychange2()">
+                                                        <option>{{ $country_select->firstWhere('id', $customer->country)->name ?? 'N/A' }}</option>
+                                                            @foreach ($country as $c)
+                                                            <option value="{{$c->id}}">{{$c->name}}</option>
+                                                            
+                                                            @endforeach
+                                                        </select>
 
 
 
@@ -283,10 +267,9 @@ function pricelevel(){
     pricelevelInput.value = pricelevelSelect.value;
 }
                                                         </script>
-                                                        <input type="hidden" name="price_type" id="pricelevelInput" value="cust->price_leveltype}}">
+                                                        <input type="hidden" name="price_type" id="pricelevelInput" value="{{$customer->price_leveltype}}">
                                                         <select name="price_level_type" id="pricelevelSelect" class="form-control form-control-sm selectpicker" data-live-search="true" onchange="pricelevel()">
-                                                            <option value="{{$customer->price_leveltype}}">{{$customer->price_leveltype}}</option>
-                                                           
+                                                            <option value="">{{$customer->price_leveltype}}</option>
                                                             <option value="Increase" data-tokens="0" value="Increase">Increase</option>
                                                             <option value="Decrease" data-tokens="1" value="Decrease">Decrease</option>
 
@@ -297,7 +280,7 @@ function pricelevel(){
                                                 <div class="col-lg-6 mb-2">
                                                     <div class="form-group">
                                                         <label class="form-label">Price Level</label>
-                                                        <input type="text" name="price_level" class="form-control form-control-sm" value="{{$customer->price_level ? : '00'}}">
+                                                        <input type="text" name="price_level" class="form-control form-control-sm" value="{{$customer->price_level}}">
                                                     </div>
                                                 </div>
 
@@ -328,7 +311,7 @@ function pricelevel(){
     </div>
 </div>
 </div>
-
+@endsection
 
 <!--**********************************
             Content body end-->

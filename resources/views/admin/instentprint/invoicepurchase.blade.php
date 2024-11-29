@@ -630,37 +630,35 @@
                                 </table>
                             </div>
 
-                            <div
-                                style="width:100%;  border-top:1px solid; margin-top: :20px; display:flex;  justify-content:center; align-items:center; gap:5px;">
-                                <table cellspacing="0px" cellpadding="2px" style="width:100%; height:auto;" class="terms_seal">
-                                    <tr style=" border-bottom:1px solid; display:flex; border-right:1px solid;" id="terms_seal">
-                                        <td style="font-size:12px;  width:60%; border-right:1px solid;" id="terms">
-                                            <b> Terms & Conditions: </b> <br>
-                                            (1) There will be no warranty or replacement for physical or external damages
-                                            like:- Lightning,Mishandling,Electric shortcircuit,Warranty seal broken and
-                                            cover
-                                            broken,damages caused by the courier service.(2) After the payment due date,
-                                            interest @24% per month will be charged on
-                                            the amount overdue .(3) Rs.500 will be charged per cheque if it is bounced.(4)
-                                            The cheque has to be given within 5 days of purchase. If the cheque is not
-                                            given, the
-                                            account will be blocked by the accounts section.(5) Items sold will not be taken
-                                            back or exchanged.(6) It is the responsibility of the customer to check whether
-                                            the
-                                            item is damaged or not.(7) Only the warranty as per manufactures warranty policy
-                                            will be applicable for the items sold.
-                                        </td>
-                                        <td
-                                            style="width:50%; display:flex; position:relative; justify-content:end; font-size:13px; height:100%; ">
-                                            <b>Seal & Signature</b>
-                                        </td>
-
-                                    </tr>
-
-                                </table>
+                            <div style="width:100%; border-top:1px solid; margin-top:20px; display:flex; justify-content:center; align-items:stretch;">
+                                <div cellspacing="0px" cellpadding="2px" style="width:100%;">
+                                    <div style="border-bottom:1px solid; display:flex; min-height:150px;">
+                                        <div style="font-size:12px; padding:12px; width:60%; border-right:1px solid;">
+                                            <b>Terms & Conditions:</b><br>
+                                            <div style="margin-top:5px; line-height:1.4;">
+                                                (1) There will be no warranty or replacement for physical or external damages
+                                                like:- Lightning, Mishandling, Electric shortcircuit, Warranty seal broken and
+                                                cover broken, damages caused by the courier service.<br>
+                                                (2) After the payment due date, interest @24% per month will be charged on
+                                                the amount overdue.<br>
+                                                (3) Rs.500 will be charged per cheque if it is bounced.<br>
+                                                (4) The cheque has to be given within 5 days of purchase. If the cheque is not
+                                                given, the account will be blocked by the accounts section.<br>
+                                                (5) Items sold will not be taken back or exchanged.<br>
+                                                (6) It is the responsibility of the customer to check whether the
+                                                item is damaged or not.<br>
+                                                (7) Only the warranty as per manufactures warranty policy
+                                                will be applicable for the items sold.
+                                            </div>
+                                        </div>
+                                        <div style="width:40%; display:flex; flex-direction:column; justify-content:flex-end; align-items:center; padding:20px;">
+                                            <div style="width:100%; border-top:1px solid; padding-top:10px; text-align:center;">
+                                                <b style="font-size:13px;">Seal & Signature</b>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-
-                            <!-- T&C & Bank Details & signatories End -->
 
                             <td colspan="16" style="text-align: center;font-size: 11px; margin-top:60px;    ">
                                 <center>
@@ -2888,123 +2886,117 @@
 
 
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
     <script>
         function printPreview() {
-            // Store buttons element and its original display style
-            var buttonsElement = document.getElementById('buttons');
-            var originalButtonDisplay = buttonsElement.style.display;
-
-            // Hide buttons
-            buttonsElement.style.display = 'none';
-
-            var printContents = document.getElementById('preview_data').innerHTML;
-            var originalContents = document.body.innerHTML;
-
-            // Add print styles
-            var style = document.createElement('style');
-            style.type = 'text/css';
-            style.media = 'print';
-            style.innerHTML = `
-                @page {
-            size: A4 portrait !important;
-            margin: 10mm 10mm 10mm 10mm;
-        }
-        
-        body {
-            -webkit-print-color-adjust: exact;
-            color-adjust: exact;
-            print-color-adjust: exact;
-            width: 100% !important;
-            height: 100% !important;
-            font-size: 8pt !important;
-            background: white !important;  /* Force white background */
-        }
-
-        /* Remove grey backgrounds */
-        .card, 
-        .card-body,
-        .container-fluid,
-        .content-body {
-            background: white !important;
-            box-shadow: none !important;
-            margin: 0 !important;
-            padding: 0 !important;
-        }
-
-        /* Rest of your existing styles... */
-        
-        /* Ensure only specific elements have background colors */
-        .bg-sky {
-            background-color: #E8F3FD !important;
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-        }
-
-        /* Remove any other unwanted backgrounds */
-        * {
-            background-color: transparent !important;
-        }
-        
-        /* Exception for elements that need background */
-        .bg-sky, 
-        thead tr,
-        .gsttable thead tr {
-            background-color: #E8F3FD !important;
-        }
-
-        @media print {
-            .Not-paid {
-                background-color: #ffebee !important;
-                color: #c62828 !important;
-                border: 1px solid #c62828 !important;
-              
-                display: inline-block !important;
-                font-weight: bold !important;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
+            // Create a new window for printing
+            var printWindow = window.open('', '_blank');
+            
+            // Get only the bill content
+            var billContent = document.getElementById('preview_data').cloneNode(true);
+            
+            // Remove the buttons section from the clone
+            var buttonsSection = billContent.querySelector('#buttons');
+            if (buttonsSection) {
+                buttonsSection.remove();
             }
             
-            .paid {
-                background-color: #e8f5e9 !important;
-                color: #2e7d32 !important;
-                border: 1px solid #2e7d32 !important;
-          
-                display: inline-block !important;
-                font-weight: bold !important;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
-            
-            /* Ensure parent containers don't hide the status */
-            div[style*="position"] {
-                position: relative !important;
-                display: block !important;
-                page-break-inside: avoid !important;
-            }
-        }
-    }
+            // Add necessary styles with improved background color support
+            var styles = `
+                <style>
+                    @media print {
+                        @page { 
+                            size: portrait;
+                            margin: 10mm; 
+                        }
+                        
+                        * {
+                            -webkit-print-color-adjust: exact !important;
+                            print-color-adjust: exact !important;
+                            color-adjust: exact !important;
+                        }
+
+                        body {
+                            margin: 0;
+                            padding: 0;
+                            font-family: 'Helvetica Neue', 'Helvetica', Arial, sans-serif;
+                        }
+
+                        /* Table styles */
+                        table {
+                            border-collapse: collapse;
+                            width: 100%;
+                        }
+
+                     
+
+                        /* Background colors */
+                        .bg-sky {
+                            background-color: #E8F3FD !important;
+                        }
+
+                        tr.bg-sky td {
+                            background-color: #E8F3FD !important;
+                        }
+
+                        .text-bold {
+                            font-weight: bold;
+                        }
+
+                        /* Font sizes */
+                        td {
+                            font-size: 8px !important;
+                        }
+                        
+                        p {
+                            font-size: 8px !important;
+                        }
+                        
+                        div {
+                            font-size: 8px !important;
+                        }
+                        
+                        h5 {
+                            font-size: 10px !important;
+                        }
+
+                        /* Firefox specific */
+                        @-moz-document url-prefix() {
+                            .bg-sky {
+                                background-color: #E8F3FD !important;
+                                print-color-adjust: exact;
+                            }
+                        }
+                    }
+
+                    /* Include other existing styles */
+                    ${document.querySelector('style').innerHTML}
+                </style>
             `;
-
-            document.getElementsByTagName('head')[0].appendChild(style);
-            document.body.innerHTML = printContents;
-
-            window.print();
-
-            // Restore original content
-            document.body.innerHTML = originalContents;
-
-            // Re-get the buttons element since we replaced the body content
-            buttonsElement = document.getElementById('buttons');
-            // Restore the buttons display to flex
-            buttonsElement.style.display = 'flex';
-
-            // Add a fallback in case the display isn't restored
-            setTimeout(() => {
-                if (buttonsElement.style.display === 'none') {
-                    buttonsElement.style.display = 'flex';
-                }
-            }, 100);
+            
+            // Write the content to the new window with proper DOCTYPE and meta tags
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="utf-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1">
+                    ${styles}
+                </head>
+                <body>
+                    ${billContent.innerHTML}
+                </body>
+                </html>
+            `);
+            
+            // Wait for content and images to load before printing
+            printWindow.document.close();
+            printWindow.onload = function() {
+                setTimeout(() => {
+                    printWindow.print();
+                    printWindow.close();
+                }, 250); // Small delay to ensure styles are applied
+            };
         }
     </script>
 

@@ -1,68 +1,132 @@
-@extends('admin/layouts/app')
+@extends('store/layouts/app')
 
-@section('title', 'Home Page')
+@section('title', 'Purchase Preview')
 
 @section('content')
-    <link href="{{ asset('admin-assets/css/toast.css') }}" rel="stylesheet">
 
-    <style type="text/css">
-        @media print {
-            @page {
-            size: portrait;
+ 
+<style type="text/css">
+    @media print {
+        /* Reset all backgrounds to white first */
+        * {
+            background-color: white !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
         }
-            body {
-                -webkit-print-color-adjust: exact;
-                /* Adjusts color to match screen */
-                color-adjust: exact;
-                /* For Firefox */
-                print-color-adjust: exact;
-                font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
-            }
-
-            .item {
-                border-bottom: 1px solid gray !important;
-                /* Forces the border to appear */
-            }
-
-            table {
-                border-collapse: collapse;
-                /* Ensures borders are continuous */
-            }
+        
+        body *:not(#preview_data *) {
+            visibility: hidden;
+            background: white !important;
         }
-
-        @media print and (orientation: portrait) {
-            td {
-                /* Replace with your desired font */
-                font-size: 8px !important;
-                /* Adjust the size as needed */
-            }
-            p {
-                font-size: 8px !important;
-            }
-            div{
-                font-size: 8px !important;
-                gap: 10px !important;
-            }
-            h5{
-                font-size: 10px !important;
-            }
-            #buttons{
-                display: none !important;
-            }
+        
+        #preview_data,
+        #preview_data * {
+            visibility: visible;
+        }
+        
+        #preview_data {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            background: white !important;
         }
 
-        .text-bold {
-            font-weight: bold;
+        /* Then explicitly set the backgrounds we want to keep */
+        .Not-paid {
+            background-color: #ffebee !important;
+            color: #c62828 !important;
+            border: 1px solid #c62828 !important;
+        }
+        
+        .paid {
+            background-color: #e8f5e9 !important;
+            color: #2e7d32 !important;
+            border: 1px solid #2e7d32 !important;
         }
 
         .bg-sky {
-            background-color: #E8F3FD;
+            background-color: #E8F3FD !important;
+        }
+        
+        /* Remove all box shadows and borders that might cause gray backgrounds */
+        .card,
+        .card-body,
+        .container,
+        .container-fluid,
+        .content-body,
+        .row,
+        .col-lg-12 {
+            background: white !important;
+            box-shadow: none !important;
+            border: none !important;
+        }
+        
+        #buttons {
+            display: none !important;
+        }
+        
+        @page {
+            size: A4;
+            margin: 10mm;
+            background: white;
         }
 
-        .text-center {
-            text-align: center;
+        /* Specifically target the Tax Summary table backgrounds */
+        .gsttable table tr.bg-sky,
+        .gsttable table tr.bg-sky td,
+        tr.bg-sky,
+        tr.bg-sky td,
+        .bg-sky,
+        .text-bold.bg-sky {
+            background-color: #E8F3FD !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
         }
-        .Not-paid {
+
+        /* Force background colors in Firefox */
+        @-moz-document url-prefix() {
+            .gsttable table tr.bg-sky,
+            .gsttable table tr.bg-sky td,
+            tr.bg-sky,
+            tr.bg-sky td,
+            .bg-sky,
+            .text-bold.bg-sky {
+                print-color-adjust: exact !important;
+            }
+        }
+
+        /* Ensure specific visibility for bill number and reference number */
+        #preview_data p,
+        #preview_data span,
+        #preview_data div {
+            visibility: visible !important;
+        }
+
+        /* Add these specific selectors */
+        #preview_data .created-by-info,
+        #preview_data .bill-number,
+        #preview_data .reference-number,
+        #preview_data .header-info {
+            visibility: visible !important;
+            display: flex !important;
+            position: relative !important;
+            z-index: 999 !important;
+        }
+
+        #preview_data .header-info {
+            gap: 10px !important;
+        }
+
+        #preview_data .reference-number b {
+            visibility: visible !important;
+            display: inline !important;
+        }
+    }
+
+    /* Non-print styles for the colored elements */
+    .Not-paid {
         background-color: #ffebee !important;
         color: #c62828 !important;
         border: 1px solid #c62828 !important;
@@ -79,24 +143,104 @@
         padding: 2px 8px !important;
         display: inline-block !important;
     }
-    </style>
 
-    <div class="content-body" id="body_all">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="card" id="preview_data">
-                        <div style="padding:10px;">
-                            <h3 style="width: 100%; display:flex; justify-content:center;"> Purchase Preview</h3>
-                            <div style=" width:100%; display:flex; gap:20px; justify-content:end;">
-                                <div style="left: 10px; position: absolute;">
-                                    
-                                    <p style="font-size: 12px;">
-                                    Created By : {{$user->firstWhere('id',$userids)->name}}({{$user->firstWhere('id',$userids)->role}})</p>
-                                </div>
-                               
-                                </span>
+    .bg-sky {
+        background-color: #E8F3FD;
+    }
+
+    @media print and (orientation: portrait) {
+        td {
+            /* Replace with your desired font */
+        font-size: 11px !important;
+            /* Adjust the size as needed */
+        }
+        p {
+            font-size: 11px !important;
+        }
+        div{
+            font-size: 11px !important;
+            gap: 10px !important;
+        }
+        h5{
+            font-size: 13px !important;
+        }
+        #buttons{
+            display: none !important;
+        }
+    }
+
+    .text-bold {
+        font-weight: bold;
+    }
+
+    .bg-sky {
+        background-color: #E8F3FD;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+     .Not-paid {
+    background-color: #ffebee !important;
+    color: #c62828 !important;
+    border: 1px solid #c62828 !important;
+    border-radius: 4px;
+    padding: 2px 8px !important;
+    display: inline-block !important;
+}
+
+.paid {
+    background-color: #e8f5e9 !important;
+    color: #2e7d32 !important;
+    border: 1px solid #2e7d32 !important;
+    border-radius: 4px;
+    padding: 2px 8px !important;
+    display: inline-block !important;
+}
+
+/* Non-print styles */
+.gsttable table tr.bg-sky,
+.gsttable table tr.bg-sky td,
+tr.bg-sky,
+tr.bg-sky td,
+.bg-sky,
+.text-bold.bg-sky {
+    background-color: #E8F3FD !important;
+}
+</style>
+
+<div class="content-body" id="body_all">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card" id="preview_data" style="background-color: white;">
+             
+                    <div style="padding:10px;" >
+                        <h3 style="width: 100%; display:flex; justify-content:center;">Purchase View</h3>
+                        <div style=" width:100%; display:flex; gap:20px; justify-content:end; ;">
+                            <div style="left:2% ; position:absolute;  width:100%;">
+                                        @if ($sale->paid_amount == null)
+                                            <p class=" Not-paid" style="padding:2px; "> Un Paid </p>
+                                        @else
+                                            <p class=" paid" style="padding:2px; "> Paid </p>
+                                        @endif
+                                <p style="font-size: 12px;" class="created-by-info">
+                                Created By : {{$user->firstWhere('id',$userids)->name}}({{$user->firstWhere('id',$userids)->role}})</p>
                             </div>
+                            <p style="font-size:15px;" class="bill-number">
+                                <b>Bill No : {{ $sale->prefix }} /{{ $sale->purchase_code }}
+                                </b>
+                            </p>
+                            <span style="display:flex; gap:10px;" class="header-info">
+                                <p style="font-size:15px;" class="reference-number">
+                                    <b>Reference No : {{ $sale->reference_no }}</b>
+                                </p>
+                                <p style="right:0%; position:relative; font-size:15px;"><b>Date :
+                                        {{ $sale->purchase_date }}
+                                    </b>
+                                </p>
+                            </span>
+                        </div>
                         </div>
                         <div class="card-body">
 
@@ -134,20 +278,7 @@
                                                           
                                                              
                                     </div>    </div>   </div>      </div>
-                                     <div style="width: 100%; display:flex; gap:10px; jsutify-content:end;">
-                                            <p style="font-size:15px;"><b>Bill No : {{ $sale->prefix }} /{{ $sale->purchase_code }}
-                                            </b>
-                                        </p>
-                                        <span style="display:flex; gap:10px;">
-        
-                                            <p style="font-size:15px;"><b>Reference No : {{ $sale->reference_no }}</b>
-                                            </p>
-                                            <br>
-                                            <p style="right:0%; position:relative; font-size:15px;"><b>Date :
-                                                    {{ $sale->purchase_date }}
-                                                </b>
-                                            </p>
-                                        </div>
+                                  
                                     </div>
                                 </table>
 
@@ -157,6 +288,7 @@
                                             <td style="font-size:12px; text-align:center; width:5%;">SL NO</td>
                                             <td style="font-size:12px; text-align:center; width:15%;"> Part No</td>
                                             <td style="font-size:12px; text-align:center; width:25%;">ITEM</td>
+                                            <td style="font-size:12px; text-align:center; width:12%;"> PRICE/UNIT</td>
                                             <td style="font-size:12px; text-align:center; width:12%;"> HSN/ SAC</td>
 
                                             <td style="font-size:12px; text-align:center; width:12%;"> Quantity</td>
@@ -174,9 +306,9 @@
                                             $totalAmount = 0;
                                             $totalLiter = 0;
                                         @endphp
-                                        @foreach ($sales_itemdata as $index => $item)
+                                        @foreach ($purchase_itemdata as $index => $item)
                                             @php
-                                                $quantity = $item->sales_qty;
+                                                $quantity = $item->purchase_qty;
                                                 $amount = $item->total_cost;
                                              
                                                 $totalQuantity += $quantity;
@@ -228,13 +360,17 @@
                                                     {{$items->firstWhere('id',$item->item_id)->item_name}}
                                                 </td>
                                                 <td
+                                                style="font-size:10px; border-right:1px solid;width:15%; text-align:center;">
+                                                {{$item->price_per_unit}}
+                                            </td>
+                                                <td
                                                     style="font-size:10px; text-align:center; border-right:1px solid; width:10%;">
                                                     {{ $item->hsn_code }}
                                                 </td>
 
                                                 <td
                                                     style="font-size:10px; text-align:center; border-right:1px solid; width:10%;">
-                                                    {{ $item->sales_qty }}
+                                                    {{ $item->purchase_qty }}
                                                     @if ($unit_id->firstWhere('id', $item->unit_id)->unit_name == 'Ltr')
                                                     @endif
                                                     @if ($unit_id->firstWhere('id', $item->unit_id)->unit_name == 'Ltr')
@@ -278,12 +414,12 @@
                                                                 });
                                                             </script>
                                                         @else
-                                                            {{ number_format(optional($item_alqty->firstWhere('id', $item->item_id))->alt_unit * $item->sales_qty) }}
+                                                            {{ number_format(optional($item_alqty->firstWhere('id', $item->item_id))->alt_unit * $item->purchase_qty) }}
                                                             @php
                                                                 $liter = number_format(
                                                                     optional(
                                                                         $item_alqty->firstWhere('id', $item->item_id),
-                                                                    )->alt_unit * $item->sales_qty,
+                                                                    )->alt_unit * $item->purchase_qty,
                                                                 );
                                                                 // Accumulate totals
 
@@ -296,16 +432,7 @@
                                             
                                                 <td
                                                     style="font-size:10px; text-align:center; border-right:1px solid; width:10%;">
-                                                    <?php
-                                                    // Clean up the value to ensure it is numeric
-                                                    $pricePerUnit = preg_replace('/[^0-9.]/', '', $item->price_per_unit);
-                                                    $taxPercentage = preg_replace('/[^0-9.]/', '', $tax->firstWhere('id', (int) $item->tax_id)->per);
-                                                    
-                                                    // Calculate the tax amount
-                                                    $taxAmount = number_format(((float) $pricePerUnit * (float) $taxPercentage) / 100, 2);
-                                                    
-                                                    echo $taxAmount;
-                                                    ?>
+                                                    {{ $item->tax_amt }}
                                                 </td>
                                                 <td
                                                     style="font-size:10px; text-align:center; border-right:1px solid; width:10%;">
@@ -316,15 +443,47 @@
                                         @endforeach
 
                                     </tbody>
-                                
+                                    <tr class="bg-sky text-bold" style="border-bottom:1px solid;">
+                                        <td style="font-size:12px; text-align:center; border-right: 1px solid; ">
+                                            Total
+                                        </td>
+                                      
+                                       
+                                  
+                                        <td style="width:10%; text-align:center; border-right: 1px solid; ">
+                                        </td>
+                                        <td style="width:10%; text-align:center; border-right: 1px solid; ">
+                                        </td>
+                                        <td style="font-size:12px; text-align:center; border-right: 1px solid; ">
+                                       
+                                        </td>
+                                        <td
+                                            style="width:10%; text-align:center; border-right: 1px solid; font-size: 12px; ">
+                                         
+                                        </td>
+                                        <td style="width:10%; text-align:center; border-right: 1px solid;  font-size: 12px; ">
+                                            {{ $totalQuantity }}
+                                        </td>
+                                        <td style="width:10%; text-align:center; border-right: 1px solid;  font-size: 12px;">
+                                            {{ $totalLiter }}
+                                        </td>
+                                        <td style="width:10%; text-align:right; border-right: 1px solid; ">
+                                        </td>
+                                       
+                                        <td
+                                            style=" width:10%; font-size:12px; text-align:center; border-right: 1px solid; ">
+                                            {{ $totalAmount }}
+                                        </td>
+                                    </tr>
+                                  
                                     <td style="width:90%;" colspan="5"></td>
                                 </table>
                                 <table>
                                     <tr class="item">
-                                        <td style="width:60%;" colspan="4">
+                                        <td style="width:80%;" colspan="6">
 
                                             <div class="gsttable">
-                                                <table style="border:0px !important;">
+                                                <table style="border:0px !important; width:100%;">
                                                     <!-- Tax Summary Header -->
                                                  
                                                         <td colspan="15" style="font-size:12px; padding:5px;">Tax Summary</td>
@@ -357,29 +516,34 @@
                                                         <td style="font-size:12px; width:10%;" class="text-center">Amt (INR)</td>
                                                     </tr>
                                             
-                                                    <!-- Data Rows -->
+                                                    @php
+                                                    $totalTaxAmount = array_sum(array_column($response_data, 'tax_amt'));
+                                                    $centralTax = $totalTaxAmount / 2;
+                                                    $stateTax = $totalTaxAmount / 2;
+                                                @endphp
                                                     @foreach ($response_data as $item)
                                                         <tr>
                                                             <td style="font-size:12px;" class="text-center">
                                                                 {{ $item['hsn_code'] }}
                                                             </td>
                                                             <td style="font-size:12px;" class="text-center">
-                                                                {{ number_format($item['total_tax_percentage'] / 2, 2) }}
-                                                            </td>
-                                                            <td style="font-size:12px;" class="text-center">
-                                                                {{ number_format($item['taxable_amount'] / 2, 2) }}
+                                                                {{ number_format($item['price_per_unit'] * $item['purchase_qty'] , 2) }}
                                                             </td>
                                                             <td style="font-size:12px;" class="text-center">
                                                                 {{ number_format($item['total_tax_percentage'] / 2, 2) }}
                                                             </td>
                                                             <td style="font-size:12px;" class="text-center">
-                                                                {{ number_format($item['taxable_amount'] / 2, 2) }}
+                                                                {{ number_format($item['tax_amt'] / 2, 2) }}
                                                             </td>
                                                             <td style="font-size:12px;" class="text-center">
                                                                 {{ number_format($item['total_tax_percentage'] / 2, 2) }}
                                                             </td>
                                                             <td style="font-size:12px;" class="text-center">
-                                                                {{ number_format($item['taxable_amount'], 2) }}
+                                                                
+                                                                {{ number_format($item['tax_amt'] / 2, 2) }}
+                                                            </td>
+                                                            <td style="font-size:12px;" class="text-center">
+                                                                {{ number_format($item['tax_amt'], 2) }}
                                                             </td>
                                                         </tr>
                                                     @endforeach
@@ -387,47 +551,128 @@
                                             </div>
 
                                         </td>
-                                       
-                                        <td style="width:100%; text-align:right;  height: 100%;  ">
+                                    
+                                        <td class="col-xs-12"
+                                            style="width:100%; text-align:right; position:relative; height: 100%; display:flex; justify-content:center; ">
 
-                                            <table style="width:80%; margin-left: 150px;">
+                                            <table style="width:100%;  position:relative; left:40%; ">
+                                            
                                                 <tr style="width:100%;">
                                                     <td>
                                                         <div class="bg-sky text-bold"
-                                                            style="width:100%; font-size:12px; ">Sub total
+                                                            style="width:100%; font-size:12px; text-align:left; padding: 5px;">Sub total
 
                                                         </div>
                                                     </td>
-                                                    </td>
                                                     <td>
-                                                        <div class="bg-sky text-bold" style="font-size:12px; "
+                                                        <div class="bg-sky text-bold" style="font-size:12px; padding: 5px;"
                                                             id="subtotal">
 
-                                                          
-                                                                {{ $sale->subtotal }}
-                                                     
+
+                                                            {{ $sale->subtotal }}
+
                                                         </div>
                                                         <script>
                                                             var subtotal = document.getElementById('subtotal').value;
                                                         </script>
                                                     </td>
                                                 </tr>
+                                            
+                                                <tr>
+                                                    <td>
+                                                        <div colspan="8" class="bg-sky text-bold"
+                                                            style="font-size:12px; padding: 5px; text-align:left;"><b>CGST </b>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div colspan="7" class="bg-sky text-bold"
+                                                            style="font-size:12px; padding: 5px;">
+                                                            <b>{{ number_format($centralTax, 2) }}</b>
+                                                        </div>
+                                                    </td>
+                                                </tr>
                                                 <tr>
                                                     <td>
                                                         <div colspan="7" class="bg-sky text-bold"
-                                                            style="font-size:12px; padding: 5px;"><b>Total</b></div>
+                                                            style="font-size:12px; padding: 5px; text-align:left;"><b>SGST</b>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div colspan="7" class="bg-sky text-bold"
+                                                            style="font-size:12px; padding: 5px; ">
+                                                            <b>{{ number_format($stateTax, 2) }}</b>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                
+                                                <tr>
+                                                    <td>
+                                                        <div colspan="7" class="bg-sky text-bold"
+                                                            style="font-size:12px; padding: 5px; text-align:left;"><b>Round Off</b>
+                                                        </div>
                                                     </td>
                                                     <td>
                                                         <div colspan="7" class="bg-sky text-bold"
                                                             style="font-size:12px; padding: 5px;">
                                                             <b>
-                                                              
-                                                                    <span
-                                                                        id="amountNumeric">{{ round(    $totalAmount ) }}</span>
                                                                 
+                                                                {{ $sale->round_off}}
+                                                            </b>
+                                                        </div>
+                                      
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <div colspan="7" class="bg-sky text-bold"
+                                                            style="font-size:12px; padding: 5px; text-align:left;"><b>Other Charges</b>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div colspan="7" class="bg-sky text-bold"
+                                                            style="font-size:12px; padding: 5px;">
+                                                            <b>
+                                                               {{ $sale->other_charges_amt}}
+                                                            </b>
+                                                        </div>
+                                      
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <tr>
+                                                        <td>
+                                                            <div colspan="7" class="bg-sky text-bold"
+                                                                style="font-size:12px; padding: 5px; text-align:left;"><b>Total Discount</b>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div colspan="7" class="bg-sky text-bold"
+                                                                style="font-size:12px; padding: 5px;">
+                                                                <b>
+                                                                   {{$sale->discount_to_all_input }}
+                                                                </b>
+                                                            </div>
+                                          
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                    <td>
+                                                        <div colspan="7" class="bg-sky text-bold"
+                                                            style="font-size:12px; padding: 5px; text-align:left;"><b>Total</b>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div colspan="7" class="bg-sky text-bold"
+                                                            style="font-size:12px; padding: 5px; ">
+                                                            <b>
+
+                                                                <span
+                                                                    id="amountNumeric">{{ $sale->grand_total}}</span>
+
                                                             </b>
                                                         </div>
                                                     </td>
+                                                    
                                                 </tr>
                                                 <tr>
                                                     <td colspan="2" style="font-size:12px;">(<b
@@ -435,6 +680,7 @@
                                                 </tr>
 
                                             </table>
+
 
                                             <div class="subtotalarea"
                                                 style="width:200px; height:100%; display:flex;  justify-content:center; ">
@@ -491,7 +737,6 @@
                                 </div>
                             </div>
 
-                            <!-- T&C & Bank Details & signatories End -->
 
                             <td colspan="16" style="text-align: center;font-size: 11px; margin-top:60px;    ">
                                 <center>
@@ -504,17 +749,17 @@
 
                         </div>
 
-
-                        <div class="card-header" id="buttons">
+                   
+                        <div class="card-header" id="buttons" style="display: flex; gap: 10px;">
                             <div class="col-xs-6">
-                                <button class="btn btn-primary" id="download_Btn"><i class="fa-solid fa-file-pdf"></i>
-                                    Download
-                                    Pdf</button>
+                                <button class="btn btn-primary" id="download_Btn">
+                                    <i class="fa-solid fa-file-pdf"></i> Download Pdf
+                                </button>
                             </div>
                             <div class="col-xs-6">
-                                <button class="btn btn-primary" onclick="printPreview()" id="print-button"><i
-                                        class="fa  fa-print"></i>
-                                    Print</button>
+                                <button class="btn btn-primary" onclick="printPreview()" id="print-button">
+                                    <i class="fa fa-print"></i> Print
+                                </button>
                             </div>
                         </div>
 
@@ -523,185 +768,22 @@
             </div>
         </div>
     </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+                        
 
- 
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
-    <script>
-        function printPreview() {
-            // Create a new window for printing
-            var printWindow = window.open('', '_blank');
-            
-            // Get only the bill content
-            var billContent = document.getElementById('preview_data').cloneNode(true);
-            
-            // Remove the buttons section from the clone
-            var buttonsSection = billContent.querySelector('#buttons');
-            if (buttonsSection) {
-                buttonsSection.remove();
-            }
-            
-            // Add necessary styles with improved background color support
-            var styles = `
-                <style>
-                    @media print {
-                        @page { 
-                            size: portrait;
-                            margin: 10mm; 
-                        }
-                        
-                        * {
-                            -webkit-print-color-adjust: exact !important;
-                            print-color-adjust: exact !important;
-                            color-adjust: exact !important;
-                        }
 
-                        body {
-                            margin: 0;
-                            padding: 0;
-                            font-family: 'Helvetica Neue', 'Helvetica', Arial, sans-serif;
-                        }
-
-                        /* Table styles */
-                        table {
-                            border-collapse: collapse;
-                            width: 100%;
-                        }
-
-                     
-
-                        /* Background colors */
-                        .bg-sky {
-                            background-color: #E8F3FD !important;
-                        }
-
-                        tr.bg-sky td {
-                            background-color: #E8F3FD !important;
-                        }
-
-                        .text-bold {
-                            font-weight: bold;
-                        }
-
-                        /* Font sizes */
-                        td {
-                            font-size: 8px !important;
-                        }
-                        
-                        p {
-                            font-size: 8px !important;
-                        }
-                        
-                        div {
-                            font-size: 8px !important;
-                        }
-                        
-                        h5 {
-                            font-size: 10px !important;
-                        }
-
-                        /* Firefox specific */
-                        @-moz-document url-prefix() {
-                            .bg-sky {
-                                background-color: #E8F3FD !important;
-                                print-color-adjust: exact;
-                            }
-                        }
-                    }
-
-                    /* Include other existing styles */
-                    ${document.querySelector('style').innerHTML}
-                </style>
-            `;
-            
-            // Write the content to the new window with proper DOCTYPE and meta tags
-            printWindow.document.write(`
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <meta charset="utf-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1">
-                    ${styles}
-                </head>
-                <body>
-                    ${billContent.innerHTML}
-                </body>
-                </html>
-            `);
-            
-            // Wait for content and images to load before printing
-            printWindow.document.close();
-            printWindow.onload = function() {
-                setTimeout(() => {
-                    printWindow.print();
-                    printWindow.close();
-                }, 250); // Small delay to ensure styles are applied
-            };
-        }
     </script>
 
-    <script>
-        function numberToWords(num) {
-            const ones = [
-                '', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten',
-                'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'
-            ];
-            const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
-            const scales = ['', 'Thousand', 'Million', 'Billion'];
-
-            if (num === 0) return 'Zero';
-
-            let words = '';
-
-            function toWords(n, scaleIndex) {
-                if (n === 0) return '';
-
-                let currentWords = '';
-
-                if (n >= 100) {
-                    currentWords += ones[Math.floor(n / 100)] + ' Hundred ';
-                    n %= 100;
-                }
-
-                if (n >= 20) {
-                    currentWords += tens[Math.floor(n / 10)] + ' ';
-                    n %= 10;
-                }
-
-                if (n > 0) {
-                    currentWords += ones[n] + ' ';
-                }
-
-                if (scaleIndex > 0 && currentWords.trim() !== '') {
-                    currentWords += scales[scaleIndex] + ' ';
-                }
-
-                return currentWords;
-            }
-
-            let scaleIndex = 0;
-            while (num > 0) {
-                let part = num % 1000;
-                if (part > 0) {
-                    words = toWords(part, scaleIndex) + words;
-                }
-                num = Math.floor(num / 1000);
-                scaleIndex++;
-            }
-
-            return words.trim();
-        }
-
-        // Get the numeric amount
-        const amountElement = document.getElementById('amountNumeric');
-        const amountNumeric = parseFloat(amountElement.innerText);
-
-        // Convert to words and display
-        if (!isNaN(amountNumeric)) {
-            const amountInWords = numberToWords(amountNumeric);
-            document.getElementById('amountInWords').innerText = amountInWords;
-        }
-    </script>
     <script>
         function numberToWords(num) {
             const ones = [
@@ -767,26 +849,42 @@
        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
+        function printPreview() {
+            // Hide buttons before printing
+            const buttonsElement = document.getElementById('buttons');
+            buttonsElement.style.display = 'none';
+            
+            // Small delay to ensure styles are applied
+            setTimeout(() => {
+                window.print();
+                
+                // Show buttons again after print dialog closes
+                setTimeout(() => {
+                    buttonsElement.style.display = 'flex';
+                }, 200);
+            }, 100);
+        }
+
+        // Update the download function as well for consistency
         document.getElementById('download_Btn').addEventListener('click', () => {
-var buttonsElement = document.getElementById('buttons');
+            const buttonsElement = document.getElementById('buttons');
             buttonsElement.style.display = "none";
+            
             const previewData = document.getElementById('preview_data');
 
             html2canvas(previewData).then(canvas => {
                 const imgData = canvas.toDataURL('image/png');
                 const pdf = new jspdf.jsPDF();
 
-
                 const imgWidth = 190;
                 const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
                 pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
                 pdf.save('preview.pdf');
+                
                 setTimeout(() => {
-
-buttonsElement.style.display = "flex";
-
-}, 200);
+                    buttonsElement.style.display = "flex";
+                }, 200);
             });
         });
     </script>

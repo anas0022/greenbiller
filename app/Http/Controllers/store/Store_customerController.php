@@ -16,73 +16,9 @@ use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 class Store_customerController extends Controller
 {
-    public function customer(){
-        $country = countrysettings::all();
-        $logo = Coresetting::all();
-     
-        return view('store.contacts.addcustomer',compact('country','logo'));
-    }
-    public function customer_post(Request $request)
-    {
   
-        $latestCustomer = Customer::orderBy('customer_id', 'desc')->first(); 
 
-if ($latestCustomer) {
-    $lastNumber = (int) substr($latestCustomer->customer_id, -4);
-} else {
-    $lastNumber = 0;
-}
-
-// Increment the number by 1
-$nextNumber = $lastNumber + 1;
-$nextCustomerCode = 'CUS-1-' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT); // CUS-1-XXXX format
-
-// Create a new customer instance
-$customer = new Customer();
-
-// Set customer fields
-$customer->customer_id = $nextCustomerCode; // Set the auto-incrementing customer code
-$customer->customer_name = $request->input('customer_name');
-$customer->mobile = $request->input('mobile');
-$customer->email = $request->input('email');
-$customer->gst_number = $request->input('gstin');
-$customer->store_id = Auth::user()->store_id;
-$customer->created_by = Auth::user()->id;
-$customer->tax_number = $request->input('tax_number');
-$customer->credit_limit = $request->input('credit_limit');
-$customer->previous_due = $request->input('opening_balance');
-$customer->address = $request->input('address');
-$customer->city = $request->input('city');
-$customer->state = $request->input('state');
-$customer->postcode = $request->input('postcode');
-$customer->country = $request->input('country_name');
-$customer->ship_address = $request->input('address_shipping');
-$customer->ship_city = $request->input('city_shipping');
-$customer->ship_state = $request->input('state_shipping');
-$customer->ship_postcode = $request->input('postcode_shipping');
-$customer->ship_country = $request->input('shipping_country');
-$customer->price_leveltype = $request->input('price_type');
-$customer->price_level = $request->input('price_level');
-
-// Save the customer and return success or error message
-if ($customer->save()) {
-    return back()->with('success', 'Customer added successfully with code ' . $nextCustomerCode);
-}
-
-return back()->with('error', 'Customer not added');
-    }
-    public function customer_list()
-    {
-      
-  
     
-  $storeIds = Store::where('id',Auth::user()->store_id)->first();
-
-        $customer = Customer::whereIn('store_id',$storeIds)->get();
-      
-        $logo = Coresetting::all();
-        return view('store.contacts.customerlist', compact('customer','logo'));
-    }
     public function customer_status(Request $request){
         $brands = Customer::find($request->input('id'));
         if ($brands) {
@@ -146,12 +82,7 @@ return back()->with('error', 'Customer not added');
         }
     }
     
-public function deletecu(Request $request){
-    $brand  = Customer::where('id',$request->input('id'));
 
-    if($brand->delete()){
-        return back()->with('success' ,'Deleted successfully');
-    }}
     public function add_supplier(){
         $logo = Coresetting::all();
         $cuntry = countrysettings::all();
