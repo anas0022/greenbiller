@@ -21,6 +21,17 @@
                         @csrf
                         <div class="card-body" >
                             <div style="display: flex; justify-content: space-between;">
+                                <select name="store_id" id="store_select">
+                                    <option value="">-select-</option>
+                                    @foreach ($store as $st )
+
+                                    <option value="{{$st->id}}">{{$st->store_name}}</option>
+                                        
+                                    @endforeach
+                                </select>
+                                @if($store->isEmpty())
+                                    <p>No stores available.</p>
+                                @endif
                                 <p>Today Date: <span id="display_date">{{date('d-m-Y')}}</span></p>
                                 <p>Opening Balance: <span id="opening_balance"></span></p>
                                 <input type="hidden" name="opening" id="opening_input" value="">
@@ -53,9 +64,11 @@
                                         @endforeach
                                     </td>
                                     <td class="text-center flash-cell table-info" id="purchase_bill_list">
-                                        @foreach ($purchases as $item)
-                                            <div class="amount-line">{{$item->prefix}}/{{$item->purchase_code}}</div>
-                                        @endforeach
+                                      
+                                            @foreach ($purchases as $item)
+                                                <div class="amount-line">{{ $item->prefix }}/{{ $item->purchase_code }}</div>
+                                            @endforeach
+                                      
                                     </td>
                                     <td class="text-center flash-cell " id="purchase_list">
                                    
@@ -120,204 +133,224 @@
 </div>
 
 <script>
-$(document).ready(function() {
-    // Initial load
-    loadClosingData();
-
-    // Date change event
-    $('#closing_date').change(function() {
+    $(document).ready(function() {
+        // Initial load
         loadClosingData();
-    });
 
-    // Function to fetch data every 2 seconds
-    function startLiveUpdate() {
-        setInterval(function() {
+        // Date change event
+        $('#closing_date').change(function() {
             loadClosingData();
-        }, 2000);
-    }
-
-    function loadClosingData() {
-        let date = $('#closing_date').val();
-        
-        $.ajax({
-            url: '{{ route("daily.closing") }}',
-            type: 'GET',
-            data: {
-                date: date,
-                _: new Date().getTime() // Prevent caching
-            },
-            headers: {
-                'Cache-Control': 'no-cache',
-                'Pragma': 'no-cache'
-            },
-            success: function(response) {
-                updateDisplayWithAnimation(response);
-            },
-            error: function(xhr, status, error) {
-                console.error('Error loading closing data:', error);
-            }
         });
-    }
 
-    function updateDisplayWithAnimation(response) {
-     
-        let displayDate = new Date($('#closing_date').val()).toLocaleDateString('en-GB');
-        updateElementWithAnimation('#display_date', displayDate);
-
-  
-        let openingBalance = parseFloat(response.opening_balance ? response.opening_balance.closing_amount : 0) || 0;
-        updateElementWithAnimation('#opening_balance', openingBalance);
-        $('#opening_input').val(openingBalance);
-
-       
-        let invoiceHtml = '';
-        response.sale.forEach(function(item) {
-            invoiceHtml += `${item.prefix}/ ${item.sales_code}<br>`;
+        // Store change event
+        $('#store_select').change(function() {
+            loadClosingData();
         });
-        updateElementWithAnimation('#invoice_list', invoiceHtml);
-        let purchaseHtml = '';
-        let totalPurchase = 0;
 
-        if (response.payment && response.payment.length > 0) {
-            response.payment.forEach(function(item) {
-                purchaseHtml += `₹${numberFormat(item.payment)}<br>`;
-                totalPurchase += parseFloat(item.payment || 0);
-            });
-        } else {
-            purchaseHtml = '₹0';
-        }
-
-        // Update the purchase list and total
-        updateElementWithAnimation('#purchase_list', purchaseHtml);
-        updateElementWithAnimation('#total_purchase', numberFormat(totalPurchase));
-        $('#total_purchase_input').val(totalPurchase);
-
-        // Update sale list
-        let saleHtml = '';
-        response.sale_amount.forEach(function(item) {
-            saleHtml += `₹${numberFormat(item.payment)}<br>`;
-        });
-        updateElementWithAnimation('#sale_list', saleHtml);
-
-        // Update expense list
-        let expenseHtml = '';
-        response.expense.forEach(function(item) {
-            expenseHtml += `₹${numberFormat(item.amount)}<br>`;
-        });
-        updateElementWithAnimation('#expense_list', expenseHtml);
-
-        // Update totals
-        updateElementWithAnimation('#total_invoices', numberFormat(response.total_invoice_count, 0));
-        $('#invoice_count_input').val(response.total_invoice_count);
-
-        updateElementWithAnimation('#total_sales', numberFormat(response.sale_payment));
-        $('#total_sale_input').val(response.sale_payment);
-
-        updateElementWithAnimation('#total_expenses', numberFormat(response.expense_amount));
-        $('#total_expense_input').val(response.expense_amount);
-
-      
-
-
-        // Parse all values as floats to ensure proper calculation
-        let salePayment = parseFloat(response.sale_payment) || 0;
-        let expenseAmount = parseFloat(response.expense_amount) || 0;
-
-        // Calculate closing balance
-        let closingBalance = salePayment - expenseAmount - totalPurchase;
-        
-        // For debugging - remove these lines after testing
-        console.log('Opening Balance:', openingBalance);
-        console.log('Sale Payment:', salePayment);
-        console.log('Expense Amount:', expenseAmount);
-        console.log('Closing Balance:', closingBalance);
-
-        // Update display and input
-        updateElementWithAnimation('#closing_balance', numberFormat(closingBalance));
-        $('#closing_amount_input').val(closingBalance);
-
-        // Update purchase bill list with animation
-        let purchaseBillHtml = '';
-        response.purchases.forEach(function(item) {
-            purchaseBillHtml += `<div class="amount-line">${item.prefix}/${item.purchase_code}</div>`;
-        });
-        updateElementWithAnimation('#purchase_bill_list', purchaseBillHtml);
-
-        // Update purchase bills count
-        updateElementWithAnimation('#total_purchase_bills', numberFormat(response.purchases.length, 0));
-        $('#total_purchase_bills_input').val(response.purchases.length);
-    }
-
-    function updateElementWithAnimation(selector, newValue) {
-        const element = $(selector);
-        const currentValue = element.html();
-        if (currentValue !== newValue) {
-            element.fadeOut(100, function() {
-                $(this).html(newValue)
-                       .fadeIn(100)
-                       .addClass('highlight table-info');
+        function loadClosingData() {
+            let date = $('#closing_date').val();
+            let storeId = $('#store_select').val(); // Get the selected store ID
             
-                setTimeout(function() {
-                    element.removeClass('highlight')
-                          .addClass('table-info');
-                }, 1000);
+            if (!storeId) {
+                alert('Please select a store.');
+                return;
+            }
+
+            $.ajax({
+                url: '{{ route("daily.closing") }}',
+                type: 'GET',
+                data: {
+                    date: date,
+                    store_id: storeId, // Include the store ID in the request
+                    _: new Date().getTime() // Prevent caching
+                },
+                headers: {
+                    'Cache-Control': 'no-cache',
+                    'Pragma': 'no-cache'
+                },
+                success: function(response) {
+                    console.log('AJAX Response:', response); // Log the entire response
+
+                    let purchaseBillHtml = '';
+                    console.log('Number of Purchases:', response.purchases.length); // Log the number of purchases
+
+                    response.purchases.forEach(function(item) {
+                        purchaseBillHtml += `<div class="amount-line">${item.prefix}/${item.purchase_code}</div>`;
+                    });
+
+                    // Update the purchase bill list with the generated HTML
+                    updateElementWithAnimation('#purchase_bill_list', purchaseBillHtml);
+
+                    updateDisplayWithAnimation(response);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error loading closing data:', error);
+                }
             });
         }
-    }
 
-    function numberFormat(number, decimals = 2) {
-        return parseFloat(number || 0).toFixed(decimals).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    }
+    
+        function updateDisplayWithAnimation(response) {
+     
+     let displayDate = new Date($('#closing_date').val()).toLocaleDateString('en-GB');
+     updateElementWithAnimation('#display_date', displayDate);
 
-    // Start live updates
-    startLiveUpdate();
+
+     let openingBalance = parseFloat(response.opening_balance ? response.opening_balance.closing_amount : 0) || 0;
+     updateElementWithAnimation('#opening_balance', openingBalance);
+     $('#opening_input').val(openingBalance);
+
+    
+     let invoiceHtml = '';
+     response.sale.forEach(function(item) {
+         invoiceHtml += `${item.prefix}/ ${item.sales_code}<br>`;
+     });
+    
+     updateElementWithAnimation('#invoice_list', invoiceHtml);
+     let purchaseHtml = '';
+     let totalPurchase = 0;
+
+     if (response.payment && response.payment.length > 0) {
+         response.payment.forEach(function(item) {
+             purchaseHtml += `₹${numberFormat(item.payment)}<br>`;
+             totalPurchase += parseFloat(item.payment || 0);
+         });
+     } else {
+         purchaseHtml = '₹0';
+     }
+
+     // Update the purchase list and total
+     updateElementWithAnimation('#purchase_list', purchaseHtml);
+     updateElementWithAnimation('#total_purchase', numberFormat(totalPurchase));
+     $('#total_purchase_input').val(totalPurchase);
+
+     // Update sale list
+     let saleHtml = '';
+     response.sale_amount.forEach(function(item) {
+         saleHtml += `₹${numberFormat(item.payment)}<br>`;
+     });
+     updateElementWithAnimation('#sale_list', saleHtml);
+
+     // Update expense list
+     let expenseHtml = '';
+     response.expense.forEach(function(item) {
+         expenseHtml += `₹${numberFormat(item.amount)}<br>`;
+     });
+     updateElementWithAnimation('#expense_list', expenseHtml);
+
+     // Update totals
+     updateElementWithAnimation('#total_invoices', numberFormat(response.total_invoice_count, 0));
+     $('#invoice_count_input').val(response.total_invoice_count);
+
+     updateElementWithAnimation('#total_sales', numberFormat(response.sale_payment));
+     $('#total_sale_input').val(response.sale_payment);
+
+     updateElementWithAnimation('#total_expenses', numberFormat(response.expense_amount));
+     $('#total_expense_input').val(response.expense_amount);
+
+   
+
+
+     // Parse all values as floats to ensure proper calculation
+     let salePayment = parseFloat(response.sale_payment) || 0;
+     let expenseAmount = parseFloat(response.expense_amount) || 0;
+
+     // Calculate closing balance
+     let closingBalance = salePayment - expenseAmount - totalPurchase;
+     
+     // For debugging - remove these lines after testing
+     console.log('Opening Balance:', openingBalance);
+     console.log('Sale Payment:', salePayment);
+     console.log('Expense Amount:', expenseAmount);
+     console.log('Closing Balance:', closingBalance);
+
+     // Update display and input
+     updateElementWithAnimation('#closing_balance', numberFormat(closingBalance));
+     $('#closing_amount_input').val(closingBalance);
+
+     // Update purchase bill list with animation
+     let purchaseBillHtml = '';
+     response.purchases.forEach(function(item) {
+        purchaseBillHtml += `${item.prefix}/ ${item.purchase_code}<br>`;
+         
+     });
+     updateElementWithAnimation('#purchase_bill_list', purchaseBillHtml);
+
+     // Update purchase bills count
+     updateElementWithAnimation('#total_purchase_bills', numberFormat(response.purchases.length, 0));
+     $('#total_purchase_bills_input').val(response.purchases.length);
+ }
+
+ function updateElementWithAnimation(selector, newValue) {
+     const element = $(selector);
+     const currentValue = element.html();
+     if (currentValue !== newValue) {
+         element.fadeOut(100, function() {
+             $(this).html(newValue)
+                    .fadeIn(100)
+                    .addClass('highlight table-info');
+         
+             setTimeout(function() {
+                 element.removeClass('highlight')
+                       .addClass('table-info');
+             }, 1000);
+         });
+     }
+ }
+
+ function numberFormat(number, decimals = 2) {
+     return parseFloat(number || 0).toFixed(decimals).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+ }
+
+ // Start live updates
+ startLiveUpdate();
 });
 </script>
 
 <!-- Add this CSS for animations -->
 <style>
 .highlight {
-    transition: background-color 1s ease-out;
+ transition: background-color 1s ease-out;
 }
 
 td, th {
-    transition: background-color 0.5s ease-out;
+ transition: background-color 0.5s ease-out;
 }
 
 .table-bordered td, .table-bordered th {
-    position: relative;
+ position: relative;
 }
 
 .flash {
-    animation: flash-animation 1s ease-out;
+ animation: flash-animation 1s ease-out;
 }
 
 @keyframes flash-animation {
-    0% { background-color: #fff3cd; }
-    100% { background-color: transparent; }
+ 0% { background-color: #fff3cd; }
+ 100% { background-color: transparent; }
 }
 
 .amount-line {
-    padding: 2px 0;
-    margin: 2px 0;
+ padding: 2px 0;
+ margin: 2px 0;
 }
 
 .flash-cell {
-    background-color: transparent;
-    transition: background-color 0.5s ease;
+ background-color: transparent;
+ transition: background-color 0.5s ease;
 }
 
 .flash-cell.highlight {
-    background-color: #fff3cd !important;
+ background-color: #fff3cd !important;
 }
 
 /* Add spacing between lines */
 .amount-line:not(:last-child) {
-    border-bottom: 1px solid #eee;
+ border-bottom: 1px solid #eee;
 }
 
 .custom-bg {
-    background-color: #fff3cd !important;  /* This is Bootstrap's warning background color */
+ background-color: #fff3cd !important;  /* This is Bootstrap's warning background color */
 }
 </style>
 @endsection

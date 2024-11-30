@@ -1,21 +1,23 @@
 @extends('admin.layouts.app')
 @section('content')
-<script src="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.min.js"></script>
-<link rel="stylesheet" type="text/css" href="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.css">
+    <script src="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.css">
 
 
-<link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css">
-<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.css"> <div class="content-body">
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.css">
+    <div class="content-body">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
                     <div class="card">
-                        <div class="card-footer" >
+                        <div class="card-footer">
                             <h4 class="card-text d-inline"> Closing List </h4>
                             <div style="padding: 10px;">
-                                <a href="{{route('daily.closing')}}"
-                                    class="card-link float-end btn btn-rounded btn-info btn-sm " style="margin-bottom:25px;"><span
-                                        class="btn-icon-start text-info"><i class="fa fa-plus color-info"></i>
+                                <a href="{{ route('daily.closing') }}"
+                                    class="card-link float-end btn btn-rounded btn-info btn-sm "
+                                    style="margin-bottom:25px;"><span class="btn-icon-start text-info"><i
+                                            class="fa fa-plus color-info"></i>
                                     </span>New Closing</a>
                             </div>
                         </div>
@@ -41,9 +43,9 @@
                 </div>
             </div>
         </div>
-    </div>  
-             
-      
+    </div>
+
+
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/buttons/3.2.0/js/dataTables.buttons.js"></script>
@@ -54,53 +56,42 @@
     <script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.print.min.js"></script>
 
-<script>
-$(document).ready(function() {
+    <script>
+     $(document).ready(function() {
     $('#example').DataTable({
         processing: true,
         serverSide: false,
         ajax: {
             url: '{{ route("closing.list") }}',
-            type: 'GET'
+            type: 'GET',
+            dataSrc: function (json) {
+                console.log('AJAX Response:', json); // Log the entire response
+                return json.data; // Ensure this matches your data structure
+            }
         },
         columns: [
-            { 
-                data: 'date',
-                className: 'text-center'
-            },
-            { 
-                data: 'invoice_count',
-                className: 'text-center'
-            },
-            { 
-                data: 'total_sale',
-                className: 'text-center'
-            },
-            { 
-                data: 'purchase_count',
-                className: 'text-center'
-            },
-            { 
-                data: 'total_purchase',
-                className: 'text-center'
-            },
-            { 
-                data: 'total_expense',
-                className: 'text-center'
-            },
-            { 
-                data: 'closing_amount',
-                className: 'text-center'
-            },
+            { data: 'date', className: 'text-center' },
+            { data: 'invoice_count', className: 'text-center' },
+            { data: 'total_sale', className: 'text-center' },
+            { data: 'purchase_count', className: 'text-center' },
+            { data: 'total_purchase', className: 'text-center' },
+            { data: 'total_expense', className: 'text-center' },
+            { data: 'closing_amount', className: 'text-center' },
             {
                 data: 'id',
                 className: 'text-center',
-                render: function(data) {
-                    var url = "{{ route('closing.bill', ':id') }}";
-                    url = url.replace(':id', data);
-                    return `<a href="${url}">
-                        <i class="fas fa-eye" style="color: #007bff; font-size: 20px;"></i>
-                    </a>`;
+                render: function(data, type, row) {
+                    console.log('Row data:', row); // Log the row data
+                    var url = "{{ route('closing.bill',[ ':id', ':store_id']) }}";
+                    if (row.store_id) {
+                        url = url.replace(':id', data).replace(':store_id', row.store_id);
+                        return `<a href="${url}">
+                            <i class="fas fa-eye" style="color: #007bff; font-size: 20px;"></i>
+                        </a>`;
+                    } else {
+                        console.warn('Missing store_id for row:', row); // Log a warning
+                        return `<span>No Store ID</span>`;
+                    }
                 }
             }
         ],
@@ -113,5 +104,5 @@ $(document).ready(function() {
         lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]]
     });
 });
-</script>
+    </script>
 @endsection

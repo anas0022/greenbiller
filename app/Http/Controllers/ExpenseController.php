@@ -17,8 +17,16 @@ class ExpenseController extends Controller
 
         $expense = Expense::all();
         $logo = Coresetting::all();
-        $expense_category = Expensecat::all();
-        return view('admin.expences.listexpences' , compact('expense','logo','expense_category'));
+        $categoryIds = $expense->pluck("category")->first();
+        //$userIds = $expense->pluck("created_by")->first();
+        $accountIds = $expense->pluck("account")->first();
+        
+        $expense_category = Expensecat::where('id' ,$categoryIds)->get();
+        $account = Account::where('id',$accountIds)->first();
+        //$user = UserList::where('id',$userIds)->first();
+      
+   
+        return view('admin.expences.listexpences' , compact('account','expense','logo','expense_category'));
     }
     public function expense_category(){
 
@@ -113,8 +121,9 @@ class ExpenseController extends Controller
         $account = Account::all();
         $user = UserList::all();
         $expense_category = Expensecat::all();
+        $store = Store::all();
         
-return view('admin.expences.addexpence',compact('expenses','account','logo','user','expense_category'   ));
+return view('admin.expences.addexpence',compact('expenses','account','logo','user','expense_category' ,'store'  ));
     }
     public  function addexpense(Request $request){
         $request ->validate([
@@ -142,6 +151,7 @@ return view('admin.expences.addexpence',compact('expenses','account','logo','use
         $expense ->expense_for = $request->input('expense_for');
         $expense ->payment_type = $request->input('payment_type');
         $expense ->account = $request->input('account');
+        $expense->store_id = $request->input('store_id');
     
         $expense ->amount = $request->input('expense_amt');
         $expense ->reference_no = $request->input('reference_no');

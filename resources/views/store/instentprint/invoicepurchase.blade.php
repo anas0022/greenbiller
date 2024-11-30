@@ -3,7 +3,85 @@
 @section('title', 'Home Page')
 
 @section('content')
-<link href="{{asset('admin-assets/css/toast.css')}}" rel="stylesheet">
+
+<style type="text/css">
+    @media print {
+        @page {
+        size: portrait;
+    }
+        body {
+            -webkit-print-color-adjust: exact;
+            /* Adjusts color to match screen */
+            color-adjust: exact;
+            /* For Firefox */
+            print-color-adjust: exact;
+            font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+        }
+
+        .item {
+            border-bottom: 1px solid gray !important;
+            /* Forces the border to appear */
+        }
+
+        table {
+            border-collapse: collapse;
+            /* Ensures borders are continuous */
+        }
+        #buttons{
+            display: none !important;
+        }
+    }
+
+    @media print and (orientation: portrait) {
+        td {
+            /* Replace with your desired font */
+            font-size: 6px !important;
+            /* Adjust the size as needed */
+        }
+        p {
+            font-size: 6px !important;
+        }
+        div{
+            font-size: 6px !important;
+            gap: 10px !important;
+        }
+        h5{
+            font-size: 8px !important;
+        }
+       
+    }
+
+    .text-bold {
+        font-weight: bold;
+    }
+
+    .bg-sky {
+        background-color: #E8F3FD;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    .Not-paid {
+        background-color: #ffebee !important;
+        color: #c62828 !important;
+        border: 1px solid #c62828 !important;
+        border-radius: 4px;
+        padding: 2px 8px !important;
+        display: inline-block !important;
+    }
+    
+    .paid {
+        background-color: #e8f5e9 !important;
+        color: #2e7d32 !important;
+        border: 1px solid #2e7d32 !important;
+        border-radius: 4px;
+        padding: 2px 8px !important;
+        display: inline-block !important;
+    }
+</style>
+
 
 <div class="content-body">
     <div class="container-fluid">

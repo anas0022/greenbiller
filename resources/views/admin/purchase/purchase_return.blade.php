@@ -568,13 +568,16 @@
                                                             class="form-control selectpicker" data-live-search="true"
                                                             required onchange="othercharge()">
 
-                                                            <option value="">Select Tax</option>
-                                                            @foreach ($taxes as $t)
-                                                                <option value="{{ $t->id }}"
-                                                                    data-percentage="{{ $t->per }}">
-                                                                    {{ $t->taxname }}
-                                                                </option>
-                                                            @endforeach
+                                                            @if(!$purchase->taxIdses)
+                                                            <option value="">-select-</option>
+                                                        @endif
+                                                            @foreach ($taxes as $taxvalue)
+                                                            <option value="{{ $taxvalue->id }}" 
+                                                                    data-id="{{ $taxvalue->per }}"
+                                                                    {{ $taxvalue->id == $pur->tax_id ? 'selected' : '' }}>
+                                                                {{ $taxvalue->taxname }}
+                                                            </option>
+                                                        @endforeach
                                                             <input type="hidden" name="tax_amount" id="tax-percentage"
                                                                 placeholder="Tax Amount" readonly>
                                                         </select>

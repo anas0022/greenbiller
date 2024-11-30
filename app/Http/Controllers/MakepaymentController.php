@@ -165,7 +165,7 @@ class MakepaymentController extends Controller
             $ledger->invoice_purchase_no = $payment_code;
     
             $ledger->title = 'Cash';
-            $ledger->credit = $request->input('paid_amount');
+            $ledger->debit = $request->input('paid_amount');
             $ledger->save();
             return redirect()->route('reciept.view', ['id' => $ledger->id]);
         }

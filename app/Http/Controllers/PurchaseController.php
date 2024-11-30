@@ -16,9 +16,11 @@ use App\Models\PurchaseReturn;
 use App\Models\PurchaseReturnItem;
 use App\Models\PurchaseReturnPay;
 use App\Models\Sale;
+use App\Models\salespayment;
 use App\Models\second_store;
 use App\Models\Second_wareitems;
 use App\Models\Store;
+use App\Models\UserList;
 use Illuminate\Support\Facades\DB;
 use Exception;
 use App\Models\Tax;
@@ -160,7 +162,7 @@ class PurchaseController extends Controller
         $stocks = $request->input('stock');
         $maxPurchaseId = Purchase::max('count_id');
         $bill_number = $request->input('bill_no');
-
+        $tax = $request->input('othercharges_tax_id');
         $bill_no = $request->input('bill_no');
         $created_by = Auth()->id();
         $discount_to_all_type = $request->input('discount_to_all_type');
@@ -171,11 +173,11 @@ class PurchaseController extends Controller
 
         $purchaseId = $request->input('existing_purchase_id');
 
-
+    
 
         $purchase = Purchase::create([
             'purchase_code' => $purchaseCode,
-
+            'tax_id'=>$tax,
             'off_store_id' => $off_Store->id,
             'bill_number' => $bill_no,
             'prefix' => 'PU',
@@ -819,7 +821,8 @@ class PurchaseController extends Controller
             $items = Item::whereIn('id', $itemIds)->get();
             $unitIds = $purchaseItems->pluck('unit_id');
             $units = Unit::whereIn('id', $unitIds)->first();
-
+            $taxIdses =$purchase->pluck('tax_id');
+            $tax_id = Tax::whereIn('id', $taxIdses)->first();
             $taxIds = $purchaseItems->pluck('tax_id');
             $tax = Tax::whereIn('id', $taxIds)->get();
         }
@@ -840,7 +843,7 @@ class PurchaseController extends Controller
         $suppliers = Supplier::all();
         $account = Account::all();
         $logo = Coresetting::all();
-        return view('admin.purchase.purchase_return', compact('taxes', 'purchaseItems', 'units', 'logo', 'account', 'purchase', 'supplier', 'suppliers', 'country', 'ware', 'tax', 'category', 'brands', 'unit', 'store', 'stores', 'items'));
+        return view('admin.purchase.purchase_return', compact('taxes', 'taxIdses','purchaseItems', 'units', 'logo', 'account', 'purchase', 'supplier', 'suppliers', 'country', 'ware', 'tax', 'category', 'brands', 'unit', 'store', 'stores', 'items'));
     }
     public function purchase_return_post(Request $request)
     {
@@ -1124,7 +1127,21 @@ class PurchaseController extends Controller
 
         return back()->with('success', 'Item deleted successfully.');
     }
+public function purchase_return_list() {
+    $sales = PurchaseReturn::all();
+    $logo = Coresetting::all();
+    $account = Account::all();
 
+    // Collect supplier IDs from the sales
+    $supplierIds = $sales->pluck('supplier_id')->unique(); // Ensure unique IDs
+    $suppliers = Supplier::whereIn('id', $supplierIds)->get()->keyBy('id'); // Key by ID for easy access
+
+    // Prepare user data
+    $userIds = $sales->pluck('created_by')->unique();
+    $user = UserList::whereIn('id', $userIds)->first();
+
+    return view('admin.purchase.purchasereturnlist', compact('sales', 'suppliers', 'user', 'logo', 'account'));
+}
 
 }
 

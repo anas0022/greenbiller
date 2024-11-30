@@ -419,6 +419,7 @@
                                         
                                                 <td style="font-size:12px; text-align:center; width:8%;"> Rate <br> (Incl. of
                                                     Tax) </td>
+                                      
                                                     <td style="font-size:12px; text-align:center; width:8%;">
                                                         Price/Unit </td>
                                                 <td style="font-size:12px; text-align:center; width:8%; "> MRP</td>
@@ -556,6 +557,7 @@
                                                         style="font-size:10px; text-align:center; border-right:1px solid; width:10%;">
                                                         {{ $item->rate_inclusive_tax }}
                                                     </td>
+                                                    
                                                     <td
                                                     style="font-size:10px; text-align:center; border-right:1px solid; width:10%;">
                                                     {{ $item->price_per_unit }}

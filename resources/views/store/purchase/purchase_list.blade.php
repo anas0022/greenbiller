@@ -52,7 +52,7 @@
                 <div class="card-footer" style="margin-bottom:30px;">
                     <h4 class="card-text d-inline"> Purchase List</h4>
 
-                    <a href="{{route('store_new_purchase')}}"
+                    <a href="{{route('new_purchase')}}"
                                 class="card-link float-end btn btn-rounded btn-info btn-sm "><span
                                     class="btn-icon-start text-info"><i class="fa fa-plus color-info"></i>
                                 </span>New Purchase</a>
@@ -68,14 +68,14 @@
                                                 <div class="modal-dialog modal-lg">
                                                     <div class="modal-content">
                                                         <div class="modal-header header-custom">
-                                                            <button type="button" class="close" data-dismiss="modal"
+                                                            <button type="button" class="close" data-bs-dismiss="modal"
                                                                 aria-label="Close">
                                                                 <span aria-hidden="true">×</span>
                                                             </button>
                                                             <h4 class="modal-title text-center">Payments</h4>
                                                         </div>
                                                         <div class="modal-body">
-                                                            <form class="row" action="{{route('makepayment.purchase')}}" method="post">
+                                                            <form class="row" action="{{route('makepayment.purchase.store')}}" method="post">
                                                             @csrf
                                                                 <div class="col-md-8" >
                                                               
@@ -324,7 +324,7 @@
                                 <td>
                                     @if($item->paid_amount === null || $item->paid_amount == 0)
                                         <p class="not-paid" style="background-color: red !important; color: white !important;  border-radius: 4px; text-align: center; ">Not Paid</p>
-                                    @elseif($item->paid_amount < $purchaseItems->where('purchase_id', $item->id)->sum('total_cost'))
+                                    @elseif($item->paid_amount < $purchaseItems->where('purchase_id', $item->id)->sum('grand_total'))
                                         <p class="partial" style="background-color: orange   !important; color: white !important;  border-radius: 4px; text-align: center; ">Partial</p>
                                     @else
                                         <p class="paid" >Paid</p>
@@ -339,16 +339,16 @@
                                             <a class="dropdown-item" href="{{ route('invoice_purchase.view.store', ['purchase' => $item->id]) }}"><i class="fas fa-eye"></i> View Purchase</a>
                                             <a class="dropdown-item" href="{{ route('purchase.edit', ['id' => $item->id]) }}"><i class="fas fa-pencil-alt"></i> Edit</a>
                                             
-                                            @if ($item->paid_amount == null || $item->paid_amount < $purchaseItems->where('purchase_id', $item->id)->sum('total_cost'))
-                                                <a class="dropdown-item" data-toggle="modal" data-target="#cash-payments-modal"
+                                            @if ($item->paid_amount == null || $item->paid_amount < $purchaseItems->where('purchase_id', $item->id)->sum('grand_total'))
+                                                <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#cash-payments-modal"
                                                     onclick="totals({{ $purchaseItems->where('purchase_id', $item->id)->first()->purchase_qty ?? 0 }}, {{ $item->grand_total ?? 0 }}, {{ $item->id }},{{ $item->paid_amount ?? 0 }})">
                                                     <i class="fas fa-money-check-dollar"></i> Make Payments
                                                 </a>
                                             @else
-                                                <a class="dropdown-item" href="{{ route('reciept.view', ['id' => $payment_id]) }}"><i class="fas fa-money-check-dollar"></i> View Payments</a>
+                                                <a class="dropdown-item" href="{{ route('reciept.view.store', ['id' => $payment_id]) }}"><i class="fas fa-money-check-dollar"></i> View Payments</a>
                                             @endif
                                             
-                                            <a class="dropdown-item" href="{{ route('purchase.return', ['id' => $item->id]) }}" style="color:red;">
+                                            <a class="dropdown-item" href="{{ route('purchase.return.store', ['id' => $item->id]) }}" style="color:red;">
                                                 <i class="fa-solid fa-rotate-left"></i> Purchase Return
                                             </a>
                                         </div>
@@ -379,4 +379,5 @@
 }
           
 </script>
+
 @endsection

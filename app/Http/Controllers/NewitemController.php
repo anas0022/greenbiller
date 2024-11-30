@@ -9,7 +9,7 @@ use App\Models\Warehouseitem;
 use Auth;
 use Illuminate\Http\Request;
 use App\Models\Brand;
-use App\Models\category;
+use App\Models\Category;
 use App\Models\Warehouse;
 use App\Models\Unit;
 use Illuminate\Support\Facades\DB;
@@ -177,5 +177,85 @@ class NewitemController extends Controller
 
         \Log::warning('No file uploaded');
         return back()->with('error', 'File not uploaded');
+    }
+
+    public function item_edit(Request $request){
+        DB::beginTransaction(); // Start the transaction
+
+        try {
+            $store = Store::find($request->input('store_id'));
+
+            // Validate request data
+            $request->validate([
+                'store_id' => 'required',
+                'item_code' => 'required',
+                'item_name' => 'required',
+                'category' => 'required',
+                'brand' => 'required',
+                'unit' => 'required',
+                'sku' => 'required',
+                'price' => 'required',
+                'sales_price' => 'required',
+                'purchase_value' => 'required',
+                'opening_stock' => 'required',
+                'ware_house' => 'required',
+            ]);
+
+            // Retrieve the existing item
+            $item = Item::find($request->input('id')); // Get the item by ID
+
+            // Update item properties
+            $item->store_id = $request->input('store_id');
+            $item->item_code = $request->input('item_code');
+            $item->created_by = auth()->id();
+            $item->second_store_id = $store->second_store_id;
+            $item->tax_amount = $request->input('tax_amount');
+            $item->item_name = $request->input('item_name');
+            $item->show_app = $request->input('app');
+            $item->app_price = $request->input('app_Price');
+            $item->category_id = $request->input('category');
+            $item->brand_id = $request->input('brand');
+            $item->unit_id = $request->input('unit');
+            $item->sku = $request->input('sku');
+            $item->hsn_code = $request->input('hsn_code');
+            $item->alert_quantity = $request->input('alert_quantity');
+            $item->seller_point = $request->input('sellerpoint');
+            $item->barcode = $request->input('bar_code');
+            $item->expiry_date = $request->input('expiry_date');
+            $item->dis = $request->input('dis');
+
+            if ($request->hasFile('picture')) {
+                $imagePath = $request->file('picture')->store('item', 'public');
+                $item->image = $imagePath;
+            }
+
+            $item->discount_type = $request->input('discount_type');
+            $item->discount = $request->input('discount');
+            $item->purchase_price = $request->input('purchase_value');
+            $item->tax_id = $request->input('tax');
+            $item->tax_type = $request->input('tax_type');
+            $item->price = $request->input('price');
+            $item->profit_margin = $request->input('profit_margin');
+            $item->sales_price = $request->input('sales_price');
+            $item->mrp = $request->input('mrp');
+            $item->ware_house_id = $request->input('ware_house');
+            $item->opening_stock = $request->input('opening_stock');
+
+            if ($item->save()) {
+                // Save warehouse item details
+                $itemWarehouse = WarehouseItem::where('item_id', $item->id)->first();
+                if ($itemWarehouse) {
+                    $itemWarehouse->available_qty = $request->input('opening_stock');
+                    $itemWarehouse->save();
+                }
+
+                DB::commit();
+                return redirect()->route('itemlist')->with('success', 'Item updated successfully');
+            }
+
+        } catch (\Exception $e) {
+            DB::rollBack(); // Rollback on error
+            return redirect()->back()->withErrors(['error' => 'An error occurred: ' . $e->getMessage()]);
+        }
     }
 }

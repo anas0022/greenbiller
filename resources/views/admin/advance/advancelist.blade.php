@@ -47,7 +47,7 @@
                         <h4 class="card-text d-inline"> Advance Payments List</h4>
                         <div>
 
-                            <a href="add-customer-advance" class="card-link float-end btn btn-rounded btn-info btn-sm "><span class="btn-icon-start text-info"><i class="fa fa-plus color-info"></i>
+                            <a href="{{route('advanceadd')}}" class="card-link float-end btn btn-rounded btn-info btn-sm "><span class="btn-icon-start text-info"><i class="fa fa-plus color-info"></i>
                                 </span>Add Advance</a>
 
                         </div>
@@ -61,15 +61,47 @@
                                 <thead>
                                     <tr>
                                         <th>#</th>
-                                        <th>ID</th>
+                                      
                                         <th>Date</th>
-                                        <th>Customer Name</th>
+                                        <th>Eploy Name</th>
                                         <th>Amount</th>
                                         <th>Payment Type</th>
                                         <th><i class="fas fa-arrow-circle-down"></i></th>
                                     </tr>
                                 </thead>
-
+                                    @foreach ($advance as $index=> $ad)
+                                    <tr>
+                                        <td>
+                                            {{$index+1}}
+                                        </td>
+                                        <td>
+                                            {{$ad->date}}
+                                        </td>
+                                        <td>
+                                            {{$user->firstWhere('id',$ad->employ_id)->name}}
+                                        </td>
+                                        <td>
+                                            {{$ad->amount}}
+                                        </td>
+                                        <td>
+                                            {{$ad->type}}
+                                        </td>
+                                        <td style="display: flex; justify-content:center; gap: 10px;">
+                                            <form action="{{route('edit.advance')}}" method="post">
+                                                @csrf
+                                                <input type="hidden" value="{{$ad->id}}" name="id">
+                                            
+                                                <button type="submit" id="update" style="display:block;"><a href=""></a><i
+                                                        class="fa-solid fa-pencil"></i></button>
+                                                    </form>
+                                               
+                                                <button type="submit" id="delete" style="display:block;" onclick="deleteItem({{$ad->id}})"><i
+                                                        class="fa-solid fa-trash"></i></button>
+                                      
+                                        </td>
+                                    </tr>
+                                        
+                                    @endforeach
                             </table>
                         </div>
                     </div>
@@ -83,6 +115,106 @@
 
 
 
+
+<script>
+    function deleteItem(id) {
+        swal({
+                title: "Are you sure?",
+                text: "Do you want to delete this?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Yes",
+                cancelButtonText: "No",
+                closeOnConfirm: false,
+                closeOnCancel: true
+            },
+            function(isConfirm) {
+                if (isConfirm) {
+                    $.ajax({
+                        url: "{{ route('deleteadvance') }}",
+                        method: 'POST',
+                        data: {
+                            '_token': "{{ csrf_token() }}",
+                            'id': id
+                        },
+                        success: function(response) {
+                            swal({
+                                title: "Deleted!",
+                                text: "Warehouse deleted successfully",
+                                type: "success",
+                                confirmButtonText: "Done",
+                                confirmButtonColor: "#1dbf73"
+                            }, function(isConfirm) {
+                                if (isConfirm) {
+                                    location.reload();
+                                }
+                            });
+                        },
+                        error: function(xhr, status, error) {
+                            swal("Error!", "Failed to delete warehouse", "error");
+                        }
+                    });
+                }
+            });
+    }
+</script>
+<script>
+    function statuschange(id, currentStatus) {
+        swal({
+                title: "Are you sure?",
+                text: "Do you want to change this to " + (currentStatus === 'active' ? 'inactive' : 'active') + "?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Yes",
+                cancelButtonText: "No",
+                closeOnConfirm: false,
+                closeOnCancel: true
+            },
+            function(isConfirm) {
+                if (isConfirm) {
+                    $.ajax({
+                        url: "{{ route('updateStatus.brand') }}",
+                        method: 'POST',
+                        data: {
+                            '_token': "{{ csrf_token() }}",
+                            'id': id
+                        },
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response && response.status === 200) {
+                                swal({
+                                    title: "Status Changed!",
+                                    text: response.message,
+                                    type: "success",
+                                    confirmButtonText: "Done",
+                                    confirmButtonColor: "#1dbf73"
+                                }, function(isConfirm) {
+                                    if (isConfirm) {
+                                        location.reload();
+                                    }
+                                });
+                            } else {
+                                swal("Warning!", "Status changed but response was unexpected",
+                                    "warning");
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 1500);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.log('Error details:', xhr.responseText);
+                            swal("Warning!", "Status might have changed. Please refresh the page.",
+                                "warning");
+                            setTimeout(() => {
+                                location.reload();
+                            }, 1500);
+                        }
+                    });
+                }
+            });
+    }
 </script>
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
@@ -102,3 +234,4 @@
     }
 });
 </script>
+@endsection

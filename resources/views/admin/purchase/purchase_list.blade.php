@@ -322,12 +322,12 @@
                                 <td>{{ $item->grand_total ?? '0.00' }}</td>
                                 <td>{{ $item->paid_amount ?? '0.00' }}</td>
                                 <td>
-                                    @if($item->paid_amount === null || $item->paid_amount == 0)
-                                        <p class="not-paid" style="background-color: red !important; color: white !important;  border-radius: 4px; text-align: center; ">Not Paid</p>
-                                    @elseif($item->paid_amount < $purchaseItems->where('purchase_id', $item->id)->sum('total_cost'))
-                                        <p class="partial" style="background-color: orange   !important; color: white !important;  border-radius: 4px; text-align: center; ">Partial</p>
+                                    @if(is_null($item->paid_amount) || $item->paid_amount == 0)
+                                        <p class="not-paid" style="background-color: red !important; color: white !important; border-radius: 4px; text-align: center;">Not Paid</p>
+                                    @elseif($item->paid_amount < $item->grand_total)
+                                        <p class="partial" style="background-color: orange !important; color: white !important; border-radius: 4px; text-align: center;">Partial</p>
                                     @else
-                                        <p class="paid" >Paid</p>
+                                        <p class="paid">Paid</p>
                                     @endif
                                 </td>
                                 <td>
@@ -339,12 +339,19 @@
                                             <a class="dropdown-item" href="{{ route('invoice_purchase.view', ['purchase' => $item->id]) }}"><i class="fas fa-eye"></i> View Purchase</a>
                                             <a class="dropdown-item" href="{{ route('purchase.edit', ['id' => $item->id]) }}"><i class="fas fa-pencil-alt"></i> Edit</a>
                                             
-                                            @if ($item->paid_amount == null || $item->paid_amount < $purchaseItems->where('purchase_id', $item->id)->sum('total_cost'))
+                                            @if (is_null($item->paid_amount) || $item->paid_amount == 0)
+                                            <a class="dropdown-item" data-toggle="modal" data-target="#cash-payments-modal"
+                                            onclick="totals({{ $purchaseItems->where('purchase_id', $item->id)->first()->purchase_qty ?? 0 }}, {{ $item->grand_total ?? 0 }}, {{ $item->id }},{{ $item->paid_amount ?? 0 }})">
+                                            <i class="fas fa-money-check-dollar"></i> Make Payments
+                                        </a>
+                                                @elseif ($item->paid_amount < $item->grand_total)
                                                 <a class="dropdown-item" data-toggle="modal" data-target="#cash-payments-modal"
-                                                    onclick="totals({{ $purchaseItems->where('purchase_id', $item->id)->first()->purchase_qty ?? 0 }}, {{ $item->grand_total ?? 0 }}, {{ $item->id }},{{ $item->paid_amount ?? 0 }})">
-                                                    <i class="fas fa-money-check-dollar"></i> Make Payments
-                                                </a>
+                                                onclick="totals({{ $purchaseItems->where('purchase_id', $item->id)->first()->purchase_qty ?? 0 }}, {{ $item->grand_total ?? 0 }}, {{ $item->id }},{{ $item->paid_amount ?? 0 }})">
+                                                <i class="fas fa-money-check-dollar"></i> Make Payments
+                                            </a>
+                                            <a class="dropdown-item" href="{{ route('reciept.view', ['id' => $payment_id]) }}"><i class="fas fa-money-check-dollar"></i> View Payments</a>
                                             @else
+                                       
                                                 <a class="dropdown-item" href="{{ route('reciept.view', ['id' => $payment_id]) }}"><i class="fas fa-money-check-dollar"></i> View Payments</a>
                                             @endif
                                             

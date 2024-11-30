@@ -521,7 +521,7 @@
                                                             <div colspan="7" class="bg-sky text-bold"
                                                                 style="font-size:12px; padding: 5px;">
                                                                 <b>
-                                                                   {{$sale->discount_to_all_input }}
+                                                                   {{$sale->tot_discount_to_all_amt }}
                                                                 </b>
                                                             </div>
                                           

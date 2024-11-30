@@ -14,9 +14,10 @@
 						</a>
                         <ul aria-expanded="false">
 							<!-- <li><a href="{{route('add_sales')}}">Add Sales</a></li> -->
-							<li><a href="{{route('sales_add')}}">New Sale</a></li>
-							<li><a href="{{route('store_saleslist')}}">Sales List</a></li>
-						
+							<li><a href="{{route('add_sales_biller.store')}}">New Sale</a></li>
+		
+							<li><a href="{{route('saleslist.store')}}">Sales List</a></li>
+							<li><a href="{{route('salereturn_list.store')}}">Sales Return</a></li>
 						</ul>
                     </li>
 					<li><a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
@@ -51,7 +52,7 @@
                         <ul aria-expanded="false">
                             <li><a href="{{route('store_new_purchase')}}">New Purchase</a></li>
 							<li><a href="{{route('store_purchase_list')}}">Purchase List</a></li>
-                            <li><a href="{{route('purchase_return')}}">Purchase Return</a></li>
+                            {{-- <li><a href="{{route('purchase_return')}}">Purchase Return</a></li> --}}
                             </li>
                             
                         </ul>

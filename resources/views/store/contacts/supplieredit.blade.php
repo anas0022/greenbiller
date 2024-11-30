@@ -2,49 +2,11 @@
 
 @section('title', 'Home Page')
 
-<link href="{{asset('admin-assets/css/toast.css')}}" rel="stylesheet">
-    <link rel="stylesheet" data-purpose="Layout StyleSheet" title="Web Awesome"
-        href="/css/app-wa-462758aa1e172f82d39e1ea35e919e0a.css?vsn=d">
-    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.6.0/css/all.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
-    <style>
-        /* Existing CSS */
-
-    
-    </style>
-</head>
-
-<body>
-
-    @if(session('error'))
-        <div class="toast error active" id="errorToast">
-            <div class="toast-content">
-                <i class="fas fa-solid fa-times error-icon"></i>
-                <div class="message">
-                    <span class="text text-1">Error</span>
-                    <span class="text text-2">{{session('error')}}</span>
-                </div>
-            </div>
-            <i class="fa-solid fa-xmark close" id="closeErrorToast"></i>
-            <div class="progress error-progress active"></div>
-        </div>
-    @endif
+@section('content')
 
 
-    @if(session('success'))
-        <div class="toast active" id="toast">
-            <div class="toast-content">
-                <i class="fas fa-solid fa-check check"></i>
-                <div class="message">
-                    <span class="text text-1">Success</span>
-                    <span class="text text-2">{{session('success')}}</span>
-                </div>
-            </div>
-            <i class="fa-solid fa-xmark close" id="closeToast"></i>
-            <div class="progress active"></div>
-        </div>
-    @endif
+
+   
 <div class="content-body">
     <!-- row -->
     <div class="container-fluid">
@@ -182,6 +144,6 @@
 
     </div>
 </div>
-
+@endsection
 
 

@@ -288,6 +288,7 @@
 
                                             <td style="font-size:12px; text-align:center; width:8%;"> Rate <br> (Incl. of
                                                 Tax) </td>
+                                                <td style="font-size:12px; text-align:center; width:8%;"> Price / Unit </td>
                                             <td style="font-size:12px; text-align:center; width:8%; "> MRP</td>
                                             <td style="font-size:12px; text-align:center; width:8%;">GST (INR) </td>
                                             <td style="font-size:12px; text-align:center; width:8%;"> Amount (INR) </td>
@@ -425,6 +426,10 @@
                                                 </td>
                                                 <td
                                                     style="font-size:10px; text-align:center; border-right:1px solid; width:10%;">
+                                                    {{ $item->price_per_unit }}
+                                                </td>
+                                                <td
+                                                    style="font-size:10px; text-align:center; border-right:1px solid; width:10%;">
                                                     {{ $item->mrp }}
                                                 </td>
                                                 <td
@@ -464,6 +469,8 @@
                                         <td
                                             style="width:10%; text-align:center; border-right: 1px solid; font-size: 12px; ">
                                             {{ $totalLiter }}
+                                        </td>
+                                        <td style="width:10%; text-align:right; border-right: 1px solid; ">
                                         </td>
                                         <td style="width:10%; text-align:right; border-right: 1px solid; ">
                                         </td>

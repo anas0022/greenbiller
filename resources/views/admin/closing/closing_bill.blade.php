@@ -191,7 +191,7 @@ $(document).ready(function() {
 
     function loadClosingBill() {
         $.ajax({
-            url: '{{ route("closing.bill", ["id" => request()->id]) }}',
+            url: '{{ route("closing.bill", ["id" => request()->id, "store_id" => request()->store_id]) }}',
             type: 'GET',
             success: function(response) {
                 const closing = response.data;

@@ -99,7 +99,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'role:admin|superadm
     Route::post('/updateStatus_supplier', [CustomerController::class, 'updateStatus_supplier'])->name('updateStatus.supplier');
     Route::post('/deletesupplier', [CustomerController::class, 'deletesupplier'])->name('deletesupplier');
     Route::get('/advanceadd', [AdvanceController::class, 'advanceadd'])->name('advanceadd');
-    Route::post('/advancepost', [AdvanceController::class, 'advancepost'])->name('aadvancepost');
+    Route::post('/advancepost', [AdvanceController::class, 'advancepost'])->name('advancepost');
     Route::get('/advancelist', [AdvanceController::class, 'advancelist'])->name('advancelist');
     Route::post('/status_advance', [AdvanceController::class, 'status_advance'])->name('status.advance');
     Route::post('/edit_advance', [AdvanceController::class, 'edit_advance'])->name('edit.advance');
@@ -158,7 +158,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'role:admin|superadm
     Route::post('/addsale', [SalesController::class, 'addsale'])->name('addsale');
     Route::get('/sales_list', [SalesController::class, 'saleslist'])->name('saleslist');
     Route::get('/saleinvoice', [SalesController::class, 'sales_invoice'])->name('saleinvoice');
-    Route::get('/invoice-sale', [InvoiceController::class, 'invoice_sale'])->name('invoice_sale');
+    Route::get('/invoice-sale', [InvoiceController::class, 'invoice_sale_bill'])->name('invoice_sale.bill');
     Route::get('/country_list', [SettingsController::class, 'country'])->name('country');
     Route::post('/countrysettings_post', [SettingsController::class, 'country_post'])->name('country_post');
     Route::post('/updateStatus_tax', [SettingsController::class, 'updateStatus_tax'])->name('updateStatus.tax');
@@ -181,7 +181,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'role:admin|superadm
     Route::post('/supplier-ledger-import', [SupplierLedgerUploadController::class, 'supplier_ledger_import'])->name('supplier_ledger_import');
     Route::get('/get-customers', [SalesController::class, 'getCustomers'])->name('getCustomers');
     Route::get('/saleitem_editpost/{id}', [SalesController::class, 'saleitem_edit'])->name('admin_saleitem_edit');
-
+    Route::get('/purchase-return-list',[PurchaseController::class,'purchase_return_list'])->name('purchase.return.list');
     Route::get('/purchase_edit/{id}', [PurchaseController::class, 'purchase_edit'])->name('purchase.edit');
     Route::post('/invoice_customer', [InvoiceController::class, 'invoice_customer'])->name('invoice.customer');
     Route::put('/alt_qtywdit', [SalesController::class, 'alt_qtywdit'])->name('alt.qtywdit');
@@ -249,8 +249,11 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'role:admin|superadm
     Route::post('/get-customer-prefix', [RecieptController::class, 'getCustomerPrefix'])->name('get.customer.prefix');
     Route::get('/receipt/view/{id}', [RecieptController::class, 'view_receipt'])->name('reciept.view');
     Route::post('/daily-closing-post',[ClosingController::class,'daily_closing_post'])->name('daily.closing.post');
-    Route::get('closing/bill/{id}', [ClosingController::class, 'closingBill'])->name('closing.bill');
+    Route::get('closing/bill/{id}/{store_id}', [ClosingController::class, 'closingBill'])->name('closing.bill');
     Route::get('closing-list',[ClosingController::class,'closing_list'])->name('closing.list');
     Route::get('/add-receipt',[RecieptController::class,'add_receipt'])->name('add.receipt');
+    Route::get('/receiptes/view/{id}', [RecieptController::class, 'view_receipt_bill'])->name('reciept.view.bill');
+    Route::post('/add-reciept-post', [RecieptController::class,'add_recieptppost'])->name('makepayment.bulk');
+ 
 });
 

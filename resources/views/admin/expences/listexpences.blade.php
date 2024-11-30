@@ -44,8 +44,8 @@
                                         <th>Amount</th>
                                         <th>Account</th>
                                         <th>Note</th>
-                                        <th>Created by</th>
-                                        <th><i class="fas fa-arrow-circle-down"></i></th>
+                                       
+                                        {{-- <th><i class="fas fa-arrow-circle-down"></i></th> --}}
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -59,8 +59,24 @@
                                         {{$ex->date}}
                                     </td>
                                     <td>
-                                        {{}}
+                                        {{$expense_category->firstWhere('id',$ex->category)->category_name}}
                                     </td>
+                                    <td>
+                                        {{$ex->reference_no}}
+                                    </td>
+                                    <td>
+                                        {{$ex->expense_for}}
+                                    </td>
+                                    <td>
+                                        {{$ex->amount}}
+                                    </td>
+                                    <td>
+                                      {{$account->firstWhere('id',$ex->account)->account_name}}
+                                    </td>
+                                    <td>
+                                        {{$ex->note}}
+                                    </td>
+                                 
                                   </tr>
                                       
                                   @endforeach
@@ -99,3 +115,4 @@
 });
 </script>
 
+@endsection

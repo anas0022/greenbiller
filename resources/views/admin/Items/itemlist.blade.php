@@ -160,7 +160,7 @@
                                     <td>{{ $item->tax->taxname ?? '' }}</td>
                                     <td id="statuschange_{{ $index }}">
                                         <p class="status-cell {{ $item->status === 'active' ? 'active-status' : 'inactive-status' }}"
-                                            style="cursor: pointer;">
+                                            style="cursor: pointer;" onclick="statuschange({{ $item->id }}, '{{ $item->status }}')">
                                             {{ $item->status }}
                                         </p>
                                     </td>
@@ -173,11 +173,9 @@
                                             <button id="update" style="display:block;"><a href=""></a><i
                                                     class="fa-solid fa-pencil"></i></button>
                                         </form>
-                                        <form style="width:auto; height:auto; box-shadow:none;"
-                                            action="{{ route('deleteitem') }}" method="post">
-                                            @csrf
-                                            <input type="hidden" name="id" value="{{$item->id}}">
-                                            <button type="submit" id="delete" style="display:block;"><i
+                                      
+                                          
+                                            <button type="button" id="delete" style="display:block;" onclick="deleteItem({{$item->id}})"><i
                                                     class="fa-solid fa-trash"></i></button>
                                         </form>
                                     </td>
@@ -189,6 +187,108 @@
             </div>
         </div>
         </form>
+        
+
+<script>
+    function deleteItem(id) {
+        swal({
+                title: "Are you sure?",
+                text: "Do you want to delete this?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Yes",
+                cancelButtonText: "No",
+                closeOnConfirm: false,
+                closeOnCancel: true
+            },
+            function(isConfirm) {
+                if (isConfirm) {
+                    $.ajax({
+                        url: "{{ route('deleteitem') }}",
+                        method: 'POST',
+                        data: {
+                            '_token': "{{ csrf_token() }}",
+                            'id': id
+                        },
+                        success: function(response) {
+                            swal({
+                                title: "Deleted!",
+                                text: "Warehouse deleted successfully",
+                                type: "success",
+                                confirmButtonText: "Done",
+                                confirmButtonColor: "#1dbf73"
+                            }, function(isConfirm) {
+                                if (isConfirm) {
+                                    location.reload();
+                                }
+                            });
+                        },
+                        error: function(xhr, status, error) {
+                            swal("Error!", "Failed to delete warehouse", "error");
+                        }
+                    });
+                }
+            });
+    }
+</script>
+<script>
+    function statuschange(id, currentStatus) {
+        swal({
+                title: "Are you sure?",
+                text: "Do you want to change this to " + (currentStatus === 'active' ? 'inactive' : 'active') + "?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Yes",
+                cancelButtonText: "No",
+                closeOnConfirm: false,
+                closeOnCancel: true
+            },
+            function(isConfirm) {
+                if (isConfirm) {
+                    $.ajax({
+                        url: "{{ route('updateStatus.items') }}",
+                        method: 'POST',
+                        data: {
+                            '_token': "{{ csrf_token() }}",
+                            'id': id
+                        },
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response && response.status === 200) {
+                                swal({
+                                    title: "Status Changed!",
+                                    text: response.message,
+                                    type: "success",
+                                    confirmButtonText: "Done",
+                                    confirmButtonColor: "#1dbf73"
+                                }, function(isConfirm) {
+                                    if (isConfirm) {
+                                        location.reload();
+                                    }
+                                });
+                            } else {
+                                swal("Warning!", "Status changed but response was unexpected",
+                                    "warning");
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 1500);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.log('Error details:', xhr.responseText);
+                            swal("Warning!", "Status might have changed. Please refresh the page.",
+                                "warning");
+                            setTimeout(() => {
+                                location.reload();
+                            }, 1500);
+                        }
+                    });
+                }
+            });
+    }
+</script>
 
         <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
         <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>

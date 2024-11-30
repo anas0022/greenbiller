@@ -14,7 +14,8 @@
         <div class="row">
             <div class="col-12">
 
-                <form method="post">
+                <form action="{{route('advancepost')}}" method="post">
+                    @csrf
                     <div class="card">
                         <div class="card-header">
                             <h4 class="card-text d-inline"> New Advance </h4>
@@ -26,16 +27,21 @@
                                 <div class="mb-3 row">
                                     <label class="col-sm-3 col-form-label">Date<span class="required">*</span></label>
                                     <div class="col-sm-9">
-                                        <input name="payment_code" type="text" value="" hidden>
+                                  
                                         <input name="payment_date" type="date" class="form-control form-control-sm" required value="<?php echo date("Y-m-d"); ?>">
                                     </div>
                                 </div>
 
                                 <div class="mb-3 row">
-                                    <label class="col-sm-3 col-form-label">Customer Name<span class="required">*</span></label>
+                                    <label class="col-sm-3 col-form-label">Select Employ<span class="required">*</span></label>
                                     <div class="col-sm-9">
                                         <select name="customer_id" class="form-control form-control-sm selectpicker" data-live-search="true">
-                                            <!-- <option value="" data-tokens="-CREATE ACCOUNT HEAD-">-CREATE ACCOUNT HEAD-</option> -->
+                                            <option value="">- select -</option>
+                                         @foreach ($user as $u)
+
+                                         <option value="{{$u->id}}">{{$u->name}}({{$u->role}})</option>
+                                             
+                                         @endforeach
                                           
                                         </select>
 
@@ -49,10 +55,24 @@
                                     </div>
                                 </div>
                                 <div class="mb-3 row">
+                                    <label class="col-sm-3 col-form-label">Select Store<span class="required">*</span></label>
+                                    <div class="col-sm-9">
+                                        <select name="store_id" class="form-control form-control-sm selectpicker" data-live-search="true" required>
+                                            <option value="">-Select-</option>
+                                          @foreach ($stores as $store )
+                                          <option value="{{$store->id}}">{{$store->store_name}}</option>
+                                              
+                                          @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="mb-3 row">
                                     <label class="col-sm-3 col-form-label">Payment Type<span class="required">*</span></label>
                                     <div class="col-sm-9">
                                         <select name="payment_type" class="form-control form-control-sm selectpicker" data-live-search="true" required>
                                             <option value="">-Select-</option>
+                                            <option value="card">Card</option>
+                                            <option value="cash">Cash</option>
                                            
                                         </select>
                                     </div>
@@ -83,3 +103,4 @@
 
 
 
+@endsection

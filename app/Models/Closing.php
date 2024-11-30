@@ -19,7 +19,8 @@ class Closing extends Model
         'prefix',
         'closing_code',
         'purchase_count',
-        'total_purchase'
+        'total_purchase',
+        'store_id'
     ];
 
     protected $table = 'closing';

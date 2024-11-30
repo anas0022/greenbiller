@@ -1,6 +1,11 @@
 <?php
 
+use App\Http\Controllers\SalesController;
 use App\Http\Controllers\store\DashController;
+use App\Http\Controllers\store\invoice\ReturnInvoiceController;
+use App\Http\Controllers\store\Invoice\TaxInvoiceController;
+use App\Http\Controllers\store\sale\SaleListController;
+use App\Http\Controllers\store\salebill\SalePosController;
 use App\Http\Controllers\store\Store_advancedController;
 use App\Http\Controllers\store\Store_brandController;
 use App\Http\Controllers\store\Store_categoryController;
@@ -19,12 +24,18 @@ use App\Http\Controllers\store\Store_supplierController;
 Route::group(['prefix' => 'store', 'middleware' => 'auth'], function () {
 
     require __DIR__ . '/warehouse.php';
+    require __DIR__ . '/makepayment.php';
+    require __DIR__ . '/reciept.php';
     require __DIR__ . '/item.php';
     require __DIR__ . '/user.php';
     require __DIR__ . '/category.php';
+    require __DIR__ . '/salepos.php';
     require __DIR__ . '/brand.php';
     require __DIR__ . '/customer.php';
     require __DIR__ .'/purchase.php';
+    require __DIR__ . '/saleedit.php';
+    require __DIR__ . '/salemassre.php';
+    require __DIR__ . '/supplier.php';
     Route::get('/dasboard', [DashController::class, 'dashboard'])->name('store.dash');
     Route::get('add_sales', [Store_salesController::class, 'sales_add'])->name('sales_add');
     Route::put('/customer_address', [Store_salesController::class, 'customer_address'])->name('customer.address');
@@ -43,19 +54,19 @@ Route::group(['prefix' => 'store', 'middleware' => 'auth'], function () {
     Route::get('/sales_list', [Store_SalesController::class, 'saleslist'])->name('store_saleslist');
     Route::get('/saleitem_editpost/{id}', [Store_salesController::class, 'saleitem_edit'])->name('saleitem_edit');
 
+    Route::get('/invoice-sale-view/{id}/{sale_type}/{sale_id}', [ReturnInvoiceController::class, 'invoice_sale_view_store'])->name('invoice_sale.view.store');
 
-
+    Route::get('/salescode', [SalePosController::class, 'salescode_store'])->name('salescode.store');
+    
+    Route::get('/invoice-sale-main/{id}/{sale_type}/', [TaxInvoiceController::class, 'invoice_sale_main_store'])->name('invoice_sale.main.store');
+    Route::get('/sales_list', [SaleListController::class, 'saleslist_store'])->name('saleslist.store');
+    Route::post('/addsale', [SalePosController::class, 'addsale_store'])->name('addsale.store');
    
     
    
-    
-    Route::get('/add_supplier', [Store_supplierController::class, 'add_supplier'])->name('store_add_supplier');
-    Route::post('/supplier_post', [Store_supplierController::class, 'supplier_post'])->name('store_add.su');
-    Route::get('/list_supplier', [Store_supplierController::class, 'list_supplier'])->name('store_list_supplier');
     Route::post('/updateStatus_supplier', [Store_supplierController::class, 'updateStatus_supplier'])->name('store_updateStatus.supplier');
     Route::post('/deletesupplier', [Store_supplierController::class, 'deletesupplier'])->name('store_deletesupplier');
-    Route::post('/edit_supplier', [Store_supplierController::class, 'edit_supplier'])->name('store_edit.supplier');
-    Route::post('/edit_supplierpost', [Store_supplierController::class, 'edit_supplierpost'])->name('store_edit.supplierpost');
+   
     Route::get('/advanceadd', [Store_advancedController::class, 'advanceadd'])->name('store_advanceadd');
     Route::post('/advancepost', [Store_advancedController::class, 'advancepost'])->name('store.advancepost');
     Route::get('/advancelist', [Store_advancedController::class, 'advancelist'])->name('store_advancelist');

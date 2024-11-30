@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 
 <html style="--animate-duration: 0.5s; --animate-delay: 0.1s; height: auto">
-
+    <script src="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.css">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     <!-- TABLES CSS CODE -->
@@ -11,7 +12,7 @@
     <link rel="icon" type="image/png" href="">
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport" />
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Bootstrap 3.3.6 -->
     <link rel="stylesheet" href="{{ asset('pos_assets/css/bootstrap.min.css') }}" />
     <!-- Font Awesome -->
@@ -70,6 +71,28 @@
 
 <body class="skin-blue layout-top-nav " style="height: auto" cz-shortcut-listen="true">
 
+    @if($errors->any())
+        <script>
+            swal({
+                title: "Error!",
+                text: "{!! implode('\n', $errors->all()) !!}", // Join errors with line breaks
+                icon: "error",
+                type: "error"
+            });
+        </script>
+    @endif
+
+    @if(session('success'))
+        <script>
+            swal({
+                title: "Success!",
+                text: "{{ session('success') }}",
+                icon: "success",
+                type: "success"
+            });
+        </script>
+    @endif
+
     <style>
         .underselect {
             height: 17px;
@@ -96,7 +119,7 @@
                             <ul class="nav navbar-nav">
 
                                 <li class="">
-                                    <a href="{{route('add_sales_biller')}}"><i
+                                    <a href="{{ route('add_sales_biller') }}"><i
                                             class="fa fa-calculator text-yellow"></i><span> New
                                             Invoice</span></a>
                                 </li>
@@ -104,7 +127,8 @@
 
                             <ul class="nav navbar-nav">
                                 <li class="">
-                                    <a href="{{route('saleslist')}}"><i class="fa fa-list text-yellow"></i> <span>Sales
+                                    <a href="{{ route('saleslist') }}"><i class="fa fa-list text-yellow"></i>
+                                        <span>Sales
                                             List</span></a>
                                 </li>
 
@@ -175,7 +199,7 @@
                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                         <img src="{{ asset('pos_assets/avatar1.png') }}" class="user-image"
                                             alt="User Image" />
-                                        <span class="hidden-xs">{{Auth::user()->name}}</span>
+                                        <span class="hidden-xs">{{ Auth::user()->name }}</span>
                                     </a>
 
                                     <ul class="dropdown-menu">
@@ -184,10 +208,10 @@
                                             <img src="{{ asset('pos_assets/avatar1.png') }}" class="img-circle"
                                                 alt="User Image" />
                                             <p>
-                                                {{Auth::user()->name}}
+                                                {{ Auth::user()->name }}
                                                 <!-- <small>Year 2023</small> -->
                                                 <small class="text-uppercase text-bold">Role:
-                                                    {{Auth::user()->role}}</small>
+                                                    {{ Auth::user()->role }}</small>
                                             </p>
                                         </li>
                                         <!-- Menu Body -->
@@ -223,7 +247,8 @@
                                 <div class="modal-dialog modal-lg">
                                     <div class="modal-content">
                                         <div class="modal-header header-custom">
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <button type="button" class="close" data-dismiss="modal"
+                                                aria-label="Close">
                                                 <label aria-hidden="true">×</label>
                                             </button>
                                             <h4 class="modal-title text-center">Edit Customer</h4>
@@ -258,7 +283,8 @@
                                                                 <div class="form-group">
                                                                     <label class="form-label">Email</label>
                                                                     <input name="email" type="email"
-                                                                        class="form-control form-control-sm" id="email">
+                                                                        class="form-control form-control-sm"
+                                                                        id="email">
                                                                 </div>
                                                             </div>
                                                             <div class="col-lg-6 mb-2">
@@ -303,28 +329,30 @@
                                                             <div class="col-lg-6 mb-2">
                                                                 <div class="form-group">
                                                                     <label class="form-label">Address</label>
-                                                                    <textarea name="address" id="address"
-                                                                        class="form-control form-control-sm"></textarea>
+                                                                    <textarea name="address" id="address" class="form-control form-control-sm"></textarea>
                                                                 </div>
                                                             </div>
                                                             <div class="col-lg-6 mb-2">
                                                                 <div class="form-group">
                                                                     <label class="form-label">City</label>
-                                                                    <input type="text" name="city" id="city"
+                                                                    <input type="text" name="city"
+                                                                        id="city"
                                                                         class="form-control form-control-sm">
                                                                 </div>
                                                             </div>
                                                             <div class="col-lg-6 mb-2">
                                                                 <div class="form-group">
                                                                     <label class="form-label">State</label>
-                                                                    <input type="text" name="state" id="state"
+                                                                    <input type="text" name="state"
+                                                                        id="state"
                                                                         class="form-control form-control-sm">
                                                                 </div>
                                                             </div>
                                                             <div class="col-lg-6 mb-2">
                                                                 <div class="form-group">
                                                                     <label class="form-label">Postcode</label>
-                                                                    <input type="text" name="postcode" id="postcode"
+                                                                    <input type="text" name="postcode"
+                                                                        id="postcode"
                                                                         class="form-control form-control-sm">
                                                                 </div>
                                                             </div>
@@ -337,9 +365,11 @@
                                                                         class="form-control form-control-sm selectpicker"
                                                                         data-live-search="true"
                                                                         onchange="document.getElementById('countryInput').value = this.value;">
-                                                                        <option id="country">-SELECT COUNTRY -</option>
+                                                                        <option id="country">-SELECT COUNTRY -
+                                                                        </option>
                                                                         @foreach ($country as $c)
-                                                                            <option value="{{ $c->id }}">{{ $c->name }}
+                                                                            <option value="{{ $c->id }}">
+                                                                                {{ $c->name }}
                                                                             </option>
                                                                         @endforeach
                                                                     </select>
@@ -356,8 +386,9 @@
                                                                 <div class="form-group">
                                                                     <label class="form-label">Copy Address ?</label>
                                                                     <div class="form-check form-switch">
-                                                                        <input class="form-check-input" type="checkbox"
-                                                                            role="switch" id="same" name="same"
+                                                                        <input class="form-check-input"
+                                                                            type="checkbox" role="switch"
+                                                                            id="same" name="same"
                                                                             onchange="sameasabove()">
                                                                     </div>
                                                                 </div>
@@ -365,9 +396,7 @@
                                                             <div class="col-lg-6 mb-2">
                                                                 <div class="form-group">
                                                                     <label class="form-label">Address</label>
-                                                                    <textarea name="address_shipping"
-                                                                        id="address_shipping"
-                                                                        class="form-control form-control-sm"></textarea>
+                                                                    <textarea name="address_shipping" id="address_shipping" class="form-control form-control-sm"></textarea>
                                                                 </div>
                                                             </div>
                                                             <div class="col-lg-6 mb-2">
@@ -407,7 +436,8 @@
                                                                         <option id="ship_country">-SELECT COUNTRY-
                                                                         </option>
                                                                         @foreach ($country as $c)
-                                                                            <option value="{{ $c->id }}">{{ $c->name }}
+                                                                            <option value="{{ $c->id }}">
+                                                                                {{ $c->name }}
                                                                             </option>
                                                                         @endforeach
                                                                     </select>
@@ -444,13 +474,16 @@
                                                                             document.getElementById("pricelevelInput").value = document.getElementById('pricelevelSelect').value;
                                                                         }
                                                                     </script>
-                                                                    <input type="text" name="price_level_type_value"
+                                                                    <input type="text"
+                                                                        name="price_level_type_value"
                                                                         id="pricelevelInput">
                                                                     <select name="price_level_type"
                                                                         id="pricelevelSelect"
                                                                         class="form-control form-control-sm selectpicker"
-                                                                        data-live-search="true" onchange="pricelevel()">
-                                                                        <option value="" id="price_level"></option>
+                                                                        data-live-search="true"
+                                                                        onchange="pricelevel()">
+                                                                        <option value="" id="price_level">
+                                                                        </option>
                                                                         <option value="Increase" data-tokens="0">
                                                                             Increase</option>
                                                                         <option value="Decrease" data-tokens="1">
@@ -493,11 +526,12 @@
 
 
 
-                            <form class="form-horizontal" method="post" action="{{route('addsale')}}"
+                            <form class="form-horizontal" method="post" action="{{ route('sale.edit.store') }}"
                                 enctype="multipart/form-data">
 
 
                                 @csrf
+                                <input type="text" value="{{$sale->id}}" name="Ids" hidden>
                                 <!-- models -->
                                 <!-- customer model start-->
 
@@ -527,8 +561,9 @@
                                                             <div class="form-group">
                                                                 <label for="discount_to_all_input">Discount</label>
                                                                 <input type="text" class="form-control"
-                                                                    id="discount_to_all_amt" name="discount_to_all_amt"
-                                                                    placeholder="" value="0" oninput="alldiscout()" />
+                                                                    id="discount_to_all_amt"
+                                                                    name="discount_to_all_amt" placeholder=""
+                                                                    value="0" oninput="alldiscout()" />
 
 
                                                             </div>
@@ -539,7 +574,8 @@
                                                             <div class="form-group">
                                                                 <label for="discount_type">Discount Type</label>
                                                                 <select class="form-control" id="discount_to_all_type"
-                                                                    name="discount_to_all_type" onchange="alldiscout()">
+                                                                    name="discount_to_all_type"
+                                                                    onchange="alldiscout()">
                                                                     <option value="Percentage" selected="selected">
                                                                         Percentage%
                                                                     </option>
@@ -590,8 +626,7 @@
                                                     <div class="col-md-12">
                                                         <div class="box-body">
                                                             <div class="form-group">
-                                                                <textarea class="form-control" id="invoice_terms"
-                                                                    name="invoice_terms"
+                                                                <textarea class="form-control" id="invoice_terms" name="invoice_terms"
                                                                     placeholder="Enter Invoice Terms and Conditions"></textarea>
                                                             </div>
                                                         </div>
@@ -686,11 +721,11 @@
                                                         <select class="form-control select2 select2-hidden-accessible"
                                                             id="store_id" name="store_id" style="width: 100%"
                                                             tabindex="-1" aria-hidden="true" onchange="store()">
-                                                            <option value="{{ $cu_store->id }}" selected>
-                                                                {{ $cu_store->store_name }}
-                                                            </option>
+                                                            <option value="{{$sale->store_id}}">{{$store->firstWhere('id',$sale->store_id)->store_name ?? 'N/A'}}</option>
+                                                           
 
-                                                      
+
+
                                                         </select>
 
 
@@ -702,17 +737,10 @@
 
                                                     <div class="input-group" data-toggle="tooltip" title=""
                                                         data-original-title="Warehouse">
-                                                        <span class="input-group-addon"><i
-                                                                class="fa fa-building text-red"></i></span>
-                                                        <select name="sales_type" id="sales_type" class="form-control"
-                                                            onchange="store(); notax(this.value)">
-                                                            <option value="0">B2B</option>
-                                                            <option value="1">B2C</option>
-                                                            <option value="2">*</option>
-                                                        </select>
+                                                     
+                                                       <input type="hidden" name="sales_type" id="" value="{{$sale->sales_type}}">
 
-
-                                                    </div>
+                                                    </div> 
 
 
                                                 </div>
@@ -732,13 +760,13 @@
                                                 <span class="input-group-addon"><i class="fa fa-th-list"></i></span>
                                                 <input type="text" class="form-control"
                                                     placeholder="Invioce Initial Code" id="prefix" name="prefix"
-                                                    value="{{$sale_items->prefix}}" />
+                                                    value="{{ $sale->prefix }}" />
                                             </div>
                                         </div>
                                         <div class="col-md-4">
-                                            <input type="text" class="form-control" data-toggle="tooltip" title=""
-                                                placeholder="Invioce Number" id="sale_code" name="sale_code"
-                                                value="{{$sale_items->sales_code}}" />
+                                            <input type="text" class="form-control" data-toggle="tooltip"
+                                                title="" placeholder="Invioce Number" id="sale_code"
+                                                name="sale_code" value="{{ $sale->sales_code }}" />
                                         </div>
                                     </div>
                                     <script>
@@ -746,7 +774,6 @@
                                             store();
                                             notax(value);
                                         }
-
                                     </script>
 
                                     <script>
@@ -758,7 +785,6 @@
                                                 checkbox.checked = true; // Unchecked otherwise
                                             }
                                         }
-
                                     </script>
                                     <script>
                                         function store() {
@@ -775,7 +801,7 @@
                                                         store_id: store_id,
                                                         sales_type: sales_type
                                                     },
-                                                    success: function (response) {
+                                                    success: function(response) {
                                                         var data = jQuery.parseJSON(response);
                                                         // var data = JSON.stringify(response);
                                                         // alert(data.newSalescode);
@@ -818,25 +844,7 @@
                                                 <select class="form-control select2 select2-hidden-accessible"
                                                     id="customer_id" name="customer_id" style="width: 100%"
                                                     tabindex="-1" aria-hidden="true" onchange="customercheck()">
-                                                    <option value="{{ $customer->id }}" selected
-                                                        data-name="{{ $customer->customer_name }}"
-                                                        data-mobile="{{ $customer->mobile }}"
-                                                        data-email="{{ $customer->email }}"
-                                                        data-gst_number="{{ $customer->gst_number }}"
-                                                        data-credit="{{ $customer->credit_limit }}"
-                                                        data-previous_due="{{ $customer->previous_due }}"
-                                                        data-address="{{ $customer->address }}"
-                                                        data-city="{{ $customer->city }}"
-                                                        data-state="{{ $customer->state }}"
-                                                        data-postcode="{{ $customer->postcode }}"
-                                                        data-country="{{ $customer->country }}"
-                                                        data-ship_country="{{ $customer->ship_address }}"
-                                                        data-ship_state="{{ $customer->ship_state }}"
-                                                        data-ship_postcode="{{ $customer->ship_postcode }}"
-                                                        data-pricelevel_type="{{ $customer->price_leveltype }}"
-                                                        data-price_level="{{ $customer->price_level }}"
-                                                        data-tax_number="{{ $customer->tax_number }}">
-                                                        {{ $customer->customer_name }}</option>
+                                                <option value="{{$customerIds}}">{{$customer_detail->customer_name}}</option>
 
                                                 </select>
 
@@ -846,7 +854,7 @@
                                                         class="fa fa-user-edit text-primary fa-lg"
                                                         data-toggle="modal"></i></span>
                                             </div>
-
+{{-- 
                                             <script>
                                                 function showedit() {
                                                     // Get the selected option element
@@ -896,8 +904,7 @@
                                                     document.getElementById('price_level').value = price_level;
 
                                                 }
-
-                                            </script>
+                                            </script> --}}
                                             <div class="form-group" style="margin-bottom:0px !important;">
 
                                                 <label for="staticEmail" class="col-sm-4 col-form-label"
@@ -912,31 +919,29 @@
 
 
                                             <script>
-                                                 var customer_id = document.getElementById('customer_id').value;
-                                                    $.ajax({
-                                                        type: "GET",
-                                                        url: "{{ route('findCustomer') }}",
-                                                        data: {
-                                                            customer_id: customer_id
-                                                        },
-                                                        success: function (response) {
-                                                            var customerdata = JSON.stringify(response);
-                                                            response.forEach(function (customerdata) {
-                                                                //alert(customerdata.id);
-                                                                document.getElementById('prevdue').innerHTML = 'Previous Due : ' + customerdata.previous_due;
-                                                                document.getElementById('creditlmt').innerHTML = 'Credit Limit : ' + customerdata.credit_limit;
-                                                                document.getElementById('customer_credit_limit').value = customerdata.credit_limit;
+                                                var customer_id = document.getElementById('customer_id').value;
+                                                $.ajax({
+                                                    type: "GET",
+                                                    url: "{{ route('findCustomer') }}",
+                                                    data: {
+                                                        customer_id: customer_id
+                                                    },
+                                                    success: function(response) {
+                                                        var customerdata = JSON.stringify(response);
+                                                        response.forEach(function(customerdata) {
+                                                            //alert(customerdata.id);
+                                                            document.getElementById('prevdue').innerHTML = 'Previous Due : ' + customerdata
+                                                                .previous_due;
+                                                            document.getElementById('creditlmt').innerHTML = 'Credit Limit : ' + customerdata
+                                                                .credit_limit;
+                                                            document.getElementById('customer_credit_limit').value = customerdata.credit_limit;
 
 
-                                                            });
+                                                        });
 
 
-                                                        },
-                                                    });
-
-
-                                                
-
+                                                    },
+                                                });
                                             </script>
 
                                         </div>
@@ -946,7 +951,7 @@
                                                 <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                                 <input type="date" class="form-control ui-autocomplete-input"
                                                     name="sales_date" id="dateInput"
-                                                    value="{{ $sale_items->sales_date }}" />
+                                                    value="{{ $sale->sales_date }}" />
 
                                             </div>
                                         </div>
@@ -986,19 +991,15 @@
                                                 <br>
                                                 <label class="form-label">Tax Report</label>
 
-                                                @if ($sale_items->tax_report == 1)
-
-                                                    <input class="form-check-input" type="checkbox" role="switch"
-                                                        id="tax_report" name="tax_report" value="1" checked>
-
-                                                @else
+                                                @if ($sale->tax_report == 2)
                                                     <input class="form-check-input" type="checkbox" role="switch"
                                                         id="tax_report" name="tax_report" value="1">
-
+                                                @else
+                                                    <input class="form-check-input" type="checkbox" role="switch"
+                                                        id="tax_report" name="tax_report" value="1" checked>
                                                 @endif
 
-                                                <input class="form-check-input" type="checkbox" role="switch"
-                                                    id="tax_report" name="tax_report" value="1" checked>
+
                                                 <label class="form-label">Show Part</label>
 
                                                 <input class="form-check-input" type="checkbox" role="switch"
@@ -1006,11 +1007,11 @@
 
                                             </div>
                                             <script>
-                                                function notax() {
-                                                    if
-}
-
-
+                                                /*    function notax() {
+                                                                                                                                               if
+                                                                                           }
+                                                                                           
+                                                                                            */
                                             </script>
                                         </div>
 
@@ -1020,7 +1021,7 @@
                                                 <span class="input-group-addon"><i class="fa fa-info"></i></span>
                                                 <input type="text" class="form-control ui-autocomplete-input"
                                                     placeholder=" Reference No " id="item_search" name="re_no"
-                                                    value="{{$sale_items->reference_no}}" />
+                                                    value="{{ $sale->reference_no }}" />
 
                                                 </select>
 
@@ -1046,7 +1047,8 @@
                                                     <table
                                                         class="table table-condensed table-bordered table-responsive items_table"
                                                         id="purchase_table">
-                                                        <thead class="bg-gray">
+                                                        <thead class="bg-gray" >
+
                                                             <tr>
                                                                 <th width="20%">Item Name</th>
                                                                 <th width="10%">Quantity</th>
@@ -1067,75 +1069,196 @@
                                                             style=" font-size: 16px;font-weight: bold;overflow: scroll;"
                                                             id="item-results">
 
+                                                            @php
+                                                                $i = 0;
+                                                            @endphp
+                                         @if ($sales_itemdata->isNotEmpty())
+                                         @foreach ($sales_itemdata as $sale)
+                                         <tr @if ($sale->sales_qty < 1) style="background-color: #f8d7da; color: #721c24;" @endif>
+                                                 <td>
+                                                     <input name="item_id[]" type="hidden" id="item_id_{{ $i }}" class="form-control form-control-sm itemRow" value="{{ $sale->item_id }}">
+                                                     <input type="hidden" value="{{ $items->firstWhere('id', $sale->item_id)->item_name }}" name="item_name[]">
+                                                     {{ $items->firstWhere('id', $sale->item_id)->item_name }}
+                                                     <input type="hidden" value="{{ $items->firstWhere('id', $sale->item_id)->hsn_code }}" name="hsn_code[]">
+                                                     <input type="hidden" value="{{ $items->firstWhere('id', $sale->item_id)->part_no }}" name="part_no[]">
+                                                 </td>
+                                                 <td>
+                                                     <div class="input-group input-group-sm">
+                                                         <span class="input-group-btn">
+                                                             <button type="button" onclick="decrement_qty(1,{{ $i }})" class="btn btn-default btn-flat"><i class="fa fa-minus text-danger"></i></button>
+                                                         </span>
+                                                         <input name="sales_qty[]" type="text" id="qty_{{ $i }}" class="form-control no-padding text-center min_width" value="{{ $sale->sales_qty }}">
+                                                         <span class="input-group-btn">
+                                                             <button type="button" onclick="increment_qty(1,{{ $i }})" class="btn btn-default btn-flat"><i class="fa fa-plus text-success"></i></button>
+                                                         </span>
+                                                     </div>
+                                                 </td>
+                                                 <td>
+                                                    <select class="form-control form-control-sm" name="unit_id[]">
+                                                        <option value="">-select-</option>
+                                                        
+                                                        
+                                                            <option value="{{ $unit_id->firstWhere('id', $sale->unit_id)->id }}" selected>
+                                                                {{ $unit_id->firstWhere('id', $sale->unit_id)->unit_name }}
+                                                            </option>
+                                                     
+                                                        
+                                                        @foreach ($unit as $u)
+                                                            @if ($u->id !== $unit_id->firstWhere('id', $sale->unit_id)->id )
+                                                                <option value="{{ $u->id }}">{{ $u->unit_name }}</option>
+                                                            @endif
+                                                        @endforeach
+                                                    </select>
+                                                 </td>
+                                                 <td><input name="rate_inc_tax[]" id="rate_inc_tax_{{ $i }}" type="text" class="form-control form-control-sm" value="{{ $sale->rate_inclusive_tax }}" oninput="cal_division({{ $i }})"></td>
+                                                 <td><input name="purchase_price[]" id="purchase_price_{{ $i }}" type="text" oninput="update_calculation({{ $i }})" class="form-control form-control-sm" value="{{ $sale->price_per_unit }}"></td>
+                                                 <td>
+                                                     <input name="discount_amt[]" id="discount_{{ $i }}" type="text" oninput="cal_division({{ $i }})" class="form-control form-control-sm" value="{{ $sale->discount_amt }}">
+                                                     <select class="underselect" name="item_discount_type[]" id="item_discount_type_{{ $i }}" onchange="cal_division({{ $i }})">
+                                                         <option value="percent">Percent</option>
+                                                         <option value="fixed">Fixed</option>
+                                                     </select>
+                                                 </td>
+                                                 <td>
+                                                     <select name="tax_id[]" id="taxid_{{ $i }}" class="form-control form-control-sm" onchange="calculatetax({{ $i }});">
+                                                        <option value="">-select-</option>
+                                                        @foreach ($taxes as $t)
+                                                            <option value="{{ $t->id }}" 
+                                                                    data-id="{{ $t->per }}"
+                                                                    {{ $t->id == $sale->tax_id ? 'selected' : '' }}>
+                                                                {{ $t->taxname }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                    <input type="text" id="taxInput_{{ $i }}" value="{{ $sale->tax_id }}" hidden>
+                                                 </td>
+                                                 <td><input name="tax_amt[]" id="tax_amt_{{ $i }}" type="text" class="form-control form-control-sm" value="{{$sale->tax_amt}}" style="background-color: #ddd;"></td>
+                                                 <td><input type="text" id="mrp_{{ $i }}" value="{{ $sale->mrp }}" name="mrp[]" class="form-control form-control-sm"></td>
+                                                 <td><input name="total_amount[]" id="total_amount_{{ $i }}" type="text" class="form-control form-control-sm total" value="{{ $sale->total_cost }}" style="background-color: #ddd;" oninput="total_sum()"></td>
+                                                 <td>
+                                                     <form action="{{ route('item_delete_salebill') }}" method="post">
+                                                         @csrf
+                                                         <input type="hidden" name="id" value="{{ $sale->id }}">
+                                                         <button type="button" onclick="deleteItem({{ $sale->id }})" class="btn btn-danger shadow btn-xs sharp">
+                                                             <i class="fa fa-trash"></i>
+                                                         </button>
+                                                     </form>
+                                                 </td>
+                                             </tr>
+                                             @php $i++; @endphp
+                                         @endforeach
+                                     @endif
+                                     @php
+                                     $i = 0;
+                                 @endphp
+                                     @if ($sales_itemdata_off->isNotEmpty())
+                                         @foreach ($sales_itemdata_off as $sale)
+                                             <tr>
+                                                 <td>
+                                                     <input name="item_id[]" type="hidden" id="item_id_{{ $i }}" class="form-control form-control-sm itemRow" value="{{ $sale->item_id }}">
+                                                     <input type="hidden" value="{{ $items->firstWhere('id', $sale->item_id)->item_name }}" name="item_name[]">
+                                                     {{ $items->firstWhere('id', $sale->item_id)->item_name }}
+                                                     <input type="hidden" value="{{ $items->firstWhere('id', $sale->item_id)->hsn_code }}" name="hsn_code[]">
+                                                     <input type="hidden" value="{{ $items->firstWhere('id', $sale->item_id)->part_no }}" name="part_no[]">
+                                                 </td>
+                                                 <td>
+                                                     <div class="input-group input-group-sm">
+                                                         <span class="input-group-btn">
+                                                             <button type="button" onclick="decrement_qty(1,{{ $i }})" class="btn btn-default btn-flat"><i class="fa fa-minus text-danger"></i></button>
+                                                         </span>
+                                                         <input name="sales_qty[]" type="text" id="qty_{{ $i }}" class="form-control no-padding text-center min_width" value="{{ $sale->sales_qty }}">
+                                                         <span class="input-group-btn">
+                                                             <button type="button" onclick="increment_qty(1,{{ $i }})" class="btn btn-default btn-flat"><i class="fa fa-plus text-success"></i></button>
+                                                         </span>
+                                                     </div>
+                                                 </td>
+                                                 <td>
+                                                    <select class="form-control form-control-sm" name="unit_id[]">
+                                                        <option value="">-select-</option>
+                                                        
+                                                        
+                                                            <option value="{{ $unit_id->firstWhere('id', $sale->unit_id)->id }}" selected>
+                                                                {{ $unit_id->firstWhere('id', $sale->unit_id)->unit_name }}
+                                                            </option>
+                                                     
+                                                        
+                                                        @foreach ($unit as $u)
+                                                            @if ($u->id !== $unit_id->firstWhere('id', $sale->unit_id)->id )
+                                                                <option value="{{ $u->id }}">{{ $u->unit_name }}</option>
+                                                            @endif
+                                                        @endforeach
+                                                    </select>
+                                                 </td>
+                                                 <td><input name="rate_inc_tax[]" id="rate_inc_tax_{{ $i }}" type="text" class="form-control form-control-sm" value="{{ $sale->rate_inclusive_tax }}" oninput="cal_division({{ $i }})"></td>
+                                                 <td><input name="purchase_price[]" id="purchase_price_{{ $i }}" type="text" oninput="update_calculation({{ $i }})" class="form-control form-control-sm" value="{{ $sale->price_per_unit }}"></td>
+                                                 <td>
+                                                     <input name="discount_amt[]" id="discount_{{ $i }}" type="text" oninput="cal_division({{ $i }})" class="form-control form-control-sm" value="{{ $sale->discount_amt }}">
+                                                     <select class="underselect" name="item_discount_type[]" id="item_discount_type_{{ $i }}" onchange="cal_division({{ $i }})">
+                                                         <option value="percent">Percent</option>
+                                                         <option value="fixed">Fixed</option>
+                                                     </select>
+                                                 </td>
+                                                 <td>
+                                                     {{-- <select name="tax_id[]" id="taxid_{{ $i }}" class="form-control form-control-sm" onchange="calculatetax({{ $i }});">
+                                                         <option value="">-select -</option>
+                                                         <option value="{{ $tax->firstWhere('id', $sale->tax_id)->id }}" selected>{{ $tax->firstWhere('id', $sale->tax_id)->taxname }}</option>
+                                                         @foreach ($taxes as $u)
+                                                             @if ($u->id !== $sale->tax_id)
+                                                                 <option value="{{ $u->id }}">{{ $u->taxname }}</option>
+                                                             @endif
+                                                         @endforeach
+                                                     </select> --}}
+                                                     <select name="tax_id[]" id="taxid_{{ $i }}" class="form-control form-control-sm" onchange="calculatetax({{ $i }});">
+                                                        <option value="">-select-</option>
+                                                        @foreach ($taxes as $t)
+                                                            <option value="{{ $t->id }}" 
+                                                                    data-id="{{ $t->per }}"
+                                                                    {{ $t->id == $sale->tax_id ? 'selected' : '' }}>
+                                                                {{ $t->taxname }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                    <input type="text" id="taxInput_{{ $i }}" value="{{ $sale->tax_id }}" hidden>
+                                                 </td>
+                                                 <td><input name="tax_amt[]" id="tax_amt_{{ $i }}" type="text" class="form-control form-control-sm" value="{{$sale->tax_amt}}" style="background-color: #ddd;"></td>
+                                                 <td><input type="text" id="mrp_{{ $i }}" value="{{ $sale->mrp }}" name="mrp[]" class="form-control form-control-sm"></td>
+                                                 <td><input name="total_amount[]" id="total_amount_{{ $i }}" type="text" class="form-control form-control-sm total" value="{{ $sale->total_cost }}" style="background-color: #ddd;" oninput="total_sum()"></td>
+                                                 <td>
+                                                     <form action="{{ route('item_delete_salebill') }}" method="post">
+                                                         @csrf
+                                                         <input type="hidden" name="id" value="{{ $sale->id }}">
+                                                         <button type="button" onclick="deleteItem({{ $sale->id }})" class="btn btn-danger shadow btn-xs sharp">
+                                                             <i class="fa fa-trash"></i>
+                                                         </button>
+                                                     </form>
+                                                 </td>
+                                             </tr>
+                                             @php $i++; @endphp
+                                         @endforeach
+                                     @endif
 
-                        
-                                                    
-                                                    
-                                                      <tr>
-                                                                <td><input name="item_id[]" type="hidden" id="item_id_"
-                                                                        class="form-control form-control-sm itemRow"
-                                                                        value="{{$sales_all_item->id}}">
-                                                                        {{$sales_all_item->id}}
-                                                                </td>
-
-                                                                <td>
-                                                                    <div class="input-group input-group-sm">
-                                                                        <span class="input-group-btn">
-                                                                            <button type="button"
-                                                                                class="btn btn-default btn-flat"><i
-                                                                                    class="fa fa-minus text-danger"></i></button>
-                                                                        </span>
-                                                                        <input name="qty[]" type="text"
-                                                                            class="form-control no-padding text-center min_width"
-                                                                            value="" oninput="">
-                                                                        <span class="input-group-btn">
-                                                                            <button type="button" onclick=""
-                                                                                class="btn btn-default btn-flat">
-                                                                                <i class="fa fa-plus text-success"></i>
-                                                                            </button>
-                                                                        </span>
-                                                                    </div>
-                                                                </td>
-                                                                <td class="text-right"> 
-                                                                    
-                                                                    <select name="" id="" class="form-control no-padding min_width">
-                                                                        <option value="">1</option>
-                                                                    </select>
-                                                                </td>
-                                                                <td class="text-right"> 
-                                                                    <input id="" oninput="" name="sales_price[]" type="text" class="form-control no-padding min_width" value="" /> 
-                                                                </td>
-                                                                <td class="text-right"> 
-                                                                    <input id="" name="item_discount_amt[]" type="text" class="form-control no-padding min_width pointer" value="" />
-                                                                 </td>
-                                                                <td> 
-                                                                    <input id="" name="tax_amt[]" type="text" class="form-control no-padding pointer min_width"  value="" /> 
-                                                                </td>
-                                                                <td class="text-right"> 
-                                                                <select name="" id="" class="form-control no-padding min_width">
-                                                                        <option value="">1</option>
-                                                                    </select>
-                                                                </td>
-                                                                <td class="text-right"> 
-                                                                    <input id="" name="item_discount_amt[]" type="text" class="form-control no-padding min_width pointer" value="" />
-                                                                 </td>
-                                                                 <td class="text-right"> 
-                                                                    <input id="" name="item_discount_amt[]" type="text" class="form-control no-padding min_width pointer" value="" />
-                                                                 </td>
-                                                                 <td class="text-right"> 
-                                                                    <input id="" name="item_discount_amt[]" type="text" class="form-control no-padding min_width pointer" value="" />
-                                                                 </td>
-
-                                                               
-                                                                <td> <a class="fa fa-fw fa-trash-o text-red"
-                                                                        style="cursor: pointer; font-size: 20px"
-                                                                        onclick="" title="Delete Item?"></a> </td>
-                                                            </tr> 
-
-                                             
-                                                        </tbody>
 
                                                     </table>
+                                                    <script>
+                                                        // window.addEventListener('load', function() {
+                                                        //     calculatingtax();
+                                                        //     itemTotal();
+                                                        //     total_sum();
+                                                        //     totalamtsum();
+                                                        //     delete_row()
+                                                        //     decrement_qty()
+                                                        //     increment_qty()
+                                                        //     calculatetax()
+                                                          
+                                                        //     discount_per();
+                                                        //     update_calculation()
+                                                        //     othercharge()
+                                                        //     alldiscout()
+                                                        //     update_calculation()
+                                                        //     unitcost()
+                                                        //     calculateTotal()
+                                                        // });
+                                                    </script>
                                                 </div>
                                             </div>
                                         </div>
@@ -1146,11 +1269,13 @@
 
 
 
+
                                         <div class="col-md-2">
 
                                             <label class="fa fa-pencil-square-o cursor-pointer"
                                                 title="Edit Invoice T&amp;C" data-toggle="modal"
                                                 data-target="#terms-modal"></label>
+
 
 
 
@@ -1169,7 +1294,7 @@
                                             <input type="text" id="totalitemqty" name="total_qty"
                                                 class="form-control form-control-sm" readonly
                                                 style="background-color: #ddd; font-size:18px !important; text-align:right"
-                                                value="0">
+                                                value="{{$qty}}">
 
                                         </div>
                                         <div class="col-md-2 text-right">
@@ -1180,7 +1305,7 @@
                                             <input type="text" id="subtotal_amt" name="subtotal"
                                                 class="form-control form-control-sm" readonly
                                                 style="background-color: #ddd; font-size:18px !important; text-align:right"
-                                                oninput="totalamtsum()" value="0">
+                                                oninput="totalamtsum()" value="{{   $subtotal }}">
 
                                         </div>
 
@@ -1192,7 +1317,7 @@
                                             <input type="text" id="other_charges_amt" name="other_charge"
                                                 class="form-control form-control-sm" readonly
                                                 style="background-color: #ddd; font-size:18px !important; text-align:right"
-                                                oninput="totalamtsum()" value="0">
+                                                oninput="totalamtsum()" value="{{$other_charge}}">
 
 
                                         </div>
@@ -1212,7 +1337,8 @@
                                                             <div class="col-md-6">
                                                                 <div class="box-body">
                                                                     <div class="form-group">
-                                                                        <label for="discount_input">Other Charge</label>
+                                                                        <label for="discount_input">Other
+                                                                            Charge</label>
                                                                         <input name="other_charges_input"
                                                                             id="other_charges_input" type="text"
                                                                             class="form-control form-control-sm"
@@ -1224,7 +1350,8 @@
                                                                 <div class="box-body">
                                                                     <div class="form-group">
                                                                         <label for="discount_type">Tax</label>
-                                                                        <input type="hidden" name="tax" id="taxInput">
+                                                                        <input type="hidden" name="tax"
+                                                                            id="taxInput">
                                                                         <select name="othercharges_tax_id"
                                                                             id="othercharges_tax_id"
                                                                             class="form-control selectpicker"
@@ -1232,7 +1359,7 @@
                                                                             onchange="othercharge()">
 
                                                                             <option value="">No Tax</option>
-                                                                            @foreach ($tax as $t)
+                                                                            @foreach ($taxes as $t)
                                                                                 <option value="{{ $t->id }}"
                                                                                     data-percentage="{{ $t->per }}">
                                                                                     {{ $t->taxname }}
@@ -1243,8 +1370,8 @@
                                                                                 placeholder="Tax Amount" readonly>
                                                                         </select>
 
-                                                                        <input type="hidden" name="tax_type" id=""
-                                                                            value="inclusive">
+                                                                        <input type="hidden" name="tax_type"
+                                                                            id="" value="inclusive">
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -1276,7 +1403,7 @@
                                             <input type="text" id="total_discount_amt" name="total_discount_amt"
                                                 class="form-control form-control-sm" readonly
                                                 style="background-color: #ddd; font-size:18px !important; text-align:right"
-                                                value="0">
+                                                value="{{$tot_discount_to_all_amt}}">
                                         </div>
                                         <div class="col-md-3 text-right">
                                             <label> Total Amount:</label> <br />
@@ -1286,7 +1413,7 @@
                                             <input type="text" id="grand_total" name="grand_total"
                                                 class="form-control form-control-sm" readonly
                                                 style="background-color: #ddd; font-size:18px !important; text-align:right"
-                                                value="0">
+                                                value="{{$grand_total}}">
 
                                         </div>
                                     </div>
@@ -1327,8 +1454,8 @@
                                                 <div class="modal-dialog modal-lg">
                                                     <div class="modal-content">
                                                         <div class="modal-header header-custom">
-                                                            <button type="button" class="close" data-dismiss="modal"
-                                                                aria-label="Close">
+                                                            <button type="button" class="close"
+                                                                data-dismiss="modal" aria-label="Close">
                                                                 <span aria-hidden="true">×</span>
                                                             </button>
                                                             <h4 class="modal-title text-center">Payments</h4>
@@ -1373,7 +1500,8 @@
                                                                                                     name="paymenttypes"
                                                                                                     class="form-control selectpicker"
                                                                                                     data-live-search="true">
-                                                                                                    <option value="">
+                                                                                                    <option
+                                                                                                        value="">
                                                                                                         -Select-
                                                                                                     </option>
                                                                                                     <option
@@ -1403,13 +1531,14 @@
                                                                                                     name="account_id"
                                                                                                     class="form-control selectpicker"
                                                                                                     data-live-search="true">
-                                                                                                    <option value="0">
+                                                                                                    <option
+                                                                                                        value="0">
                                                                                                         -None-
                                                                                                     </option>
                                                                                                     @foreach ($account as $acc)
                                                                                                         <option
-                                                                                                            value="{{$acc->id}}">
-                                                                                                            {{$acc->account_name}}
+                                                                                                            value="{{ $acc->id }}">
+                                                                                                            {{ $acc->account_name }}
                                                                                                         </option>
                                                                                                     @endforeach
 
@@ -1428,11 +1557,7 @@
                                                                                                 <label
                                                                                                     for="payment_note_1">Payment
                                                                                                     Note</label>
-                                                                                                <textarea type="text"
-                                                                                                    class="form-control"
-                                                                                                    id="payment_note_1"
-                                                                                                    name="payment_note_1"
-                                                                                                    placeholder=""></textarea>
+                                                                                                <textarea type="text" class="form-control" id="payment_note_1" name="payment_note_1" placeholder=""></textarea>
                                                                                                 <span
                                                                                                     id="payment_note_1_msg"
                                                                                                     style="display: none"
@@ -1467,11 +1592,7 @@
                                                                                     <div class="">
                                                                                         <label
                                                                                             for="sales_note">Note</label>
-                                                                                        <textarea type="text"
-                                                                                            class="form-control"
-                                                                                            id="sales_note"
-                                                                                            name="sales_note"
-                                                                                            placeholder=""></textarea>
+                                                                                        <textarea type="text" class="form-control" id="sales_note" name="sales_note" placeholder=""></textarea>
                                                                                         <span id="sales_note_msg"
                                                                                             style="display: none"
                                                                                             class="text-danger"></span>
@@ -1508,7 +1629,8 @@
                                                                                                 id="totalitemqty_1"
                                                                                                 name="totalitemqty_1"
                                                                                                 class="form-control form-control-sm diaplaylabel"
-                                                                                                readonly value="0">
+                                                                                                readonly
+                                                                                                value="0">
 
                                                                                         </span>
 
@@ -1525,7 +1647,8 @@
                                                                                                 id="total_amount_print"
                                                                                                 name="subtotal_amt_1"
                                                                                                 class="form-control form-control-sm diaplaylabel"
-                                                                                                readonly value="0">
+                                                                                                readonly
+                                                                                                value="0">
                                                                                         </span>
 
 
@@ -1572,13 +1695,13 @@
                                                                             <!-- <div class="row">
                                                                                         <div class="col-md-12 border-custom-bottom">
                                                                                             <span class="col-md-6 text-right text-bold">Coupon Discount(-):</span>
-                                                                                            <span class="col-md-6 text-right text-bold custom-font-size coupon_discount_div_amt">  
+                                                                                            <span class="col-md-6 text-right text-bold custom-font-size coupon_discount_div_amt">
                                                                                                 <input type="text" id="" name="subtotal" class="form-control form-control-sm diaplaylabel" readonly  value="0">
                                                                                         </span>
                                                                                         
                                                                                         </div>
                                                                                     </div> -->
-                                                                            <!--  
+                                                                            <!--
                                                                                 <div class="row bg-red">
                                                                                     <div
                                                                                         class="col-md-12 border-custom-bottom">
@@ -1596,7 +1719,7 @@
                                                                                         </span>
                                                                                     </div>
                                                                                 </div>
-                                                                                <!-- 
+                                                                                <!--
                                                                                 <div class="row">
                                                                                     <div
                                                                                         class="col-md-12 border-custom-bottom">
@@ -1613,7 +1736,7 @@
                                                                                         </span>
                                                                                     </div>
                                                                                 </div>
-                                                                                <!--  
+                                                                                <!--
                                                                              
                                                                                 <div class="row">
                                                                                     <div
@@ -1630,7 +1753,7 @@
                                                                                         </span>
                                                                                     </div>
                                                                                 </div>
-                                                                                <!-- 
+                                                                                <!--
                                                                                 <div class="row">
                                                                                     <div class="col-md-12 bg-orange">
                                                                                         <span
@@ -1647,9 +1770,9 @@
                                                                                         </span>
                                                                                     </div>
                                                                                 </div>
-                                                                                <!-- 
+                                                                                <!--
                                                                             </div>
-                                                                           /.box-body 
+                                                                           /.box-body
                                                                         </div>
                                                                     </div>
                                                                 </div> -->
@@ -1665,7 +1788,8 @@
 
                                                                         <button type="submit" name="saveprint"
                                                                             class="btn btn-success btn-lg make_sale btn-lg">
-                                                                            <i class="fa fa-print"></i> Save &amp; Print
+                                                                            <i class="fa fa-print"></i> Save &amp;
+                                                                            Print
                                                                         </button>
                                                                     </div>
                                                                 </div>
@@ -1749,18 +1873,18 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
-        $('#customer_edit').on('submit', function (e) {
+        $('#customer_edit').on('submit', function(e) {
             e.preventDefault(); // Prevent the default form submission
 
             $.ajax({
                 url: "{{ route('customer_edit') }}",
                 type: "POST", // Use POST method
                 data: $(this).serialize(),
-                success: function (response) {
+                success: function(response) {
                     alert('Data updated successfully');
                     location.reload();
                 },
-                error: function (xhr) {
+                error: function(xhr) {
                     alert('An error occurred');
                     console.error(xhr.responseText); // Log the error for debugging
                 }
@@ -1769,30 +1893,70 @@
     </script>
 
     <script>
+       
+let debounceTimer;
+function searchitem() {
+    clearTimeout(debounceTimer);
+    
+    debounceTimer = setTimeout(() => {
+        const search = document.getElementById("search").value;
+        const store_id = document.getElementById("store_id").value;
 
-        function searchitem() {
-            var search = document.getElementById("search").value;
-            var store_id = document.getElementById("store_id").value;
-            // alert(store_id);
-            if (store_id == '') {
-                // alert('Please select the store');
-                swal("Warning!", "Please select a store", "warning");
-            }
-            if (search == '') {
-                document.getElementById("ui-id-1").style.display = "none";
-                document.getElementById("ui-id-1").innerHTML = response;
+        if (!store_id) {
+            swal("Warning!", "Please select a store", "warning");
+            return;
+        }
 
+        if (search === '') {
+            document.getElementById("ui-id-1").style.display = "none";
+            return;
+        }
+
+        document.getElementById("ui-id-1").style.display = "block";
+        document.getElementById("ui-id-1").innerHTML = `<div class="alert alert-info m-2" role="alert">
+    <i class="fa fa-spinner fa-spin"></i> Searching...
+</div>`;
+
+   
+        $.ajax({
+            type: "GET",
+            url: "{{ route('search-items.store') }}",
+            data: {
+                search: search,
+                store_id: store_id
+            },
+            success: function (response) {
+                const results = response.map(test => {
+                    const stockColor = (test.opening_stock < 10) ? 'red' : 'green';
+                    return `
+                        <li class="ui-menu-item" role="presentation">
+                            <a href="javascript:void(0)" onclick="additem(${test.id})" class="ui-corner-all" tabindex="-1" style="display:flex;">
+                                ${test.item_name} [ ${test.part_no} ] 
+                                <p style="color:${stockColor};">( Stock ${test.opening_stock} )</p>
+                            </a>
+                        </li>`;
+                }).join('');
+
+                document.getElementById("ui-id-1").innerHTML = results || '<li>No results found</li>';
+            },
+            error: function () {
+                document.getElementById("ui-id-1").innerHTML = "Error loading items.";
             }
-            document.getElementById("ui-id-1").style.display = "block";
-            document.getElementById("ui-id-1").innerHTML = "!Loading .....!";
-            $.ajax({
-                type: "GET",
-                url: "{{ route('search-items') }}",
-                data: {
-                    search: search,
-                    store_id: store_id
-                },
-                success: function (response) {
+        });
+    }, 300); // Adjust the delay as necessary
+}
+
+function additem(item_id) {
+    document.getElementById("ui-id-1").style.display = "none";
+    document.getElementById("search").value = "";
+
+    $.ajax({
+        type: "GET",
+        url: "{{ route('add-item') }}",
+        data: {
+            item_id: item_id,
+        },
+        success: function (response) {
                     //  var data = jQuery.parseJSON(response)
                     // var json_obj = JSON.parse(response);
                     var test = JSON.stringify(response);
@@ -1801,16 +1965,24 @@
                     document.getElementById("ui-id-1").style.display = "block";
                     document.getElementById("ui-id-1").innerHTML = "";
 
-                    response.forEach(function (test) {
+                    response.forEach(function(test) {
                         var searchs = document.getElementById("ui-id-1").innerHTML;
-                        //console.log("ID: " + test.id);  // Accessing the `id` field                 
-                        document.getElementById("ui-id-1").innerHTML = searchs + '<li class="ui-menu-item" role="presentation"><a href="javascript:void(0)" onclick="additem(' + test.id + ')" class="ui-corner-all" tabindex="-1" >' + test.item_name + '[ ' + test.part_no + ']</a></li>';
+                                    
+                        var stockColor = (test.opening_stock < 10) ? 'red' : 'green';
+                   
+                   document.getElementById("ui-id-1").innerHTML = searchs + 
+                       '<li class="ui-menu-item" role="presentation" >' +
+                       '<a href="javascript:void(0)" onclick="additem(' + test.id + ')" class="ui-corner-all" tabindex="-1" style="display:flex; ">' + 
+                       test.item_name + ' [ ' + test.part_no + ' ] ' + 
+                        '<p style="color:' + stockColor + ';"  id="stock">( Stock ' + test.opening_stock + ' )</p>' + 
+                       '</a></li>';
 
                     });
 
                 },
             });
         }
+
         function additem(item_id) {
             document.getElementById("ui-id-1").style.display = "none";
             document.getElementById("search").value = "";
@@ -1818,13 +1990,13 @@
             $.ajax({
                 type: "GET",
                 // url: "controller/add-item-purchase.php",
-                url: "{{ route('add-item') }}",
+                url: "{{ route('add-item.store') }}",
                 data: {
                     item_id: item_id,
                 },
-                success: function (response) {
+                success: function(response) {
                     var data = JSON.stringify(response);
-                    response.forEach(function (data) {
+                    response.forEach(function(data) {
                         var count = $(".itemRow").length;
                         var htmlRows = "";
                         htmlRows += "<tr>";
@@ -1835,93 +2007,115 @@
                             '" class="form-control form-control-sm itemRow" value="' +
                             data.id +
                             '"> ' +
-                            data.item_name + ' <input type="hidden" value="' + data.item_name + '" name="item_name[]"> <input type="hidden" value="' + data.hsn_code + '" name="hsn_code[]"> <input type="hidden" value="' + data.part_no + '" name="part_no[]"> </td>';
+                            data.item_name + ' <input type="hidden" value="' + data.item_name +
+                            '" name="item_name[]"> <input type="hidden" value="' + data.hsn_code +
+                            '" name="hsn_code[]"> <input type="hidden" value="' + data.part_no +
+                            '" name="part_no[]"> </td>';
 
-                        htmlRows += '<td> <div class="input-group input-group-sm"><span class="input-group-btn"> <button type="button" onclick="decrement_qty(1,' + count + ')" class="btn btn-default btn-flat"><i class="fa fa-minus text-danger"></i></button></span> <input name="sales_qty[]" type="text" id="qty_' + count + '" class="form-control no-padding text-center min_width" value="1"  >  <span class="input-group-btn">  <button type="button" onclick="increment_qty(1,' + count + ')" class="btn btn-default btn-flat"><i class="fa fa-plus text-success"></i> </button>  </span> </div> </td>';
+                        htmlRows +=
+                            '<td> <div class="input-group input-group-sm"><span class="input-group-btn"> <button type="button" onclick="decrement_qty(1,' +
+                            count +
+                            ')" class="btn btn-default btn-flat"><i class="fa fa-minus text-danger"></i></button></span> <input name="sales_qty[]" type="text" id="qty_' +
+                            count +
+                            '" class="form-control no-padding text-center min_width" value="1"  >  <span class="input-group-btn">  <button type="button" onclick="increment_qty(1,' +
+                            count +
+                            ')" class="btn btn-default btn-flat"><i class="fa fa-plus text-success"></i> </button>  </span> </div> </td>';
                         htmlRows += '<td>';
 
                         // Unit ID exists in the data, pre-select the option in the dropdown
                         htmlRows += '<select class="form-control form-control-sm"  name="unit_id[]">';
                         htmlRows += '<option value="">select</option>';
-                        @if($unit->isNotEmpty())
+                        @if ($unit->isNotEmpty())
                             @foreach ($unit as $unitvalue)
-                                htmlRows += '<option value="{{ $unitvalue->id }}" data-name="{{ $unitvalue->unit_name }}">{{ $unitvalue->unit_name }}</option>';
+                                htmlRows +=
+                                    '<option value="{{ $unitvalue->id }}" data-name="{{ $unitvalue->unit_name }}">{{ $unitvalue->unit_name }}</option>';
                             @endforeach
                         @else
                             htmlRows += '<option value="">No units available</option>';
                         @endif
-                           
+
                         htmlRows +=
-                '<td> <input name="rate_inc_tax[]" id="rate_inc_tax_' +
-                count +
-                '" type="text" class="form-control form-control-sm" value="" oninput="cal_division(' + count + ')"></td>';
+                            '<td> <input name="rate_inc_tax[]" id="rate_inc_tax_' +
+                            count +
+                            '" type="text" class="form-control form-control-sm" value="" oninput="cal_division(' +
+                            count + ')"></td>';
 
-            htmlRows +=
-                '<td> <input name="purchase_price[]" id="purchase_price_' +
-                count +
-                '" type="text"  oninput="update_calculation(' +
-                count +
-                ')" class="form-control form-control-sm" value="' +
-                (data.purchase_price ? data.purchase_price : "00") +
-                '"></td>';
-            htmlRows += '<td> <input name="discount_amt[]" id="discount_' + count + '" type="text" oninput="cal_division(' + count + ')" class="form-control form-control-sm" value="' + (data.discount ? data.discount : "00") + '"><select class="underselect" name="item_discount_type[]" id="item_discount_type_' + count + '" onchange="cal_division(' + count + ')"><option value="percent">Percent</option><option value="fixed">Fixed</option></select></td>';
-            htmlRows += '<td>';
+                        htmlRows +=
+                            '<td> <input name="purchase_price[]" id="purchase_price_' +
+                            count +
+                            '" type="text"  oninput="update_calculation(' +
+                            count +
+                            ')" class="form-control form-control-sm" value="' +
+                            (data.purchase_price ? data.purchase_price : "00") +
+                            '"></td>';
+                        htmlRows += '<td> <input name="discount_amt[]" id="discount_' + count +
+                            '" type="text" oninput="cal_division(' + count +
+                            ')" class="form-control form-control-sm" value="' + (data.discount ? data
+                                .discount : "00") +
+                            '"><select class="underselect" name="item_discount_type[]" id="item_discount_type_' +
+                            count + '" onchange="cal_division(' + count +
+                            ')"><option value="percent">Percent</option><option value="fixed">Fixed</option></select></td>';
+                        htmlRows += '<td>';
 
-            // Tax ID does not exist, show the select dropdown
-            htmlRows += '<select name="tax_id[]" id="taxid_' + count + '" class="form-control form-control-sm" onchange="calculatetax(' + count + ');">';
-            htmlRows += '<option value="">select</option>';
-            @foreach ($tax as $taxvalue)
-                htmlRows += '<option ';
-                if (data['tax_id'] == {{$taxvalue->id}}) {
-                    htmlRows += 'selected ';
-                }
-                htmlRows += 'value="{{$taxvalue->id}}" data-id="{{$taxvalue->per}}">{{$taxvalue->taxname}}</option>';
-            @endforeach
-            htmlRows += '</select>';
-            htmlRows += '<input type="text"  id="taxInput_' + count + '"  value="' + data['tax_id'] + '" hidden>';
+                        // Tax ID does not exist, show the select dropdown
+                        htmlRows += '<select name="tax_id[]" id="taxid_' + count +
+                            '" class="form-control form-control-sm" onchange="calculatetax(' + count +
+                            ');">';
+                        htmlRows += '<option value="">select</option>';
+                        @foreach ($taxes as $taxvalue)
+                            htmlRows += '<option ';
+                            if (data['tax_id'] == {{ $taxvalue->id }}) {
+                                htmlRows += 'selected ';
+                            }
+                            htmlRows +=
+                                'value="{{ $taxvalue->id }}" data-id="{{ $taxvalue->per }}">{{ $taxvalue->taxname }}</option>';
+                        @endforeach
+                        htmlRows += '</select>';
+                        htmlRows += '<input type="text"  id="taxInput_' + count + '"  value="' + data[
+                            'tax_id'] + '" hidden>';
 
-            htmlRows += '</td>';
-            htmlRows +=
-                '<td> <input name="tax_amt[]" id="tax_amt_' +
-                count +
-                '" type="text" class="form-control form-control-sm" value="00" readonly style="background-color: #ddd;"></td>';
+                        htmlRows += '</td>';
+                        htmlRows +=
+                            '<td> <input name="tax_amt[]" id="tax_amt_' +
+                            count +
+                            '" type="text" class="form-control form-control-sm" value="00" readonly style="background-color: #ddd;"></td>';
 
-            htmlRows +=
-                '<td><input type="text" id="mrp_' +
-                count +
-                '" value="' +
-                (data.mrp ? data.mrp : "00") +
-                '" name="mrp[]" class="form-control form-control-sm"></td>'
+                        htmlRows +=
+                            '<td><input type="text" id="mrp_' +
+                            count +
+                            '" value="' +
+                            (data.mrp ? data.mrp : "00") +
+                            '" name="mrp[]" class="form-control form-control-sm"></td>'
 
-            htmlRows +=
-                '<td> <input name="total_amount[]" id="total_amount_' +
-                count +
-                '" type="text" class="form-control form-control-sm total" value="' +
-                (data.purchase_price ? data.purchase_price : '000') +
-                '" readonly style="background-color: #ddd;" oninput="total_sum()" ></td>';
-            // htmlRows +=
-            //     '<td> <input name="bach_no[]" id="bach_no_' +
-            //     count +
-            //     '" type="text" class="form-control form-control-sm" ></td>';
-            // htmlRows +=
-            //     '<td> <input name="expire_date[]" id="expiry_date_' +
-            //     count +
-            //     '" type="date" class="form-control form-control-sm"></td>';
-            htmlRows +=
-                '<td> <button onclick="delete_row(' +
-                count +
-                ')" type="button" class="btn btn-danger shadow btn-xs sharp"><i class="fa fa-trash"></i></button></td></tr>';
+                        htmlRows +=
+                            '<td> <input name="total_amount[]" id="total_amount_' +
+                            count +
+                            '" type="text" class="form-control form-control-sm total" value="' +
+                            (data.purchase_price ? data.purchase_price : '000') +
+                            '" readonly style="background-color: #ddd;" oninput="total_sum()" ></td>';
+                        // htmlRows +=
+                        //     '<td> <input name="bach_no[]" id="bach_no_' +
+                        //     count +
+                        //     '" type="text" class="form-control form-control-sm" ></td>';
+                        // htmlRows +=
+                        //     '<td> <input name="expire_date[]" id="expiry_date_' +
+                        //     count +
+                        //     '" type="date" class="form-control form-control-sm"></td>';
+                        htmlRows +=
+                            '<td> <button onclick="delete_row(' +
+                            count +
+                            ')" type="button" class="btn btn-danger shadow btn-xs sharp"><i class="fa fa-trash"></i></button></td></tr>';
 
-            $("#purchase_table").append(htmlRows);
-            document.getElementById("totalitemqty").value = (parseFloat(count) + 1);
-            document.getElementById('totalitemqty_1').value = (parseFloat(count) + 1);
-            totalamtsum()
-            calculatingtax(count);
-            itemTotal(count);
-            total_sum();
-            alldiscout();
+                        $("#purchase_table").append(htmlRows);
+                        document.getElementById("totalitemqty").value = (parseFloat(count) + 1);
+                        document.getElementById('totalitemqty_1').value = (parseFloat(count) + 1);
+                        totalamtsum()
+                        calculatingtax(count);
+                        itemTotal(count);
+                        total_sum();
+                        alldiscout();
 
-        });
+                    });
                 },
             });
 
@@ -1942,28 +2136,34 @@
             total_sum();
             alldiscout();
         }
-        //increacing quantity
-        function increment_qty(value, count) {
+     
+             //increacing quantity
+             function increment_qty(value, count) {
             var qty = document.getElementById("qty_" + count).value;
             document.getElementById("qty_" + count).value = parseFloat(qty) + value;
-            cal_division(count);
-            calculatingtax(count);
-            itemTotal(count);
-            update_calculation(count);
-            total_sum();
-            alldiscout();
+             cal_division(count);
+            totalamtsum();
+             calculatingtax(count);
+             itemTotal(count);
+             update_calculation(count);
+             total_sum();
+             alldiscout();
+
+            
+                    
         }
         //decrecing quantity
         function decrement_qty(value, count) {
             var qty = document.getElementById("qty_" + count).value;
             if (qty != 0) {
                 document.getElementById("qty_" + count).value = parseFloat(qty) - value;
-                cal_division(count);
-                calculatingtax(count);
-                itemTotal(count);
-                update_calculation(count);
-                total_sum();
-                alldiscout();
+                 cal_division(count);
+                totalamtsum();
+                 calculatingtax(count);
+                 itemTotal(count);
+                 update_calculation(count);
+                 total_sum();
+                 alldiscout();
             }
 
         }
@@ -1973,9 +2173,12 @@
             var taxid = document.getElementById("taxid_" + counts);
             var taxoption = taxid.options[taxid.selectedIndex];
             var taxvalue = taxoption.getAttribute('data-id');
+
             var qty = document.getElementById("qty_" + counts).value;
             var purchase_price = (parseFloat(amt_inc_tax) * 100) / (100 + parseFloat(taxvalue));
             document.getElementById("purchase_price_" + counts).value = purchase_price;
+           
+           
             calculatingtax(counts);
             itemTotal(counts);
             total_sum();
@@ -2021,7 +2224,8 @@
             } else {
                 var discount_amt = discount;
             }
-            var itemtotalamt = (((parseFloat(purchase_price) * parseFloat(qty)) + parseFloat(taxamt))) - parseFloat(discount_amt);
+            var itemtotalamt = (((parseFloat(purchase_price) * parseFloat(qty)) + parseFloat(taxamt))) - parseFloat(
+                discount_amt);
             document.getElementById("total_amount_" + count).value = itemtotalamt.toFixed(3);
             total_sum();
             alldiscout();
@@ -2101,7 +2305,8 @@
                 document.getElementById("total_discount_amt").value = discount_to_all_input;
                 var subtotal_amt = document.getElementById("subtotal_amt").value;
                 var other_charges_amt = document.getElementById("other_charges_amt").value;
-                var total_amt = (parseFloat(subtotal_amt) + parseFloat(other_charges_amt)) - parseFloat(discount_to_all_input)
+                var total_amt = (parseFloat(subtotal_amt) + parseFloat(other_charges_amt)) - parseFloat(
+                    discount_to_all_input)
                 document.getElementById("grand_total").value = total_amt;
             }
 
@@ -2109,9 +2314,6 @@
             totalamtsum()
 
         }
-
-
-
     </script>
 
 
@@ -2138,7 +2340,6 @@
     </script>
 
     <script>
-
         function unitvalue(count) {
 
             var unitSelect = document.getElementById('unitselect_' + count);
@@ -2152,17 +2353,14 @@
             if (gotAttri === 'Ltr') {
                 document.getElementById('totallitters_' + count + '').style.display = "block";
                 document.getElementById('totalnos_' + count + '').style.display = "none";
-            }
-            else if (gotAttri === 'Nos') {
+            } else if (gotAttri === 'Nos') {
                 document.getElementById('totalnos_' + count + '').style.display = "block";
                 document.getElementById('totallitters_' + count + '').style.display = "none";
-            }
-            else {
+            } else {
                 document.getElementById('totalnos_' + count + '').style.display = "none";
                 document.getElementById('totallitters_' + count + '').style.display = "none";
             }
         }
-
     </script>
     <!-- <script>
         function totalamtsum() {
@@ -2221,7 +2419,54 @@
         document.getElementById('total_amount_print').value =
             document.getElementById('grand_total').value;
     </script>
+ 
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+ <script>
+     function deleteItem(saleId) {
+         Swal.fire({
+             title: "Are you sure?",
+             text: "You won't be able to revert this!",
+             icon: "warning",
+             showCancelButton: true,
+             confirmButtonColor: "#3085d6",
+             cancelButtonColor: "#d33",
+             confirmButtonText: "Yes, delete it!"
+         }).then((result) => {
+             if (result.isConfirmed) {
+                 $.ajax({
+                     url: "{{ route('item_delete_salebill') }}", // URL to send the request to
+                     type: "POST",
+                     data: {
+                         _token: "{{ csrf_token() }}",
+                         id: saleId
+                     },
+                     success: function(response) {
+                         Swal.fire({
+                             title: "Deleted!",
+                             text: response.message,
+                             icon: "success",
+                             confirmButtonText: "OK"
+                         }).then(() => {
+                            
+                             $('#deleteForm-' + saleId).closest('tr').remove();
+                             window.location.reload();
+                         });
+                     },
+                     error: function(xhr) {
+                         Swal.fire({
+                             title: "Error!",
+                             text: "An error occurred while deleting the item. Please try again.",
+                             icon: "error",
+                             confirmButtonText: "OK"
+                         });
+                     }
+                 });
+             }
+         });
+     }
+ </script>
+ 
     <!-- Bootstrap 3.3.6 -->
     <script src="{{ asset('pos_assets/js/bootstrap.min.js') }}"></script>
 
@@ -2256,7 +2501,7 @@
     <!-- Pace Loader -->
     <script src="{{ asset('pos_assets/js/pace.min.js') }}"></script>
     <!-- <script type="text/javascript">
-        $(document).ajaxStart(function () {
+        $(document).ajaxStart(function() {
             Pace.restart();
         });
     </script> -->
@@ -2294,8 +2539,8 @@
         var store_module = false;
     </script>
     <!-- <script src="pos_assets/js/pos.js"></script> -->
-    <ul class="ui-autocomplete ui-front ui-menu ui-widget ui-widget-content ui-corner-all" id="ui-id-1" tabindex="0"
-        style="display: none"></ul>
+    <ul class="ui-autocomplete ui-front ui-menu ui-widget ui-widget-content ui-corner-all" id="ui-id-1"
+        tabindex="0" style="display: none"></ul>
 
 </body>
 

@@ -1077,7 +1077,7 @@
                                                             oninput="othercharge()" value="0">
                                                     </div>
                                                     <div class="col-sm-4 mt-2 mt-sm-0">
-                                                        <input type="hidden" name="tax" id="taxInput">
+                                                        <input type="hidden" name="" id="taxInput">
                                                         <select name="othercharges_tax_id" id="othercharges_tax_id"
                                                             class="form-control selectpicker" data-live-search="true"
                                                              onchange="othercharge()">
@@ -1258,7 +1258,7 @@
                                                                         
                                                                         CGST
                                                                         <input type="text" id="cgst"
-                                                                        name="tot_discount_to_all_amt"
+                                                                        name=""
                                                                         class="form-control form-control-sm"
                                                                         style="background-color: #ddd;font-size:18px !important;"
                                                                     
@@ -1267,7 +1267,7 @@
                                                                     <div class="col-sm-6">
                                                                         SGST
                                                                         <input type="text" id="sgst"
-                                                                        name="tot_discount_to_all_amt"
+                                                                        name=""
                                                                         class="form-control form-control-sm"
                                                                         style="background-color: #ddd;font-size:18px !important;"
                                                                 

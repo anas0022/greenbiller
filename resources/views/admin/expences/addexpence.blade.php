@@ -66,7 +66,17 @@
                                         </select>
                                     </div>
                                 </div>
-
+                                <div class="mb-3 row">
+                                    <label class="col-sm-3 col-form-label">Store</label>
+                                    <div class="col-sm-9">
+                                        <select name="store_id" class="form-control selectpicker" data-live-search="true">
+                                            <option value="">-Select-</option>
+                                            @foreach ($store as $st)
+                                            <option value="{{$st->id}}">{{$st->store_name}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
 
                                 <div class="mb-3 row">
                                     <label class="col-sm-3 col-form-label">Expense For</label>

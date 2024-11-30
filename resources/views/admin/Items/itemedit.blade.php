@@ -51,9 +51,7 @@
 
             <div class="row">
                 <div class="col-12">
-                    <form action="{{route('item_edit')}}" method="post" enctype="multipart/form-data">
-
-
+                    <form action="{{ route('item_edit') }}" method="POST">
                         @csrf
                         <div class="card">
                             <input type="hidden" name="id" id="" value={{$items->id}}>

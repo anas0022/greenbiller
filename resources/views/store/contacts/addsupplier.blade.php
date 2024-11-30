@@ -30,7 +30,7 @@
     swal({
             title: "error!",
             text: "{{ session('error') }}",
-            icon: "error",  // For SweetAlert version 1, use `type` instead of `icon`
+            icon: "error",  
             type: "error"
         });
 </script>
@@ -40,7 +40,7 @@
         swal({
             title: "Success!",
             text: "{{ session('success') }}",
-            icon: "success",  // For SweetAlert version 1, use `type` instead of `icon`
+            icon: "success",  
             type: "success"
         });
     </script>
@@ -138,7 +138,7 @@
 
                                         <select id="countryselect" onchange="countryselecting()" name="country_id" class="form-control selectpicker" data-live-search="true" >
                                             <option value="">-Select-</option>
-                                           @foreach ($cuntry as $c )
+                                           @foreach ($country as $c )
 
                                            <option value="{{$c->id}}">{{$c->name}}</option>
                                            

@@ -573,7 +573,7 @@
                                                             <div colspan="7" class="bg-sky text-bold"
                                                                 style="font-size:12px; padding: 5px;">
                                                                 <b>
-                                                                   {{$sale->discount_to_all_input ?? '00'}}
+                                                                   {{$sale->tot_discount_to_all_amt ?? '00'}}
                                                                 </b>
                                                             </div>
                                           

@@ -14,7 +14,7 @@ class Purchase extends Model
     protected $fillable = [
         'purchase_code', 'created_by', 'store_id', 'purchase_note',
         'other_charges_input', 'subtotal', 'reference_no', 'prefix',
-        'round_off',  'supplier_id', 'purchase_date',
+        'round_off',  'supplier_id', 'purchase_date','tax_id',
         'grand_total',  'count_id','paid_amount','created_on','bill_number','off_store_id','other_charges_amt','tot_discount_to_all_amt','discount_to_all_input','purchase_qty'
     ];
     
