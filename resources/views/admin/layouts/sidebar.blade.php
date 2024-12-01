@@ -22,19 +22,7 @@
 						{{-- 	<li><a href="{{route('reciept')}}">Reciept</a></li> --}}
 						</ul>
                     </li>
-					<li><a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
-						<i class="fa-solid fa-cart-shopping"></i>
-								<span class="nav-text">Reciept</span>
-								<span class="badge badge-xs badge-danger">New</span>
-							</a>
-							<ul aria-expanded="false">
-								<!-- <li><a href="{{route('add_sales')}}">Add Sales</a></li> -->
-								<li><a href="{{route('add.receipt')}}">New Reciept</a></li>
-								
-							
 				
-							</ul>
-						</li>
 					<li><a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
 					<i class="fa-solid fa-user"></i>
 							<span class="nav-text">Contacts</span>
@@ -181,16 +169,7 @@
                     </li>
 					
                 </ul>
-            
-				<!-- <div class="add-menu-sidebar">
-					<img src="i{{asset('admin-assets/mages/icon1.png')}}" alt="">
-					<p>Organize your menus through button bellow</p>
-					<a href="javascript:void(0);" class="btn bg-white text-black">+ Add Menus</a>
-				</div>
-				<div class="copyright">
-					<p><strong>Davur - Restaurant Admin Dashboard</strong> ©2023 All Rights Reserved</p>
-					<p>Made with <span class="heart"></span> by DexignZone</p>
-				</div> -->
+           
               
 			</div>
            

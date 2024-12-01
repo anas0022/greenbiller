@@ -1,4 +1,4 @@
-@extends('store.layouts.app')
+@extends('admin.layouts.app')
 @section('content')
     <style>
         .receipt-content {
@@ -174,8 +174,8 @@
                                                         Mode</th>
                                                     <th width="100%" style="border-right: 1px solid #000; border-bottom: 1px solid #000;">
                                                         <span>Received:</span>
-                                                        <span style="float: right; position: relative;" >
-                                                            {{$amount}}
+                                                        <span style="float: right; position: relative;">
+                                                          {{$amount}}
                                                         </span>
                                                     </th>
 
@@ -190,8 +190,12 @@
                                                     </td>
                                                     <td style="border-right: 1px solid #000;">
                                                         <span>Amount In Words:</span>
-                                                        <strong id="amount-in-words" style="float: right; position: relative; padding-left: 1rem;">
-                                                            <!-- Amount in words will be displayed here -->
+                                                 
+                                                        <strong style="float: right; position: relative;  padding-left: 1rem;">
+                                                          
+                                                                <span id="amount-in-words">58</span>
+                                                       
+                                                       
                                                         </strong>
                                                     </td>
 
@@ -237,8 +241,11 @@
             </div>
         </div>
         <script>
-            function numberToWords(num) {
-                const words = {
+            function getIndianCurrency(number) {
+                number = parseFloat(number);
+                let decimal = Math.round((number - Math.floor(number)) * 100);
+                let no = Math.floor(number);
+                let words = {
                     0: '',
                     1: 'one',
                     2: 'two',
@@ -268,24 +275,22 @@
                     80: 'eighty',
                     90: 'ninety'
                 };
-                const digits = ['', 'hundred', 'thousand', 'lakh', 'crore'];
-
-                if (num === 0) return 'zero';
+                let digits = ['', 'hundred', 'thousand', 'lakh', 'crore'];
 
                 let result = [];
                 let digitIndex = 0;
 
-                while (num > 0) {
+                while (no > 0) {
                     let chunk;
                     if (digitIndex === 0) {
-                        chunk = num % 100;
-                        num = Math.floor(num / 100);
+                        chunk = no % 100;
+                        no = Math.floor(no / 100);
                     } else if (digitIndex === 1) {
-                        chunk = num % 10;
-                        num = Math.floor(num / 10);
+                        chunk = no % 10;
+                        no = Math.floor(no / 10);
                     } else {
-                        chunk = num % 100;
-                        num = Math.floor(num / 100);
+                        chunk = no % 100;
+                        no = Math.floor(no / 100);
                     }
 
                     if (chunk) {
@@ -304,14 +309,28 @@
                     digitIndex++;
                 }
 
-                return result.join(' ').trim() + ' rupees';
+                let rupees = result.join(' ');
+                let paise = '';
+
+                if (decimal > 0) {
+                    if (decimal < 20) {
+                        paise = words[decimal];
+                    } else {
+                        paise = words[Math.floor(decimal / 10) * 10] + (decimal % 10 ? ' ' + words[decimal % 10] : '');
+                    }
+                    paise = ' and ' + paise + ' paise';
+                }
+
+                return (rupees ? rupees + ' rupees' : '') + paise;
             }
 
-            // Convert amount to words when the page loads
+            // Convert amount to words when page loads
             document.addEventListener('DOMContentLoaded', function() {
-                const amount = parseFloat("{{ $amount }}"); // Get the amount from Blade
-                const amountInWords = numberToWords(amount);
-                document.getElementById('amount-in-words').textContent = amountInWords + ' Only'; // Display the result
+                const amountElement = document.getElementById('amount-in-words');
+                if (amountElement) {
+                    const amount = parseFloat(amountElement.textContent);
+                    amountElement.textContent = getIndianCurrency(amount) + ' Only';
+                }
             });
         </script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>

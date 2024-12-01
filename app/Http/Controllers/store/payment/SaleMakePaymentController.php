@@ -34,6 +34,12 @@ class SaleMakePaymentController extends Controller
         $sale->paid_amount = $request->input('paid_amount')+$salepay;
         $sale->sales_date = $today_date;
         $sale->update();
+        $saleId = $sale->id;
+        $existingpay = salespayment::where('sales_id', $saleId)->first();
+        if ($existingpay) {
+            $existingpay->payment = $existingpay->payment + $request->input('paid_amount');
+            $existingpay->update();
+        }
         $salespayment = new salespayment();
 
         $salespayment->payment = $request->input('paid_amount');
@@ -61,7 +67,7 @@ class SaleMakePaymentController extends Controller
 
         $salespayment->created_by = Auth()->id();
         $sales_type = $sale->sales_type;
-        if ($salespayment->save()) {
+       
             $saleId = $sale->id;
          
             
@@ -78,26 +84,24 @@ class SaleMakePaymentController extends Controller
                 $existingLedger->invoice_purchase_no = 'PAY/'.$sale->sales_code;
                
                 $existingLedger->date = $today_date;
-                
+          
                 $existingLedger->save();
-                $amount = $request->input('paid_amount');
-                return redirect()->route('reciept.view.store', ['id' => $existingLedger->id ,'amount'=> $amount])->with('success','');
+                return redirect()->route('reciept.view.bill.store', ['id' => $existingLedger->id , 'amount'=> $request->input('paid_amount')]);
             } else {
                 $ledger = new ledger();
                 $ledger->sale_id = $sale->id;
                 $ledger->customer_id = $sale->customer_id;
                 $ledger->store_id = $sale->store_id;
                 $ledger->date = $today_date;
-                $amount = $request->input('amount');
                 $ledger->invoice_purchase_no = 'PAY/'.$sale->sales_code;
                 $ledger->title = 'Cash';
-                $amount = $request->input('paid_amount');
+                $ledger->credit = $request->input('paid_amount');
                 $ledger->save();
-                return redirect()->route('reciept.view.store', ['id' => $existingLedger->id ,'amount'=> $amount]);
+                return redirect()->route('reciept.view.bill.store', ['id' => $ledger->id , 'amount'=> $request->input('paid_amount')]);
+            }
             }
 
-            
         }
+        
 
-    }
-}
+    

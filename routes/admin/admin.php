@@ -90,6 +90,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'role:admin|superadm
     Route::post('/customer_status', [CustomerController::class, 'customer_status'])->name('customer.status');
     
     Route::post('/customer_editpost', [CustomerController::class, 'customer_edit'])->name('customer_edit');
+    Route::post('/editcustomer',[CustomerController::class,'editcustomer'])->name('edit.customer');
     Route::post('/deletecu', [CustomerController::class, 'deletecu'])->name('deletecu');
     Route::get('/add_supplier', [CustomerController::class, 'add_supplier'])->name('add_supplier');
     Route::post('/supplier_post', [CustomerController::class, 'supplier_post'])->name('add.su');
@@ -252,8 +253,16 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'role:admin|superadm
     Route::get('closing/bill/{id}/{store_id}', [ClosingController::class, 'closingBill'])->name('closing.bill');
     Route::get('closing-list',[ClosingController::class,'closing_list'])->name('closing.list');
     Route::get('/add-receipt',[RecieptController::class,'add_receipt'])->name('add.receipt');
-    Route::get('/receiptes/view/{id}', [RecieptController::class, 'view_receipt_bill'])->name('reciept.view.bill');
+    Route::get('/receiptes/view/{id}/{amount}', [RecieptController::class, 'view_receipt_bill'])->name('reciept.view.bill');
     Route::post('/add-reciept-post', [RecieptController::class,'add_recieptppost'])->name('makepayment.bulk');
- 
+    Route::post('/makepayment-live',[MakepaymentController::class,'makepayment_live'])->name('makepayment.live');
+    Route::get('/report',[HomeController::class,'report'])->name('report');
+    Route::get('/expencesum',[HomeController::class,'expencesum'])->name('expencesum');
+    Route::get('/advancesum',[HomeController::class,'advancesum'])->name('advancesum');
+    Route::get('/customercount',[HomeController::class,'customercount'])->name('customercount');
+    Route::get('/suppliercount',[HomeController::class,'suppliercount'])->name('suppliercount');
+    Route::get('/salecount',[HomeController::class,'salecount'])->name('salecount');
+    Route::get('/purchasecount',[HomeController::class,'purchasecount'])->name('purchasecount');
+    Route::get('/monthly-report', [HomeController::class, 'monthlyReport']);
 });
 

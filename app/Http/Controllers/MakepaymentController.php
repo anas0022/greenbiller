@@ -35,6 +35,9 @@ class MakepaymentController extends Controller
         $sale->paid_amount = $request->input('paid_amount')+$salepay;
         $sale->sales_date = $today_date;
         $sale->update();
+        $saleId = $sale->id;
+      
+     
         $salespayment = new salespayment();
 
         $salespayment->payment = $request->input('paid_amount');
@@ -62,7 +65,9 @@ class MakepaymentController extends Controller
 
         $salespayment->created_by = Auth()->id();
         $sales_type = $sale->sales_type;
-        if ($salespayment->save()) {
+        if($salespayment->save()){
+
+        
             $saleId = $sale->id;
          
             
@@ -81,7 +86,7 @@ class MakepaymentController extends Controller
                 $existingLedger->date = $today_date;
           
                 $existingLedger->save();
-                return redirect()->route('reciept.view', ['id' => $existingLedger->id]);
+                return redirect()->route('reciept.view.bill', ['id' => $existingLedger->id , 'amount'=> $request->input('paid_amount')]);
             } else {
                 $ledger = new ledger();
                 $ledger->sale_id = $sale->id;
@@ -92,13 +97,13 @@ class MakepaymentController extends Controller
                 $ledger->title = 'Cash';
                 $ledger->credit = $request->input('paid_amount');
                 $ledger->save();
-                return redirect()->route('reciept.view', ['id' => $ledger->id]);
+                return redirect()->route('reciept.view.bill', ['id' => $ledger->id , 'amount'=> $request->input('paid_amount')]);
             }
-
+        }
             
         }
 
-    }
+    
 
     public function makepayment_purchase(Request $request)
     {
@@ -171,5 +176,6 @@ class MakepaymentController extends Controller
         }
 
     }
+
 }
 

@@ -36,6 +36,7 @@ Route::group(['prefix' => 'store', 'middleware' => 'auth'], function () {
     require __DIR__ . '/saleedit.php';
     require __DIR__ . '/salemassre.php';
     require __DIR__ . '/supplier.php';
+    require __DIR__ . '/estimate.php';
     Route::get('/dasboard', [DashController::class, 'dashboard'])->name('store.dash');
     Route::get('add_sales', [Store_salesController::class, 'sales_add'])->name('sales_add');
     Route::put('/customer_address', [Store_salesController::class, 'customer_address'])->name('customer.address');

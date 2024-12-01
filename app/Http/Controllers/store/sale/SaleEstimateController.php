@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\store\sale;
 
+use App\Http\Controllers\Controller;
 use App\Models\Account;
 use App\Models\Brand;
 use App\Models\Category;
@@ -9,59 +10,38 @@ use App\Models\Coresetting;
 use App\Models\countrysettings;
 use App\Models\Customer;
 use App\Models\Item;
-use App\Models\Offsaleitems;
 use App\Models\Sale;
 use App\Models\saleExtimate;
 use App\Models\saleExtimateItems;
-use App\Models\Saleitems;
-use App\Models\SaleReturn;
-use App\Models\sales_return_items;
-use App\Models\sales_return_payments;
-use App\Models\salespayment;
-use App\Models\Second_wareitems;
+use App\Models\Store;
+use App\Models\Tax;
+use App\Models\Unit;
 use App\Models\UserList;
 use App\Models\Warehouse;
-use App\Models\Tax;
-use App\Models\Supplier;
-use App\Models\Store;
-use Illuminate\Support\Facades\DB;
-use Exception;
-use App\Models\Unit;
-use App\Models\Warehouseitem;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Auth;
-use App\Models\Ledger;
+use DB;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Http\Request;
 
-
-class SaleExtimateController extends Controller
+class SaleEstimateController extends Controller
 {
     public function salextimate()
     {
 
+        $sales = saleExtimate::where('created_by', Auth::user()->id)->get();
 
-        $sales = saleExtimate::all();
-
-
-
-
-
-
-
+        
 
         $logo = Coresetting::all();
         $supplierIds = $sales->pluck('customer_id');
-
         $userIds = $sales->pluck('created_by');
         $user = UserList::whereIn('id', $userIds)->first();
         $suppliers = Customer::whereIn('id', $supplierIds)->get();
         $account = Account::all();
-       
-
-    
-    return view('admin.saleextimate.extimatelist', compact('sales', 'suppliers', 'user', 'logo', 'account'));
+        return view('store.saleextimate.extimatelist', compact('sales', 'suppliers', 'user', 'logo', 'account'));
 
     }
+    
     public function add_extimate(Request $request)
     {
         $ware = Warehouse::all();
@@ -71,7 +51,7 @@ class SaleExtimateController extends Controller
         $unit = Unit::all();
         $customers = Customer::all();
 
-        $category = category::all();
+        $category = Category::all();
 
         $country = countrysettings::all();
         $brands = Brand::where('status', 'active')->get();
@@ -80,17 +60,16 @@ class SaleExtimateController extends Controller
         $ware = Warehouse::where('status', 'active')->get();
         $unit = Unit::where('status', 'active')->get();
         $tax = Tax::where('status', 'active')->get();
-        $stores = Store::where('store_status', 'active')->get();
+        $stores = Store::where('store_status', 'active')
+        ->where('id', Auth::user()->store_id)->first();
 
         $tax = Tax::all();
         $items = Item::where('id', $request->input('id'))->first();
 
         $account = Account::all();
-        return view('admin.saleextimate.addextimate', compact('customers', 'stores', 'ware', 'tax', 'store', 'unit', 'account', 'brands', 'category', 'items', 'country'));
+        return view('store.saleextimate.addextimate', compact('customers', 'stores', 'ware', 'tax', 'store', 'unit', 'account', 'brands', 'category', 'items', 'country'));
 
     }
-
-
     public function extimate_create(Request $request)
     {
         // Start DB transaction at the beginning
@@ -449,84 +428,193 @@ class SaleExtimateController extends Controller
             $storeurl = route('store_itemsscan', ['id' => $sale->store_id]); // Generate the URL for the specific route
       
 
-            return redirect()->route('invoice.sale.extimate', ['id' => $sale->id, 'sale_type' => $sales_type])
+            return redirect()->route('invoice.sale.extimate.store', ['id' => $sale->id, 'sale_type' => $sales_type])
 
                 ->with(compact('sale', 'logo', 'tax', 'unit_id', 'sales_itemdata', 'store', 'customer',   'item_alqty', 'part_no'));
 
                 }
 
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
           
             return redirect()->back()->withErrors(['error' => 'An error occurred while processing the sale: ' . $e->getMessage()]);
         }
 
     }
-
-    public function extimate_sale_add(Request $request , $id){
+    public function invoice_sale_extimate($id, $sale_type)
+    {
         $logo = Coresetting::all();
-        $sale = saleExtimate::find($id); 
-
-
-        $sales_itemdata = saleExtimateItems::where('sales_id', $id)->where('status', '0')->get();
-
-
-        // Initialize variables
-        $items = collect();
-        $unit_id = collect();
-        $subtotal = $sale->subtotal;
-        $qty = $sale->total_qty;
-        $other_charge = $sale->other_charges_amt;
-        $tot_discount_to_all_amt = $sale->tot_discount_to_all_amt;
-        $grand_total = $sale->grand_total;
-
+        $sale = Sale::find($id);
+     
+           
+       
+             
+                $sales_itemdata = saleExtimateItems::where('sales_id', $id)
+                ->where('status','0')
+                ->get();
+                $hsn_codes = $sales_itemdata->pluck('hsn_code')
+                
+                ->unique(); // Get unique HSN codes
+                
+                $response_data = []; 
+                
+                if ($hsn_codes->isNotEmpty()) {
+                    foreach ($hsn_codes as $hsn_code) {
+                    
+                        $sales_items = saleExtimateItems::where('hsn_code', $hsn_code)->where('sales_id', $id)
+                        ->where('status','0')
+                        ->get();
+                        
+                       
+                        $taxable_amount = $sales_items->pluck('rate_inclusive_tax')->sum();
+                        $tax_amt = $sales_items->pluck('tax_amt')->sum();
+                        $price_per_unit = $sales_items->pluck('price_per_unit')->sum();
+                        $sales_qty = $sales_items->pluck('sales_qty')->sum();
+                        $tax_ids = $sales_items->pluck('tax_id');
+                
+                      
+                        $tax_records = Tax::whereIn('id', $tax_ids)->get();
+                
+                        $total_tax_percentage = 0;
+                
+                        // Calculate total tax percentage for the current HSN code
+                        foreach ($tax_records as $tax) {
+                            $count = $tax_ids->filter(function ($id) use ($tax) {
+                                return $id == $tax->id;
+                            })->count();
+                
+                            $total_tax_percentage += $tax->per * $count;
+                        }
+                
+                        // Add the calculated data for the current HSN code to the response data
+                        $response_data[] = [
+                            'hsn_code' => $hsn_code,
+                            'taxable_amount' => $taxable_amount,
+                            'total_tax_percentage' => $total_tax_percentage,
+                            'tax_amt' => $tax_amt,
+                            'price_per_unit' => $price_per_unit,
+                            'sales_qty' => $sales_qty,
+                        ];
+                    }
+                }
+                
+         
+         
+                if ($sales_itemdata->isEmpty()) {
+                    return back()->with('error','No sale Item Found');
+                }
     
-        if (!$sales_itemdata->isEmpty()) {
-            $itemIds = $sales_itemdata->pluck('item_id');
-            $unit_id = Unit::whereIn('id', $sales_itemdata->pluck('unit_id'))->get();
-            $items = Item::whereIn('id', $itemIds)->get();
-        }
-
+                $itemIds = $sales_itemdata->pluck('item_id');
+                $unit_id = Unit::whereIn('id', $sales_itemdata->pluck('unit_id'))->get();
+                $store_ids = $sales_itemdata->pluck('store_id');
+                $store_view = $sales_itemdata->pluck('store_id')->first();
+       
+                $sale = saleExtimate::where('id', $sales_itemdata->pluck('sales_id'))->first();
     
+                if (!$sale) {
+                    return back()->with('error','Every Item In This Sale Has Been Returned.');
+                    
+                }
+    
+                $items = Item::whereIn('id', $itemIds)->get();
+        
+                $amount_pay = $sales_itemdata->first();
+    
+                if (!$amount_pay) {
+                    return response()->json(['message' => 'No amount payment found.'], 404);
+                }
+    
+                $amount = $amount_pay->grand_total;
+                $store = Store::whereIn('id', $store_ids)->first();
+    
+                if (!$store) {
+                    return response()->json(['message' => 'Store not found.'], 404);
+                }
+    
+                $item_alqty = Item::whereIn('id', $sales_itemdata->pluck('item_id'))->get();
+                $url = route('qrview', ['id' => $sale->id]);
+                $qrCode = QrCode::size(100)->generate($url);
+                $upiID = $store->upi_code;
+                $payeeName = $store->store_name;
+                $currency = 'INR';
+                $upiUrl = "upi://pay?pa={$upiID}&pn={$payeeName}&am={$amount}&cu={$currency}";
+                $pay = QrCode::size(100)->generate($upiUrl);
+                $storeurl = route('store_itemsscan', ['id' => $store_view]);
+                $storeurlstore = QrCode::size(100)->generate($storeurl);
+    
+                if ($sale) {
+                    $userids = $sale->created_by;
+                    $user = UserList::where('id', $userids)->first();
+                    $customerIds = collect([$sale->customer_id]);
+                    $customer = Customer::whereIn('id', $customerIds)->get();
+                }
+                return view('store.invoice.extimate-invoice', compact('unit_id','userids','response_data','tax_records','hsn_code', 'sales_itemdata', 'storeurlstore', 'qrCode', 'sale', 'pay', 'items', 'item_alqty', 'customer', 'tax', 'user', 'store', 'logo'));
+            }
 
-        // Common data retrieval
-
-        $customerIds = $sale->customer_id;
-        $customer_detail = Customer::where('id', $customerIds)->first();
-
-
-        $taxIds =$sales_itemdata->pluck('tax_id')->first() ;
-        $tax = Tax::where('id', $taxIds)->first();
-        $store = Store::where('id', $sale->store_id)->first();
-        $customer = Customer::all();
-        $cu_store = Store::all();
-        $country = countrysettings::all();
-        $unit = Unit::all();
-        $account = Account::all();
-        $taxes = Tax::all();
-
-        return view('admin.saleextimate.addto_sale', compact(
-            'cu_store',
-            'sale',
-            'qty',
-            'other_charge',
+            public function extimate_sale_add(Request $request , $id){
+                $logo = Coresetting::all();
+                $sale = saleExtimate::find($id); 
+        
+        
+                $sales_itemdata = saleExtimateItems::where('sales_id', $id)->where('status', '0')->get();
+        
+        
+                // Initialize variables
+                $items = collect();
+                $unit_id = collect();
+                $subtotal = $sale->subtotal;
+                $qty = $sale->total_qty;
+                $other_charge = $sale->other_charges_amt;
+                $tot_discount_to_all_amt = $sale->tot_discount_to_all_amt;
+                $grand_total = $sale->grand_total;
+        
             
-            'country',
-            'unit_id',
-            'store',
-            'subtotal',
-            'taxes',
-            'sales_itemdata',
-            'customer',
-            'items',
-            'logo',
-            'tax',
-            'account',
-            'unit',
-            'tot_discount_to_all_amt',
-            'grand_total',
-            'customer_detail',
-            'customerIds'
-        ));
-    }
+                if (!$sales_itemdata->isEmpty()) {
+                    $itemIds = $sales_itemdata->pluck('item_id');
+                    $unit_id = Unit::whereIn('id', $sales_itemdata->pluck('unit_id'))->get();
+                    $items = Item::whereIn('id', $itemIds)->get();
+                }
+        
+            
+        
+                // Common data retrieval
+        
+                $customerIds = $sale->customer_id;
+                $customer_detail = Customer::where('id', $customerIds)->first();
+        
+        
+                $taxIds =$sales_itemdata->pluck('tax_id')->first() ;
+                $tax = Tax::where('id', $taxIds)->first();
+                $store = Store::where('id', $sale->store_id)->first();
+                $customer = Customer::all();
+                $cu_store = Store::all();
+                $country = countrysettings::all();
+                $unit = Unit::all();
+                $account = Account::all();
+                $taxes = Tax::all();
+        
+                return view('store.saleextimate.addto_sale', compact(
+                    'cu_store',
+                    'sale',
+                    'qty',
+                    'other_charge',
+                    
+                    'country',
+                    'unit_id',
+                    'store',
+                    'subtotal',
+                    'taxes',
+                    'sales_itemdata',
+                    'customer',
+                    'items',
+                    'logo',
+                    'tax',
+                    'account',
+                    'unit',
+                    'tot_discount_to_all_amt',
+                    'grand_total',
+                    'customer_detail',
+                    'customerIds'
+                ));
+            }
 }

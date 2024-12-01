@@ -7,11 +7,18 @@ use App\Models\Brand;
 use App\Models\category;
 use App\Models\Coresetting;
 use App\Models\countrysettings;
+use App\Models\Item;
+use App\Models\Purchase;
+use App\Models\Purchaseitems;
+use App\Models\Purchasepay;
+use App\Models\second_store;
+use App\Models\Second_wareitems;
 use App\Models\Store;
 use App\Models\Supplier;
 use App\Models\Tax;
 use App\Models\Unit;
 use App\Models\Warehouse;
+use App\Models\Warehouseitem;
 use Illuminate\Http\Request;
 
 class AdvancepurchaseController extends Controller

@@ -18,6 +18,7 @@
 		
 							<li><a href="{{route('saleslist.store')}}">Sales List</a></li>
 							<li><a href="{{route('salereturn_list.store')}}">Sales Return</a></li>
+							<li><a href="{{route('salextimate.store')}}">Estimate</a></li>
 						</ul>
                     </li>
 					<li><a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">

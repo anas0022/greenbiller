@@ -440,7 +440,7 @@ class InvoiceController extends Controller
                     $customerIds = collect([$sale->customer_id]);
                     $customer = Customer::whereIn('id', $customerIds)->get();
                 }
-                return view('admin/invoice/extimate-invoice', compact('unit_id','userids','response_data','tax_records','hsn_code', 'sales_itemdata', 'storeurlstore', 'qrCode', 'sale', 'pay', 'items', 'item_alqty', 'customer', 'tax', 'user', 'store', 'logo'));
+                return view('admin.invoice.extimate-invoice', compact('unit_id','userids','response_data','tax_records','hsn_code', 'sales_itemdata', 'storeurlstore', 'qrCode', 'sale', 'pay', 'items', 'item_alqty', 'customer', 'tax', 'user', 'store', 'logo'));
             }
 public function invoice_purchase_order(Request $request ,$id){
 

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\Account;
 use App\Models\Brand;
-use App\Models\category;
+use App\Models\Category;
 use App\Models\Coresetting;
 use App\Models\countrysettings;
 use App\Models\Customer;

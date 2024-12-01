@@ -4,7 +4,7 @@ namespace App\Http\Controllers\store\item;
 
 use App\Http\Controllers\Controller;
 use App\Models\Brand;
-use App\Models\category;
+use App\Models\Category;
 use App\Models\Coresetting;
 use App\Models\Item;
 use App\Models\Store;

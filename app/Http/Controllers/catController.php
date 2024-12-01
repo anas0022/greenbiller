@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Coresetting;
 use Illuminate\Http\Request;
-use App\Models\category;
+use App\Models\Category;
 
 class catController extends Controller
 {

@@ -5,10 +5,34 @@
 
 @section('content')
 
+
+<script src="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.css">
 <div class="content-body">
-    <!-- row -->
+
     <div class="container-fluid">
 
+        @if($errors->any())
+        <script>
+            swal({
+                title: "Error!",
+                text: "{!! implode('\n', $errors->all()) !!}", 
+                icon: "error",
+                type: "error"
+            });
+        </script>
+        @endif
+        
+        @if(session('success'))
+        <script>
+            swal({
+                title: "Success!",
+                text: "{{ session('success') }}",
+                icon: "success",
+                type: "success"
+            });
+        </script>
+        @endif
        
 
         <div class="row">

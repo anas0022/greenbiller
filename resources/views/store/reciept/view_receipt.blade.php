@@ -1,4 +1,4 @@
-@extends('store.layouts.app')
+@extends('admin.layouts.app')
 @section('content')
     <style>
         .receipt-content {

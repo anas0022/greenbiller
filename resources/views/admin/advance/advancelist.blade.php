@@ -15,7 +15,14 @@
     <div class="container-fluid">
 
 
-
+<style>
+    td{
+        text-align: center;
+    }
+    th{
+        text-align: center;
+    }
+</style>
         <div class="row">
             
 @if($errors->any())
@@ -60,13 +67,13 @@
                             <table id="example" class="display" style="width:100%;" >
                                 <thead>
                                     <tr>
-                                        <th>#</th>
+                                        <th style="text-align: center;">#</th>
                                       
-                                        <th>Date</th>
-                                        <th>Eploy Name</th>
-                                        <th>Amount</th>
-                                        <th>Payment Type</th>
-                                        <th><i class="fas fa-arrow-circle-down"></i></th>
+                                        <th style="text-align: center;">Date</th>
+                                        <th style="text-align: center;">Eploy Name</th>
+                                        <th style="text-align: center;">Amount</th>
+                                        <th style="text-align: center;">Payment Type</th>
+                                        <th style="text-align: center;"><i class="fas fa-arrow-circle-down"></i></th>
                                     </tr>
                                 </thead>
                                     @foreach ($advance as $index=> $ad)

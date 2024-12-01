@@ -1,4 +1,4 @@
-@extends('store.layouts.app')
+@extends('admin.layouts.app')
 @section('content')
     <style>
         .receipt-content {
@@ -175,11 +175,7 @@
                                                     <th width="100%" style="border-right: 1px solid #000; border-bottom: 1px solid #000;">
                                                         <span>Received:</span>
                                                         <span style="float: right; position: relative;">
-                                                            @if ($ledger->credit == 0)
-                                                                ₹ {{ number_format($ledger->debit, 2) }}
-                                                            @else
-                                                                ₹ {{ number_format($ledger->credit, 2) }}
-                                                            @endif
+                                                          {{$amount}}
                                                         </span>
                                                     </th>
 

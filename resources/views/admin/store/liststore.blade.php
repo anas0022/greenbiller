@@ -78,24 +78,7 @@
 
                             @foreach ($store as $index => $item
                             )
-                                                        <div class="form_update" id="form_update_{{ $index }}">
-                                                            <form action="{{ route('updateStatus.store') }}" method="post"
-                                                                class="status-toggle-form" style="background-color:white; padding:20px ; ">
-                                                                @csrf
-                                                                <i class="fa-thin fa-circle-exclamation" style=" font-size: 60px;
-                                  margin-bottom: 2px;
-                                  color: orange; "></i>
-                                                                <p style="font-size: 20px;">Are You Sure</p>
-                                                                <input type="hidden" name="id" value="{{ $item->id }}">
-                                                                <p>Do you want to change this to
-                                                                    {{ $item->store_status === 'active' ? 'inactive' : 'active' }}?</p>
-                                                                <div class="buttons" style="width:100%; justify-content:end;">
-                                                                    <button>
-                                                                        <a href="">Cancel</a></button>
-                                                                    <button type="submit" style="display:block;">Yes</button>
-                                                                </div>
-                                                            </form>
-                                                        </div>
+                                                        
                                                         <tr>
                                                             <td>{{ $index + 1 }}</td> 
                                                            
@@ -111,11 +94,11 @@
                                                             <td>{{$item->city}}</td>
                                                             <td id="statuschange_{{ $index }}">
                                                             <p class="status-cell {{ $item->store_status === 'active' ? 'active-status' : 'inactive-status' }}"
-                                                                    style="cursor: pointer;">
+                                                                    style="cursor: pointer;" onclick="statuschange('{{$item->id}}','{{$item->status}}')">
                                                                     {{ $item->store_status }}
                                                                 </p>
                                                             </td>
-                                                            <td>
+                                                            <td style="display: flex; gap:10px;">
                                                                 <form action="{{route('storeedit')}}"
                                                                   method="post">
                                                                     @csrf
@@ -124,11 +107,9 @@
                                                                     <button id="update" ><a href=""></a><i
                                                                             class="fa-solid fa-pencil"></i></button>
                                                                 </form>
-                                                                <form 
-                                                                    action="{{ route('store_delete') }}" method="post">
-                                                                    @csrf
-                                                                    <input type="hidden" name="id" value="{{$item->id}}">
-                                                                    <button type="submit" id="delete" ><i
+                                                               
+                                                                  
+                                                                    <button type="submit" id="delete" onclick="deleteItem({{$item->id}})"><i
                                                                             class="fa-solid fa-trash"></i></button>
                                                                 </form>
                                                             </td>
@@ -143,19 +124,107 @@
         </div></div></div>
         
        
-        <script>
-            // Get all elements with the class 'status-cell'
-            document.querySelectorAll('.status-cell').forEach(function (cell, index) {
-                cell.addEventListener('click', function () {
-                    // Find the corresponding form for the current row
-                    var formUpdate = document.getElementById('form_update_' + index);
-                    if (formUpdate) {
-                        formUpdate.style.display = (formUpdate.style.display === 'none' || formUpdate.style.display === '') ? 'flex' : 'none';
-                    }
-                });
+      
+<script>
+    function deleteItem(id) {
+        swal({
+                title: "Are you sure?",
+                text: "Do you want to delete this?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Yes",
+                cancelButtonText: "No",
+                closeOnConfirm: false,
+                closeOnCancel: true
+            },
+            function(isConfirm) {
+                if (isConfirm) {
+                    $.ajax({
+                        url: "{{ route('store_delete') }}",
+                        method: 'POST',
+                        data: {
+                            '_token': "{{ csrf_token() }}",
+                            'id': id
+                        },
+                        success: function(response) {
+                            swal({
+                                title: "Deleted!",
+                                text: "Warehouse deleted successfully",
+                                type: "success",
+                                confirmButtonText: "Done",
+                                confirmButtonColor: "#1dbf73"
+                            }, function(isConfirm) {
+                                if (isConfirm) {
+                                    location.reload();
+                                }
+                            });
+                        },
+                        error: function(xhr, status, error) {
+                            swal("Error!", "Failed to delete warehouse", "error");
+                        }
+                    });
+                }
             });
-
-        </script>
+    }
+</script>
+<script>
+    function statuschange(id, currentStatus) {
+        swal({
+                title: "Are you sure?",
+                text: "Do you want to change this to " + (currentStatus === 'active' ? 'inactive' : 'active') + "?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Yes",
+                cancelButtonText: "No",
+                closeOnConfirm: false,
+                closeOnCancel: true
+            },
+            function(isConfirm) {
+                if (isConfirm) {
+                    $.ajax({
+                        url: "{{ route('updateStatus.store') }}",
+                        method: 'POST',
+                        data: {
+                            '_token': "{{ csrf_token() }}",
+                            'id': id
+                        },
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response && response.status === 200) {
+                                swal({
+                                    title: "Status Changed!",
+                                    text: response.message,
+                                    type: "success",
+                                    confirmButtonText: "Done",
+                                    confirmButtonColor: "#1dbf73"
+                                }, function(isConfirm) {
+                                    if (isConfirm) {
+                                        location.reload();
+                                    }
+                                });
+                            } else {
+                                swal("Warning!", "Status changed but response was unexpected",
+                                    "warning");
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 1500);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.log('Error details:', xhr.responseText);
+                            swal("Warning!", "Status might have changed. Please refresh the page.",
+                                "warning");
+                            setTimeout(() => {
+                                location.reload();
+                            }, 1500);
+                        }
+                    });
+                }
+            });
+    }
+</script>
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
 <script src="https://cdn.datatables.net/buttons/3.2.0/js/dataTables.buttons.js"></script>
@@ -174,3 +243,4 @@
     }
 });
 </script>
+@endsection

@@ -114,33 +114,17 @@
                                 </thead>
                               <tbody>
                                 @foreach ($supplier as $index=>$s )
-                                <div class="form_update" id="form_update_{{ $index }}">
-                                                            <form action="{{ route('updateStatus.supplier') }}" method="post"
-                                                                class="status-toggle-form" style="background-color:white; padding:20px  ">
-                                                                @csrf
-                                                                <i class="fa-thin fa-circle-exclamation" style=" font-size: 60px;
-                                  margin-bottom: 2px;
-                                  color: orange; "></i>
-                                                                <p style="font-size: 20px;">Are You Sure</p>
-                                                                <input type="hidden" name="id" value="{{ $s->id }}">
-                                                                <p>Do you want to change this to
-                                                                    {{ $s->status === 'active' ? 'inactive' : 'active' }}?</p>
-                                                                <div class="buttons" style="width:100%; justify-content:end;">
-                                                                    <button>
-                                                                        <a href="">Cancel</a></button>
-                                                                    <button type="submit" style="display:block;">Yes</button>
-                                                                </div>
-                                                            </form>
-                                                        </div>
+                             
                                 <tr>
                                     <td>{{$index+1}}</td>
                                     <td>{{$s->supplier_id}}</td>
                                     <td>{{$s->name}}</td>
                                     <td>{{$s->mobile}}</td>
                                     <td>{{$s->email}}</td>
+                                    <td>{{$s->balance}}</td>
                                     <td id="statuschange_{{ $index }}">
                                                             <p class="status-cell {{ $s->status === 'active' ? 'active-status' : 'inactive-status' }}"
-                                                                    style="cursor: pointer;">
+                                                                    style="cursor: pointer;" onclick="statuschange('{{$s->id}}','{{$s->status}}')">
                                                                     {{ $s->status }}
                                                                 </p>
                                                             </td>
@@ -153,13 +137,11 @@
                                                                     <button id="update" style="display:block;"><a href=""></a><i
                                                                             class="fa-solid fa-pencil"></i></button>
                                                                 </form>
-                                                                <form style="width:auto; height:auto; box-shadow:none;"
-                                                                    action="{{ route('deletesupplier') }}" method="post">
-                                                                    @csrf
-                                                                    <input type="hidden" name="id" value="{{$s->id}}">
-                                                                    <button type="submit" id="delete" style="display:block;"><i
+                                                               
+                                                                  
+                                                                    <button type="button" id="delete" style="display:block;" onclick="deleteItem({{$s->id}})"><i
                                                                             class="fa-solid fa-trash"></i></button>
-                                                                </form>
+                                                            
                                                             </td>
                                 </tr>
                                 
@@ -178,40 +160,106 @@
 
   
 <script>
-
-// Check if there is an error toast and set timeout
-if (document.getElementById('errorToast')) {
-    setTimeout(() => {
-        document.getElementById('errorToast').classList.remove('active');
-    }, 5000); // Adjust the duration as needed
-
-    document.getElementById('closeErrorToast').addEventListener('click', () => {
-        document.getElementById('errorToast').classList.remove('active');
-    });
-}
-
-// Toast timeout for success
-setTimeout(() => {
-    document.getElementById('toast').classList.remove('active');
-}, 5000);
-
-document.getElementById('closeToast').addEventListener('click', () => {
-    document.getElementById('toast').classList.remove('active');
-});
+    function deleteItem(id) {
+        swal({
+                title: "Are you sure?",
+                text: "Do you want to delete this?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Yes",
+                cancelButtonText: "No",
+                closeOnConfirm: false,
+                closeOnCancel: true
+            },
+            function(isConfirm) {
+                if (isConfirm) {
+                    $.ajax({
+                        url: "{{ route('deletesupplier') }}",
+                        method: 'POST',
+                        data: {
+                            '_token': "{{ csrf_token() }}",
+                            'id': id
+                        },
+                        success: function(response) {
+                            swal({
+                                title: "Deleted!",
+                                text: "Warehouse deleted successfully",
+                                type: "success",
+                                confirmButtonText: "Done",
+                                confirmButtonColor: "#1dbf73"
+                            }, function(isConfirm) {
+                                if (isConfirm) {
+                                    location.reload();
+                                }
+                            });
+                        },
+                        error: function(xhr, status, error) {
+                            swal("Error!", "Failed to delete warehouse", "error");
+                        }
+                    });
+                }
+            });
+    }
 </script>
 <script>
-// Get all elements with the class 'status-cell'
-document.querySelectorAll('.status-cell').forEach(function (cell, index) {
-    cell.addEventListener('click', function () {
-        // Find the corresponding form for the current row
-        var formUpdate = document.getElementById('form_update_' + index);
-        if (formUpdate) {
-            formUpdate.style.display = (formUpdate.style.display === 'none' || formUpdate.style.display === '') ? 'flex' : 'none';
-        }
-    });
-});
-
+    function statuschange(id, currentStatus) {
+        swal({
+                title: "Are you sure?",
+                text: "Do you want to change this to " + (currentStatus === 'active' ? 'inactive' : 'active') + "?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Yes",
+                cancelButtonText: "No",
+                closeOnConfirm: false,
+                closeOnCancel: true
+            },
+            function(isConfirm) {
+                if (isConfirm) {
+                    $.ajax({
+                        url: "{{ route('updateStatus.supplier') }}",
+                        method: 'POST',
+                        data: {
+                            '_token': "{{ csrf_token() }}",
+                            'id': id
+                        },
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response && response.status === 200) {
+                                swal({
+                                    title: "Status Changed!",
+                                    text: response.message,
+                                    type: "success",
+                                    confirmButtonText: "Done",
+                                    confirmButtonColor: "#1dbf73"
+                                }, function(isConfirm) {
+                                    if (isConfirm) {
+                                        location.reload();
+                                    }
+                                });
+                            } else {
+                                swal("Warning!", "Status changed but response was unexpected",
+                                    "warning");
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 1500);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.log('Error details:', xhr.responseText);
+                            swal("Warning!", "Status might have changed. Please refresh the page.",
+                                "warning");
+                            setTimeout(() => {
+                                location.reload();
+                            }, 1500);
+                        }
+                    });
+                }
+            });
+    }
 </script>
+
 
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
