@@ -1,9 +1,11 @@
 <?php
 
 use App\Http\Controllers\SalesController;
+use App\Http\Controllers\store\closing\ClosingController;
 use App\Http\Controllers\store\DashController;
 use App\Http\Controllers\store\invoice\ReturnInvoiceController;
 use App\Http\Controllers\store\Invoice\TaxInvoiceController;
+use App\Http\Controllers\store\report\ReportController;
 use App\Http\Controllers\store\sale\SaleListController;
 use App\Http\Controllers\store\salebill\SalePosController;
 use App\Http\Controllers\store\Store_advancedController;
@@ -48,7 +50,7 @@ Route::group(['prefix' => 'store', 'middleware' => 'auth'], function () {
     Route::put('/alt_qtywdit', [Store_salesController::class, 'alt_qtywdit'])->name('alt.qtywdit');
 
     Route::get('/salescode', [Store_salesController::class, 'salescode'])->name('salescode');
-
+ 
 
     Route::post('/addsale', [Store_salesController::class, 'addsale'])->name('store_addsale');
     Route::get('/find-customer', [Store_salesController::class, 'findCustomer'])->name('findCustomer');
@@ -106,6 +108,56 @@ Route::group(['prefix' => 'store', 'middleware' => 'auth'], function () {
     
     
 
-  
+
+
+
+
+
+
+    Route::get('/report',[DashController::class,'report'])->name('report.store');
+    Route::get('/expencesum',[DashController::class,'expencesum'])->name('expencesum.store');
+    Route::get('/advancesum',[DashController::class,'advancesum'])->name('advancesum');
+    Route::get('/customercountall',[DashController::class,'customercountall'])->name('customercountall.store');
+    Route::get('/suppliercount',[DashController::class,'suppliercount'])->name('suppliercount.store');
+    Route::get('/salecountall',[DashController::class,'salecountall'])->name('salecountall.store');
+    Route::get('/purchasecount',[DashController::class,'purchasecountall'])->name('purchasecountall.store');
+    Route::get('/monthly-report-store', [DashController::class, 'monthlyReport.store']);
+    Route::get('/admin/report/{period}', [DashController::class, 'getReportData']);
+    Route::get('expenseall',[DashController::class,'expenseall'])->name('expenseall.store');
+    Route::get('/reportall',[DashController::class,'reportall'])->name('reportall.store');
+    Route::get('/salecount',[DashController::class,'salecount'])->name('salecount.store');
+    Route::get('/suppliercountall',[DashController::class,'suppliercountall'])->name('suppliercountall.store');
+    Route::get('/customercount',[DashController::class,'customercount'])->name('customercount.store');
+    Route::get('/purchasecountall',[DashController::class,'purchasecount'])->name('purchasecount.store');
+    Route::get('/purchaseweekcount',[DashController::class,'purchaseweekcount'])->name('purchaseweekcount.store');
+    Route::get( '/saleweekcount',[DashController::class,'saleweekcount'])->name('saleweekcount.store');
+    Route::get('/supplierweekcount',[DashController::class,'supplierweekcount'])->name('supplierweekcount.store');
+    Route::get('/customerweekcount',[DashController::class,'customerweekcount'])->name('customerweekcount.store');
+    Route::get('/saleweeksum',[DashController::class,'saleweeksum'])->name('saleweeksum.store');
+    Route::get('/expenceweeksum',[DashController::class,'expenceweeksum'])->name('expenceweeksum.store');
+    Route::get('/expenseMonthlySum',[DashController::class,'expenseMonthlySum'])->name('expenseMonthlySum.store');
+    Route::get('/saleMonthlySum',[DashController::class,'saleMonthlySum'])->name('saleMonthlySum.store');
+    Route::get('/customerMonthlycount',[DashController::class,'customerMonthlycount'])->name('customerMonthlycount.store');
+    Route::get('/supplierMonthlycount',[DashController::class,'supplierMonthlycount'])->name('supplierMonthlycount.store');
+    Route::get('/purchaseMonthlycount',[DashController::class,'purchaseMonthlycount'])->name('purchaseMonthlycount.store');
+    Route::get('/saleMonthlycount',[DashController::class,'saleMonthlycount'])->name('saleMonthlycount.store');
+    Route::get('/expenseYearlySum',[DashController::class,'expenseYearlySum'])->name('expenseYearlySum.store');
+    Route::get('/saleYearlySum',[DashController::class,'saleYearlySum'])->name('saleYearlySum.store');
+    Route::get('/saleYearlycount',[DashController::class,'saleYearlycount'])->name('saleYearlycount.store');
+    Route::get('/purchaseYearlycount',[DashController::class,'purchaseYearlycount'])->name('purchaseYearlycount.store');
+    Route::get('/customerYearlycount',[DashController::class,'customerYearlycount'])->name('customerYearlycount.store');
+    Route::get('/supllierYearlycount',[DashController::class,'suplierYearlycount'])->name('suplierYearlycount.store');
+    Route::get('/recentitem',[DashController::class,'recentitem'])->name('recentitem.store');
+    Route::get('/stockalertitem',[DashController::class,'stockalertitem'])->name('stockalertitem.store');
+    Route::get('/api/items',[DashController::class,'trendingsale'])->name('trendingsale.store');
+    Route::get('/salelatest',[DashController::class,'salelatest'])->name('salelatest.store');
+    Route::get('/salesreport', [ReportController::class, 'salesreport'])->name('salesreport.store');
+    Route::get('/purchasereport',[ReportController::class,'purchasereport'])->name('purchasereport.store');
+    Route::get('/ledger-report',[ReportController::class,'ledgerreport'])->name('ledgerreport.store');
+    Route::get('closing-list',[ClosingController::class,'closing_list'])->name('closing.list.store');
+    Route::get('/get-customers-by-store', [ReportController::class, 'getCustomersByStore'])->name('get.customers.by.store.store');
+    Route::get('/get-sales-by-customer', [ReportController::class, 'getSalesByCustomer'])->name('get.sales.by.customer.store');
+    Route::get('/getPurchaseByCustomer', [ReportController::class,'getPurchaseByCustomer'])->name('getPurchaseByCustomer.store');
+    Route::get('/daily-closing',[ClosingController::class,'daily_closing'])->name('daily.closing.store');
  
 });

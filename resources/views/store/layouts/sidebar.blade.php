@@ -116,16 +116,20 @@
                          
                         </ul>
                     </li> 
-				<!-- 	<li><a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
-							<i class="flaticon-381-settings-2"></i>
-							<span class="nav-text">Reports</span>
-						</a>
-                        <ul aria-expanded="false">
-							<li><a href="{{route('salesreport')}}">Sales Reports</a></li>
-							
-							
-						</ul>
-                    </li> -->
+					<li><a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+						<i class="flaticon-381-settings-2"></i>
+						<span class="nav-text">Reports</span>
+					</a>
+					<ul aria-expanded="false">
+						<li><a href="{{route('salesreport.store')}}">Sales Reports</a></li>
+						<li><a href="{{route('purchasereport.store')}}">Purchase Reports</a></li>
+						<li><a href="{{route('ledgerreport.store')}}">Ledger Report</a></li>
+
+						<li><a href="{{route('closing.list.store')}}">Daily Closing</a></li>
+					
+						
+					</ul>
+				</li> 
                    
                 <li><a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
 							<i class="flaticon-381-notepad"></i>

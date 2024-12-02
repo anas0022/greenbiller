@@ -124,8 +124,11 @@
 						</a>
                         <ul aria-expanded="false">
 							<li><a href="{{route('salesreport')}}">Sales Reports</a></li>
-{{-- 							<li><a href="{{route('daily.closing')}}">Daily Closing</a></li> --}}
+							<li><a href="{{route('purchasereport')}}">Purchase Reports</a></li>
+							<li><a href="{{route('ledgerreport')}}">Ledger Report</a></li>
+
 							<li><a href="{{route('closing.list')}}">Daily Closing</a></li>
+						
 							
 						</ul>
                     </li> 

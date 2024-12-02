@@ -1,4 +1,4 @@
-@extends('admin/layouts/app')
+@extends('store/layouts/app')
 
 @section('title', 'Home Page')
 
@@ -49,7 +49,7 @@
 
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-text d-inline"> Sales Report </h4>
+                                <h4 class="card-text d-inline"> Purchase Report </h4>
                          
                             </div>
                             <div class="card-body">
@@ -64,10 +64,10 @@
                                             <div class="input-group mb-3">
                                                 <select id="store_select" name="store_id" class="form-control selectpicker"
                                                     data-live-search="true" required >
-                                                    <option value="">-Select-</option>
-                                                    @foreach ($store as $item)
-                                                    <option value="{{$item->id}}">{{$item->store_name}}</option>
-                                                    @endforeach
+                                          
+                                                    
+                                                    <option value="{{$store->id}}">{{$store->store_name}}</option>
+                                        
                                                 </select>
                                             </div>
 
@@ -80,89 +80,25 @@
                                  
                                     <div class="col-lg-6 mb-2">
                                         <div class="form-group">
-                                            <label class="form-label">Customer Name<span
+                                            <label class="form-label">Supplier Name<span
                                                     class="required">*</span></label>
                                       
 
                                             <div class="input-group mb-3">
                                                 <select class="form-control selectpicker" data-live-search="true" required id="customer_select" name="supplier_id">
                                                     <option value="">-Select-</option>
+                                         
+                                                    @foreach ($suppliers as $supplier)
+
+                                                    <option value="{{$supplier->id}}">{{$supplier->name}}</option>
+                                                        
+                                                    @endforeach
                                                 </select>
                                              
                                             </div>
                                         </div>
                                     </div>
                               
-
-                                    <script>
-                                        console.log('jQuery version:', $.fn.jquery);
-
-                                        $(document).ready(function() {
-                                       
-                                            $('#customer_select').on('focus', function(e) {
-                                                var storeId = $('#store_select').val();
-                                                if (!storeId) {
-                                                    e.preventDefault();
-                                                    $(this).blur();
-                                                    swal({
-                                                        title: "Warning!",
-                                                        text: "Please select a store first",
-                                                        icon: "warning",
-                                                        button: "OK",
-                                                    });
-                                                }
-                                            });
-
-                                    
-
-                                            $('#store_select').on('change', function() {
-                                                var storeId = $(this).val();
-                                                if (storeId) {
-                                                    $.ajax({
-                                                        url: '{{ route('get.customers.by.store.in') }}',
-                                                        type: 'GET',
-                                                        data: {
-                                                            store_id: storeId
-                                                        },
-                                                        success: function(data) {
-                                                            console.log('AJAX success:', data); // Log the data received
-                                                            $('#customer_select').empty().append('<option value="">Select Customer</option>'); // Reset dropdown
-
-                                                            if (data.length === 0) {
-                                                                swal({
-                                                                    title: "No Customers Found!",
-                                                                    text: "There are no customers associated with this store.",
-                                                                    icon: "warning",
-                                                                    button: "OK",
-                                                                });
-                                                                $('#customer_select').append('<option value="">No customers available</option>');
-                                                            } else {
-                                                                $.each(data, function(key, value) {
-                                                                    console.log('Adding customer:', value); // Log each customer being added
-                                                                    $('#customer_select').append('<option value="' + value.id + '">' + value.customer_name + '</option>');
-                                                                });
-                                                            }
-
-                                                            // Refresh the selectpicker if using Bootstrap Select
-                                                            $('#customer_select').selectpicker('refresh');
-                                                        },
-                                                        error: function(xhr, status, error) {
-                                                            console.error('AJAX error:', error); // Log the error
-                                                            swal({
-                                                                title: "Error!",
-                                                                text: "Failed to fetch customers. Please try again.",
-                                                                icon: "error",
-                                                                button: "OK",
-                                                            });
-                                                        }
-                                                    });
-                                                } else {
-                                                    $('#customer_select').empty();
-                                                    $('#customer_select').append('<option value="">Select Customer</option>');
-                                                }
-                                            });
-                                        });
-                                    </script>
 
 
                                     <div class="col-lg-6 mb-2">
@@ -225,66 +161,64 @@
                                             </div>
                                         </div>
                                     </div>
-                                  
-<script>
-    $(document).ready(function() {
-        // Existing code for store and customer selection...
-
-        // Fetch ledger data when a customer is selected
-        $('#customer_select').on('change', function() {
-            fetchLedgerData();
-        });
-
-        // Fetch ledger data when dates are changed
-        $('#from_date, #to_date').on('change', function() {
-            fetchLedgerData();
-        });
-
-        function fetchLedgerData() {
-            var customerId = $('#customer_select').val();
-            var fromDate = $('#from_date').val();
-            var toDate = $('#to_date').val();
-
-            if (customerId) {
-                $.ajax({
-                    url: '{{ route('get.sales.by.customer') }}', // Update with your route
-                    type: 'GET',
-                    data: {
-                        customer_id: customerId,
-                        from_date: fromDate,
-                        to_date: toDate
-                    },
-                    success: function(data) {
-                        console.log('Ledger data:', data); // Log the data received
-                        $('#ledger-results').empty(); // Clear previous results
-
-                        if (data.success) {
-                            $.each(data.sale, function(index, item) {
-                                $('#ledger-results').append('<tr>' +
-                                    '<td>' + (index + 1) + '</td>' + // Serial number
-                                    '<td>' + (item.store ? item.store.store_name : 'N/A') + '</td>' + 
-                                    '<td>' + item.sales_date + '</td>' + // Accessing store name safely
-                                    '<td>' + item.prefix + '/' + item.sales_code + '</td>' + 
-                                    '<td>' + item.total_qty +  '</td>' +// Ensure this matches your data structure
-                                  // Ensure this matches your data structure
-                                    '<td>' + item.paid_amount + '</td>' + // Ensure this matches your data structure
-                                    '</tr>');
-                            });
-                        } else {
-                            $('#ledger-results').append('<tr><td colspan="5">No sale data found.</td></tr>');
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Error fetching ledger data:', error);
-                        $('#ledger-results').append('<tr><td colspan="5">Error fetching ledger data.</td></tr>');
-                    }
-                });
-            } else {
-                $('#ledger-results').empty(); 
-            }
-        }
-    });
-</script>
+                                    <script>
+                                        $(document).ready(function() {
+                                            // Existing code for store and customer selection...
+                                    
+                                            // Fetch ledger data when a customer is selected
+                                            $('#customer_select').on('change', function() {
+                                                fetchLedgerData();
+                                            });
+                                    
+                                            // Fetch ledger data when dates are changed
+                                            $('#from_date, #to_date').on('change', function() {
+                                                fetchLedgerData();
+                                            });
+                                    
+                                            function fetchLedgerData() {
+                                                var customerId = $('#customer_select').val();
+                                                var fromDate = $('#from_date').val();
+                                                var toDate = $('#to_date').val();
+                                    
+                                                if (customerId) {
+                                                    $.ajax({
+                                                        url: '{{ route('getPurchaseByCustomer.store') }}', // Update with your route
+                                                        type: 'GET',
+                                                        data: {
+                                                            customer_id: customerId, // Changed from supplier_id to customer_id
+                                                            from_date: fromDate,
+                                                            to_date: toDate
+                                                        },
+                                                        success: function(data) {
+                                                            console.log('Ledger data:', data); // Log the data received
+                                                            $('#ledger-results').empty(); // Clear previous results
+                                    
+                                                            if (data.success) {
+                                                                $.each(data.sale, function(index, item) { // Changed from data.purchase to data.sale
+                                                                    $('#ledger-results').append('<tr>' +
+                                                                        '<td>' + (index + 1) + '</td>' + // Serial number
+                                                                        '<td>' + (item.store ? item.store.store_name : 'N/A') + '</td>' + 
+                                                                        '<td>' + item.purchase_date + '</td>' + // Accessing store name safely
+                                                                        '<td>' + item.prefix + '/' + item.purchase_code + '</td>' + 
+                                                                        '<td>' + item.purchase_qty +  '</td>' +// Ensure this matches your data structure
+                                                                        '<td>' + item.paid_amount + '</td>' + // Ensure this matches your data structure
+                                                                        '</tr>');
+                                                                });
+                                                            } else {
+                                                                $('#ledger-results').append('<tr><td colspan="5">No sale data found.</td></tr>');
+                                                            }
+                                                        },
+                                                        error: function(xhr, status, error) {
+                                                            console.error('Error fetching ledger data:', error);
+                                                            $('#ledger-results').append('<tr><td colspan="5">Error fetching ledger data.</td></tr>');
+                                                        }
+                                                    });
+                                                } else {
+                                                    $('#ledger-results').empty(); 
+                                                }
+                                            }
+                                        });
+                                    </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>

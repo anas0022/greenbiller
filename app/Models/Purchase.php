@@ -17,5 +17,8 @@ class Purchase extends Model
         'round_off',  'supplier_id', 'purchase_date','tax_id',
         'grand_total',  'count_id','paid_amount','created_on','bill_number','off_store_id','other_charges_amt','tot_discount_to_all_amt','discount_to_all_input','purchase_qty'
     ];
-    
+    public function store()
+    {
+        return $this->belongsTo(Store::class, 'store_id'); // Ensure 'store_id' is the correct foreign key
+    }
 }

@@ -1,4 +1,4 @@
-@extends('admin/layouts/app')
+@extends('store/layouts/app')
 
 @section('title', 'Home Page')
 
@@ -64,10 +64,10 @@
                                             <div class="input-group mb-3">
                                                 <select id="store_select" name="store_id" class="form-control selectpicker"
                                                     data-live-search="true" required >
-                                                    <option value="">-Select-</option>
-                                                    @foreach ($store as $item)
-                                                    <option value="{{$item->id}}">{{$item->store_name}}</option>
-                                                    @endforeach
+                                                   
+                                                   
+                                                    <option value="{{$store->id}}">{{$store->store_name}}</option>
+                                             
                                                 </select>
                                             </div>
 
@@ -87,6 +87,11 @@
                                             <div class="input-group mb-3">
                                                 <select class="form-control selectpicker" data-live-search="true" required id="customer_select" name="supplier_id">
                                                     <option value="">-Select-</option>
+                                                    @foreach ($customers as $customer)
+
+                                                    <option value="{{$customer->id}}">{{$customer->customer_name}}</option>
+                                                        
+                                                    @endforeach
                                                 </select>
                                              
                                             </div>
@@ -94,76 +99,7 @@
                                     </div>
                               
 
-                                    <script>
-                                        console.log('jQuery version:', $.fn.jquery);
-
-                                        $(document).ready(function() {
-                                       
-                                            $('#customer_select').on('focus', function(e) {
-                                                var storeId = $('#store_select').val();
-                                                if (!storeId) {
-                                                    e.preventDefault();
-                                                    $(this).blur();
-                                                    swal({
-                                                        title: "Warning!",
-                                                        text: "Please select a store first",
-                                                        icon: "warning",
-                                                        button: "OK",
-                                                    });
-                                                }
-                                            });
-
-                                    
-
-                                            $('#store_select').on('change', function() {
-                                                var storeId = $(this).val();
-                                                if (storeId) {
-                                                    $.ajax({
-                                                        url: '{{ route('get.customers.by.store.in') }}',
-                                                        type: 'GET',
-                                                        data: {
-                                                            store_id: storeId
-                                                        },
-                                                        success: function(data) {
-                                                            console.log('AJAX success:', data); // Log the data received
-                                                            $('#customer_select').empty().append('<option value="">Select Customer</option>'); // Reset dropdown
-
-                                                            if (data.length === 0) {
-                                                                swal({
-                                                                    title: "No Customers Found!",
-                                                                    text: "There are no customers associated with this store.",
-                                                                    icon: "warning",
-                                                                    button: "OK",
-                                                                });
-                                                                $('#customer_select').append('<option value="">No customers available</option>');
-                                                            } else {
-                                                                $.each(data, function(key, value) {
-                                                                    console.log('Adding customer:', value); // Log each customer being added
-                                                                    $('#customer_select').append('<option value="' + value.id + '">' + value.customer_name + '</option>');
-                                                                });
-                                                            }
-
-                                                            // Refresh the selectpicker if using Bootstrap Select
-                                                            $('#customer_select').selectpicker('refresh');
-                                                        },
-                                                        error: function(xhr, status, error) {
-                                                            console.error('AJAX error:', error); // Log the error
-                                                            swal({
-                                                                title: "Error!",
-                                                                text: "Failed to fetch customers. Please try again.",
-                                                                icon: "error",
-                                                                button: "OK",
-                                                            });
-                                                        }
-                                                    });
-                                                } else {
-                                                    $('#customer_select').empty();
-                                                    $('#customer_select').append('<option value="">Select Customer</option>');
-                                                }
-                                            });
-                                        });
-                                    </script>
-
+                              
 
                                     <div class="col-lg-6 mb-2">
                                         <div class="form-group">
@@ -247,7 +183,7 @@
 
             if (customerId) {
                 $.ajax({
-                    url: '{{ route('get.sales.by.customer') }}', // Update with your route
+                    url: '{{ route('get.sales.by.customer.store') }}', // Update with your route
                     type: 'GET',
                     data: {
                         customer_id: customerId,

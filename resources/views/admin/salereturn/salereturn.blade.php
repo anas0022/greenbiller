@@ -792,6 +792,7 @@
                                                     // Prevent customer selection before store selection
                                                     $('#customer_select').on('focus', function(e) { // Use 'focus' instead of 'click' to ensure it triggers
                                                         var storeId = $('#store_select').val();
+                                                  
                                                         if (!storeId) {
                                                             e.preventDefault();
                                                             $(this).blur();

@@ -1,4 +1,4 @@
-@extends('admin/layouts/app')
+@extends('store/layouts/app')
 
 @section('title', 'Home Page')
 
@@ -49,7 +49,7 @@
 
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-text d-inline"> Sales Report </h4>
+                                <h4 class="card-text d-inline"> Ledger Report </h4>
                          
                             </div>
                             <div class="card-body">
@@ -64,10 +64,10 @@
                                             <div class="input-group mb-3">
                                                 <select id="store_select" name="store_id" class="form-control selectpicker"
                                                     data-live-search="true" required >
-                                                    <option value="">-Select-</option>
-                                                    @foreach ($store as $item)
-                                                    <option value="{{$item->id}}">{{$item->store_name}}</option>
-                                                    @endforeach
+                                                
+                                          
+                                                    <option value="{{$store->id}}">{{$store->store_name}}</option>
+                                                
                                                 </select>
                                             </div>
 
@@ -87,6 +87,11 @@
                                             <div class="input-group mb-3">
                                                 <select class="form-control selectpicker" data-live-search="true" required id="customer_select" name="supplier_id">
                                                     <option value="">-Select-</option>
+                                                    @foreach ($customers as $customer)
+
+                                                    <option value="{{$customer->id}}">{{$customer->customer_name}}</option>
+                                                        
+                                                    @endforeach
                                                 </select>
                                              
                                             </div>
@@ -169,7 +174,7 @@
                                         <div class="form-group">
                                             <label class="form-label">From Date<span
                                                     class="required">*</span></label>
-                                            <input type="date" id="from_date" name="from_date" class="form-control form-control-sm"
+                                            <input type="date" name="purchase_date" class="form-control form-control-sm"
                                                 value="">
                                         </div>
                                     </div>
@@ -180,7 +185,7 @@
                                     <div class="col-lg-6 mb-2">
                                         <div class="form-group">
                                             <label class="form-label">To Date</label>
-                                            <input type="date" id="to_date" name="to_date" class="form-control form-control-sm">
+                                            <input type="date" name="re_no" class="form-control form-control-sm">
                                         </div>
                                     </div>
                                
@@ -214,7 +219,6 @@
                                                             <th rowspan="2" style="width:20%; color: #fff !important;" class="itemRow">Store Name</th>
                                                             <th rowspan="2" style="width:15%;min-width: 180px;color: #fff !important;">Date</th>
                                                             <th rowspan="2" style="width:15%;min-width: 180px;color: #fff !important;">Bill No</th>
-                                                            <th rowspan="2" style="width:15%;min-width: 180px;color: #fff !important;">Quantity</th>
                                                             <th rowspan="2" style="width:10%;color: #fff !important;">Paid Amount</th>
                                                         </tr>
                                                     </thead>
@@ -247,7 +251,7 @@
 
             if (customerId) {
                 $.ajax({
-                    url: '{{ route('get.sales.by.customer') }}', // Update with your route
+                    url: '{{ route('get.ledger.by.customer') }}', // Update with your route
                     type: 'GET',
                     data: {
                         customer_id: customerId,
@@ -259,19 +263,17 @@
                         $('#ledger-results').empty(); // Clear previous results
 
                         if (data.success) {
-                            $.each(data.sale, function(index, item) {
+                            $.each(data.ledger, function(index, item) {
                                 $('#ledger-results').append('<tr>' +
                                     '<td>' + (index + 1) + '</td>' + // Serial number
-                                    '<td>' + (item.store ? item.store.store_name : 'N/A') + '</td>' + 
-                                    '<td>' + item.sales_date + '</td>' + // Accessing store name safely
-                                    '<td>' + item.prefix + '/' + item.sales_code + '</td>' + 
-                                    '<td>' + item.total_qty +  '</td>' +// Ensure this matches your data structure
-                                  // Ensure this matches your data structure
-                                    '<td>' + item.paid_amount + '</td>' + // Ensure this matches your data structure
+                                    '<td>' + (item.store ? item.store.store_name : 'N/A') + '</td>' + // Accessing store name safely
+                                    '<td>' + item.date + '</td>' + // Ensure this matches your data structure
+                                    '<td>' + item.invoice_purchase_no + '</td>' + // Ensure this matches your data structure
+                                    '<td>' + item.debit + '</td>' + // Ensure this matches your data structure
                                     '</tr>');
                             });
                         } else {
-                            $('#ledger-results').append('<tr><td colspan="5">No sale data found.</td></tr>');
+                            $('#ledger-results').append('<tr><td colspan="5">No ledger data found.</td></tr>');
                         }
                     },
                     error: function(xhr, status, error) {
