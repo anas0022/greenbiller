@@ -64,7 +64,7 @@ class RecieptController extends Controller
 
         return view('admin.reciept.addreciept',compact('prefix','ware','sale','saleCode','store','unit','customers','logo','category','country','brands','tax','items','storeId','customer','account','stores'));
     }
-    public function view_receipt_bill(Request $request , $id , $amount){
+    public function view_receipt_bill_store(Request $request , $id , $amount){
         $logo = Coresetting::all(); 
         $ledger = ledger::where('id',$id)->first();
             
@@ -72,7 +72,7 @@ class RecieptController extends Controller
         $customer =Customer::where('id',$ledger->customer_id)->first();
   
 
-        return view('admin.reciept.view_receipt_bill',compact('logo','ledger','customer','store','amount'));
+        return view('store.reciept.view_receipt_bill',compact('logo','ledger','customer','store','amount'));
     }
 
     public function view_receipt($id)

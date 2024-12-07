@@ -7,7 +7,7 @@
 						</a>
                         
                     </li>
-					<li><a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+					{{-- <li><a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
 					<i class="fa-solid fa-cart-shopping"></i>
 							<span class="nav-text">Sales</span>
 							<span class="badge badge-xs badge-danger">New</span>
@@ -20,8 +20,8 @@
 							<li><a href="{{route('salereturn_list.store')}}">Sales Return</a></li>
 							<li><a href="{{route('salextimate.store')}}">Estimate</a></li>
 						</ul>
-                    </li>
-					<li><a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+                    </li> --}}
+				{{-- 	<li><a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
 					<i class="fa-solid fa-user"></i>
 							<span class="nav-text">Contacts</span>
 							
@@ -33,8 +33,8 @@
 							<li><a href="{{route('store_list_supplier')}}">Supplier List</a></li>
 								
 						</ul>
-                    </li>
-					<li><a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+                    </li> --}}
+					{{-- <li><a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
 					<i class="fa-sharp fa-regular fa-money-bill"></i>
 							<span class="nav-text">Advance</span>
 							
@@ -44,9 +44,9 @@
 							<li><a href="{{route('store_advancelist')}}">Advance List</a></li>	
 								
 						</ul>
-                    </li>
+                    </li> --}}
 					
-                    <li><a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+                   {{--  <li><a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
 					<i class="fa-solid fa-bag-shopping"></i>
 							<span class="nav-text">Purchase</span>
 						</a>
@@ -57,7 +57,7 @@
                             </li>
                             
                         </ul>
-                    </li>
+                    </li> --}}
                    <!--  <li><a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
 					<i class="fa-solid fa-receipt"></i>
 							<span class="nav-text">Account</span>
@@ -69,7 +69,7 @@
                             
                         </ul>
                     </li> -->
-                    <li><a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+                  {{--   <li><a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
 							<i class="flaticon-381-controls-3"></i>
 							<span class="nav-text">Items</span>
 						</a>
@@ -80,7 +80,7 @@
                             <li><a href="{{route('store_brand')}}">Brand List</a></li>
                             
                         </ul>
-                    </li>
+                    </li> --}}
                     <!-- <li><a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
 							<i class="flaticon-381-internet"></i>
 							<span class="nav-text">Stock</span>
@@ -105,7 +105,7 @@
 								
 						</ul>
                     </li> -->
-                  <li><a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+                 {{--  <li><a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
 							<i class="flaticon-381-heart"></i>
 							<span class="nav-text">Expenses</span>
 						</a>
@@ -115,8 +115,8 @@
                          
                          
                         </ul>
-                    </li> 
-					<li><a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+                    </li>  --}}
+					{{-- <li><a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
 						<i class="flaticon-381-settings-2"></i>
 						<span class="nav-text">Reports</span>
 					</a>
@@ -129,19 +129,30 @@
 					
 						
 					</ul>
-				</li> 
+				</li>  --}}
+				<li><a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+					<i class="flaticon-381-network"></i>
+					<span class="nav-text">Subscribtion</span>
+				</a>
+				<ul aria-expanded="false">
+					<li><a href="{{route('subsciptionadd')}}">Add Subscribtion</a></li>
+					<li><a href="{{route('store_warelist')}}">Subscribtion List</a></li>
+					<li><a href="{{route('method.add')}}">Method List</a></li>
+				</ul>
+			</li> 
                    
                 <li><a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
 							<i class="flaticon-381-notepad"></i>
 							<span class="nav-text">Users</span>
 						</a>
                         <ul aria-expanded="false">
-                            <li><a href="{{route('store_userlist')}}">Users</a></li>
-						{{-- 	<li><a href="{{route('user_role')}}">User Role</a></li> --}}
-                         
+                            <li><a href="{{route('supper.userlist')}}">Users</a></li>
+							<li><a href="{{route('supper.add')}}">User add</a></li>
+						
                         </ul>
                     </li> 
-                    <li><a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+				
+                  {{--   <li><a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
 							<i class="flaticon-381-network"></i>
 							<span class="nav-text">Warehouse</span>
 						</a>
@@ -150,37 +161,18 @@
                             <li><a href="{{route('store_warelist')}}">Warehouse List</a></li>
                         </ul>
                     </li> 
-                    
+                     --}}
 
-					<li><a href="{{route('store.store_settings')}}"class="" href="javascript:void()" aria-expanded="false">
+					{{-- <li><a href="{{route('store.store_settings')}}"class="" href="javascript:void()" aria-expanded="false">
 							<i class="fa-solid fa-gear"></i>
 							<span class="nav-text">Store Settings</span>
 							
 						</a>
-                        <!-- <ul aria-expanded="false">
-						<li><a href="{{route('coresetting')}}">Core Settings</a></li>
-                            <li><a href="{{route('tax')}}">Tax List</a></li>
-							<li><a href="{{route('country')}}">Country Settings</a></li>
-							<li><a href="{{route('unit')}}">Unit List</a></li>
-                        
-							<li><a href="">Payment Types</a></li>
-							<li><a href="">Change Password</a></li>
-                    
-								
-						</ul> -->
+                     
                     </li>
-					
+					 --}}
                 </ul>
             
-				<!-- <div class="add-menu-sidebar">
-					<img src="i{{asset('admin-assets/mages/icon1.png')}}" alt="">
-					<p>Organize your menus through button bellow</p>
-					<a href="javascript:void(0);" class="btn bg-white text-black">+ Add Menus</a>
-				</div>
-				<div class="copyright">
-					<p><strong>Davur - Restaurant Admin Dashboard</strong> ©2023 All Rights Reserved</p>
-					<p>Made with <span class="heart"></span> by DexignZone</p>
-				</div> -->
               
 			</div>
            

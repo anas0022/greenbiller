@@ -3,6 +3,7 @@
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AdjustmentController;
 use App\Http\Controllers\AdvanceController;
+use App\Http\Controllers\auth\LoginController;
 use App\Http\Controllers\catController;
 use App\Http\Controllers\ClosingController;
 use App\Http\Controllers\CoresettingsController;
@@ -11,7 +12,7 @@ use App\Http\Controllers\CustomerLedgerUploadController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ItemsController;
-use App\Http\Controllers\LoginController;
+
 use App\Http\Controllers\MakepaymentController;
 use App\Http\Controllers\NewitemController;
 use App\Http\Controllers\PosController;
@@ -48,16 +49,16 @@ use App\Http\Controllers\SalesController;
 
 
 
-/* Store */
-require __DIR__ . '/store/store.php';
-require __DIR__ . '/admin/admin.php';
-
-
 
 
 use Illuminate\Support\Facades\Route;
 
+require __DIR__ . '/store/store.php';
+require __DIR__ . '/admin/admin.php';
+require __DIR__. '/supperadmin/super.php';
+
+
 Route::post('/login', [LoginController::class, 'loginpost'])->name('loginpost');
-Route::get('/', [UserController::class, 'login'])->name('login');
+Route::get('/', [LoginController::class, 'login'])->name('login');
 Route::get('/qrview/{id}', [QrviewController::class, 'qrview'])->name('qrview');
 Route::get('/store_itemsscan/{id}', [QrviewController::class, 'store_itemsscan'])->name('store_itemsscan');

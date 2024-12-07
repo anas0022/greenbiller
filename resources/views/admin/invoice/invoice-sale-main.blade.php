@@ -671,7 +671,7 @@
                                                             </td>
                                                             <td style="font-size:12px;" class="text-center">
                                                                 
-                                                                {{ number_format($item['tax_amt'] / 2, 1) }}
+                                                                {{ number_format($item['tax_amt'] / 2, 2) }}
                                                             </td>
                                                             <td style="font-size:12px;" class="text-center">
                                                                 {{ number_format($item['total_tax_percentage'] / 2, 2) }}
@@ -725,9 +725,9 @@
                                                         <td>
                                                             <div class="bg-sky text-bold" style="font-size:12px; padding: 5px;"
                                                                 id="subtotal">
+                                                                {{ $sale->price_per_unit }}
 
-
-                                                                {{ $sale->subtotal }}
+                                                                
 
                                                             </div>
                                                             <script>

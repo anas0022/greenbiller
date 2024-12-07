@@ -122,7 +122,7 @@ class PurchasePostController extends Controller
         $stocks = $request->input('stock');
         $maxPurchaseId = Purchase::max('count_id');
         $bill_number = $request->input('bill_no');
-
+        $tax_id = $request->input('taxid');
         $bill_no = $request->input('bill_no');
         $created_by = Auth()->id();
         $discount_to_all_type = $request->input('discount_to_all_type');
@@ -143,7 +143,7 @@ class PurchasePostController extends Controller
             'prefix' => 'PU',
             'discount_to_all_type' => $discount_to_all_type,
             'tot_discount_to_all_amt' => $all_discount,
-
+            'tax_id'=>$tax_id,
             'created_by' => $created_by,
             'other_charges_amt' => $other_charges_amt,
             'store_id' => $store_id,
@@ -224,7 +224,7 @@ class PurchasePostController extends Controller
                     'created_on' => $created_on,
 
                     'unit_total_cost' => $unit_total_cost[$i],
-                    'tax_id' => $tax_id,
+                    'tax_id' => $tax_id[$i],
                     'tax_amt' => $tax_amount[$i],
                     'discount_type' => $discount_type,
 

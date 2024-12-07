@@ -1,15 +1,18 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\auth;
 
+use App\Http\Controllers\Controller;
+use Auth;
 use Illuminate\Http\Request;
-use App\Models\Login;
-use Illuminate\Support\Facades\Auth; // For authentication
 
 class LoginController extends Controller
 {
-   
-public function loginpost(Request $request)
+
+    public function login(){
+        return view('auth.login');
+    }
+    public function loginpost(Request $request)
 
 {
 
@@ -24,29 +27,23 @@ public function loginpost(Request $request)
     ]);
 
 
-    // Get credentials
+   
 
     $credentials = $request->only('username', 'password');
 
 
-    // Attempt to log the user in
+  
 
     if (Auth::attempt($credentials)) {
 
     
 
-        if (Auth::user()->role == "superadmin") {
+        if (Auth::user()->user_type == "1") {
 
-            return redirect()->route('home'); 
+            return redirect()->route('supper.home'); 
 
-        } elseif (Auth::user()->role == "admin") {
-
-            return redirect()->route('home'); 
-
-        }
-        else{
-            return redirect()->route('store.dash'); 
-        }
+        } 
+       
 
     } else {
 
@@ -65,5 +62,4 @@ public function loginpost(Request $request)
     
         return redirect('/login'); 
     }
-    
 }

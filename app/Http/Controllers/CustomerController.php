@@ -220,13 +220,13 @@ public function list_supplier(){
        
     
 
-
+        $logo = Coresetting::all();
 
     
         $supplier = Supplier::where('id', $request->input('id'))->first();
                 $country_select = countrysettings::firstWhere('id', $supplier->country);
         $country = countrysettings::all();
-        return view('admin.contacts.supplieredit',compact('supplier','country','country_select'));
+        return view('admin.contacts.supplieredit',compact('supplier','country','country_select','logo'));
     }
   
           public function edit_supplierpost(Request $request){

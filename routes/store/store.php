@@ -5,6 +5,7 @@ use App\Http\Controllers\store\closing\ClosingController;
 use App\Http\Controllers\store\DashController;
 use App\Http\Controllers\store\invoice\ReturnInvoiceController;
 use App\Http\Controllers\store\Invoice\TaxInvoiceController;
+use App\Http\Controllers\store\purchase\PurchaseReturnController;
 use App\Http\Controllers\store\report\ReportController;
 use App\Http\Controllers\store\sale\SaleListController;
 use App\Http\Controllers\store\salebill\SalePosController;
@@ -60,7 +61,7 @@ Route::group(['prefix' => 'store', 'middleware' => 'auth'], function () {
     Route::get('/invoice-sale-view/{id}/{sale_type}/{sale_id}', [ReturnInvoiceController::class, 'invoice_sale_view_store'])->name('invoice_sale.view.store');
 
     Route::get('/salescode', [SalePosController::class, 'salescode_store'])->name('salescode.store');
-    
+    Route::get('/purchase-return-list',[PurchaseReturnController::class,'purchase_return_list'])->name('purchase.return.list.store');
     Route::get('/invoice-sale-main/{id}/{sale_type}/', [TaxInvoiceController::class, 'invoice_sale_main_store'])->name('invoice_sale.main.store');
     Route::get('/sales_list', [SaleListController::class, 'saleslist_store'])->name('saleslist.store');
     Route::post('/addsale', [SalePosController::class, 'addsale_store'])->name('addsale.store');

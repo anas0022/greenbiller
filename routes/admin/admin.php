@@ -4,6 +4,7 @@
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AdjustmentController;
 use App\Http\Controllers\AdvanceController;
+use App\Http\Controllers\auth\LoginController;
 use App\Http\Controllers\catController;
 use App\Http\Controllers\ClosingController;
 use App\Http\Controllers\CoresettingsController;
@@ -13,7 +14,7 @@ use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ItemsController;
 use App\Http\Controllers\LedgerController;
-use App\Http\Controllers\LoginController;
+
 use App\Http\Controllers\MakepaymentController;
 use App\Http\Controllers\NewitemController;
 use App\Http\Controllers\PosController;

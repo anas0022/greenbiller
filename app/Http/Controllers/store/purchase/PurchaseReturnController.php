@@ -20,12 +20,30 @@ use App\Models\Store;
 use App\Models\Supplier;
 use App\Models\Tax;
 use App\Models\Unit;
+use App\Models\UserList;
 use App\Models\Warehouse;
 use App\Models\Warehouseitem;
+use Auth;
 use Illuminate\Http\Request;
 
 class PurchaseReturnController extends Controller
 {
+
+    public function purchase_return_list() {
+        $sales = PurchaseReturn::where('store_id',Auth::user()->store_id);
+        $logo = Coresetting::all();
+        $account = Account::all();
+    
+        // Collect supplier IDs from the sales
+        $supplierIds = $sales->pluck('supplier_id')->unique(); // Ensure unique IDs
+        $suppliers = Supplier::whereIn('id', $supplierIds)->get()->keyBy('id'); // Key by ID for easy access
+    
+        // Prepare user data
+        $userIds = $sales->pluck('created_by')->unique();
+        $user = UserList::whereIn('id', $userIds)->first();
+    
+        return view('store.purchase.purchasereturnlist', compact('sales', 'suppliers', 'user', 'logo', 'account'));
+    }
     public function purchase_return_store(Request $request, $id)
     {
         $purchase = Purchase::where('id', $id)->first();
@@ -128,7 +146,7 @@ class PurchaseReturnController extends Controller
             'prefix' => 'PU',
             'discount_to_all_type' => $discount_to_all_type,
             'tot_discount_to_all_amt' => $all_discount,
-
+            
             'created_by' => $created_by,
             'other_charges_amt' => $other_charges_amt,
             'store_id' => $store_id,

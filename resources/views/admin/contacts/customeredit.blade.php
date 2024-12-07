@@ -142,7 +142,7 @@
                                                         <input type="hidden" name="country_name" id="countryInput" value="{{$customer->country}}">
                                                         <label class="form-label">Country</label>
                                                         <select name="country_id" id="countrySelect" class="form-control form-control-sm selectpicker" data-live-search="true" onchange="countryname()">
-                                                        <option>{{ $country_select->firstWhere('id', $customer->country)->name ?? 'N/A' }}</option>
+                                                       
 
                                                             @foreach ($country as $c)
                                                             <option value="{{$c->id}}">{{$c->name}}</option>
@@ -214,7 +214,7 @@
                                                         <input type="hidden" name="shipping_country" id="scountryInput" value="{{$customer->ship_country}}">
                                                         <label class="form-label">Country</label>
                                                         <select name="country_id_shipping" id="scountrySelect" class="form-control form-control-sm selectpicker" data-live-search="true" onchange="countrychange2()">
-                                                        <option>{{ $country_select->firstWhere('id', $customer->country)->name ?? 'N/A' }}</option>
+                                                    
                                                             @foreach ($country as $c)
                                                             <option value="{{$c->id}}">{{$c->name}}</option>
                                                             

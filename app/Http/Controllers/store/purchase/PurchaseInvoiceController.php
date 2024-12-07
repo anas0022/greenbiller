@@ -126,6 +126,6 @@ class PurchaseInvoiceController extends Controller
                     $customer = Supplier::whereIn('id', $customerIds)->get();
                   
                 }
-        return view('store.purchaseinvoice.invoicepurchase', compact('unit_id','userids','response_data','tax_records','hsn_code', 'purchase_itemdata', 'storeurlstore', 'qrCode', 'sale', 'pay', 'items', 'item_alqty', 'customer', 'tax', 'user', 'store', 'logo'));
+        return view('store.purchaseinvoice.invoicepurchase', compact('unit_id','userids','response_data','tax_records','hsn_code', 'purchase_itemdata', 'storeurlstore', 'qrCode', 'sale', 'pay', 'items', 'item_alqty', 'customer',  'user', 'store', 'logo'));
     }
 }

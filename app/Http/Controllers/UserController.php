@@ -14,9 +14,7 @@ use App\Models\UserList;
 
 class UserController extends Controller
 {
-    public function login(){
-        return view('admin.auth.login');
-    }
+  
     public function userlist(){
         $logo = Coresetting::all();
         $userlist = UserList::all();

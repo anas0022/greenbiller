@@ -7,6 +7,8 @@ use App\Models\Coresetting;
 use App\Models\Expense;
 use App\Models\Purchasepay;
 use App\Models\Sale;
+use App\Models\SaleReturn;
+use App\Models\sales_return_payments;
 use App\Models\salespayment;
 use App\Models\Store;
 use App\Models\Purchase;
@@ -53,6 +55,8 @@ class ClosingController extends Controller
                 ->select('id', 'prefix', 'purchase_code', 'purchase_date')
                 
                 ->get();
+
+
 
             $sales = Sale::whereIn('id', $sales_payments)  
             ->select('id', 'prefix', 'sales_code', 'sales_date')

@@ -142,7 +142,7 @@
                                         <label class="form-label">Country</label>
 
                                         <select id="countryselect" onchange="countryselecting()" name="country_id" class="form-control selectpicker" data-live-search="true" >
-                                        <option>{{ $country_select->firstWhere('id', $supplier->country)->name ?? 'N/A' }}</option>
+                                       
                                            @foreach ($country as $c )
 
                                            <option value="{{$c->id}}">{{$c->name}}</option>
@@ -178,5 +178,3 @@
 </div>
 
 
-
-@endsection
