@@ -22,33 +22,30 @@
     <link rel="icon" type="image/png" sizes="16x16" href="{{asset('images/favicon.png')}}">
    
     <link rel="stylesheet" href="{{asset('admin-assets/css/style.css')}}">
-	<script src="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.min.js"></script>
-	<link rel="stylesheet" type="text/css" href="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.css">
+
 </head>
+
+@if(session('error'))
+    <div class="container mt-3">
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+@endif
+
+@if(session('success'))
+    <div class="container mt-3">
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+@endif
 
 <body class="h-100">
 	
 
-@if(session('error'))
-            <script>
-                swal({
-                    title: "error!",
-                    text: "{{ session('error') }}",
-                    icon: "error",
-                    type: "error"
-                });
-            </script>
-        @endif
-        @if(session('success'))
-            <script>
-                swal({
-                    title: "Success!",
-                    text: "{{ session('success') }}",
-                    icon: "success",
-                    type: "success"
-                });
-            </script>
-        @endif
     <div class="authincation h-100">
         <div class="container h-100">
             <div class="row justify-content-center h-100 align-items-center">
@@ -116,6 +113,7 @@
 	<script src="vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
     <script src="js/custom.min.js"></script>
     <script src="js/deznav-init.js"></script>
+
 
 </body>
 

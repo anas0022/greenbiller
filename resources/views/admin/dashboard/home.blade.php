@@ -45,8 +45,11 @@
 
         <!-- row -->
         <div class="container-fluid" style="width:100%; ">
-
+          
             <h3>Dashboard</h3>
+            @if(session('plan'))
+            <p>Your plan: {{ session('plan') }}</p>
+        @endif
             <div class="d-flex justify-content-end">
                 <div class="btn-group" style="height: 50px;">
                     <button type="button" title="Today" class="btn btn-default btn-info get_tab_records"

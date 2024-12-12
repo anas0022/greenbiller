@@ -38,4 +38,12 @@ class SubscriptionController extends Controller
         return redirect()->back()->with('success','subscription added');
 
     }
+
+    public function sub_list(){
+        $sublist = Subscription::all();
+        $logo   = Coresetting::all();
+        $type = $sublist->pluck('type');
+      $method = sub_method::where('id',$type)->first();
+        return view('supperadmin.subscription.sublist', compact('sublist','logo','method'));
+    }
 }

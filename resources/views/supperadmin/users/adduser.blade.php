@@ -35,7 +35,7 @@
 
           
                 <div class="col-12">
-                    <form action="{{route('store_useradd')}}" method="post" enctype="multipart/form-data">
+                    <form action="{{route('user.post')}}" method="post" enctype="multipart/form-data">
                         @csrf
                         <div class="card">
                             <div class="card-header">
@@ -82,7 +82,20 @@
                                             </div>
                                         </div>
                       
+                                        <div class="mb-3 row">
+                                            <label class="col-sm-3 col-form-label">Plan</label>
+                                            <div class="col-sm-9">
+                                             <select name="plan" id="" class="form-control">
+                                                <option value="">-select-</option>
+                                                @foreach ($subscription as $sub)
 
+                                                <option value="{{$sub->id}}">{{$method->firstWhere('id',$sub->type)->method}}</option>
+                                                    
+                                                @endforeach
+                                             </select>
+                                            </div>
+                                        </div>
+                                        
 
                                         <div class="mb-3 row">
                                             <label class="col-sm-3 col-form-label">Password</label>

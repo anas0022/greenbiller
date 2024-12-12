@@ -13,47 +13,74 @@ class LoginController extends Controller
         return view('auth.login');
     }
     public function loginpost(Request $request)
+    {
+        $credentials = $request->only('username', 'password');
 
-{
-
-    // Validate incoming request
-
-    $request->validate([
-
-        'username' => 'required|string',
-
-        'password' => 'required|string',
-
-    ]);
-
-
+        if (Auth::attempt($credentials)) {
+            $user = Auth::user();
+            
    
+            \Log::info('User Type Debug', [
+                'user_type' => $user->user_type,
+                'user_type_type' => gettype($user->user_type)
+            ]);
 
-    $credentials = $request->only('username', 'password');
+      
+            $userType = (string)$user->user_type;
+            
+            switch ($userType) {
+                case "1":
+                    return redirect()->route('supper.home'); 
+                
+                case "2":
+        
+                    if (empty($user->plan)) {
+                        Auth::logout();
+                        return back()->with("error", "No plan assigned");
+                    }
 
+                    if ($this->hasActiveSubscription($user)) {
+                        return redirect()->route('home')->with('plan', $user->plan);
+                    } 
+                    
+ 
+                    Auth::logout();
+                    return back()->with('error', 'Your subscription has expired');
 
-  
-
-    if (Auth::attempt($credentials)) {
-
+                default:
+                    \Log::error('Unexpected User Type', [
+                        'user_type' => $userType,
+                        'user_id' => $user->id
+                    ]);
+                    Auth::logout();
+                    return back()->with('error', 'Invalid user type: ' . $userType);
+            }
+        }
+        
+        // If authentication fails
+        return back()->with('error', 'Invalid credentials');
+    } 
+          
+        
+    
+   
     
 
-        if (Auth::user()->user_type == "1") {
+private function hasActiveSubscription($user)
+{
+  
+    $subscription = \App\Models\Subscription::where('id', $user->plan)
+        ->first();
+        $userUpdatedAt = $user->updated_at;
+  if (!$subscription) {
+            return false;
+        }
+    $expirationDate = $userUpdatedAt->addDays($subscription->duration);
 
-            return redirect()->route('supper.home'); 
 
-        } 
-       
-
-    } else {
-
-        // If authentication fails, redirect back with an error
-
-        return back()->withErrors(['login_error' => 'Invalid username or password']);
-
-    }
-
+    return now()->greaterThan($expirationDate);
 }
+
     public function logout(Request $request)
     {
         Auth::logout(); 

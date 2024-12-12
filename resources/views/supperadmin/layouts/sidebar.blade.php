@@ -136,7 +136,7 @@
 				</a>
 				<ul aria-expanded="false">
 					<li><a href="{{route('subsciptionadd')}}">Add Subscribtion</a></li>
-					<li><a href="{{route('store_warelist')}}">Subscribtion List</a></li>
+					<li><a href="{{route('sub.list')}}">Subscribtion List</a></li>
 					<li><a href="{{route('method.add')}}">Method List</a></li>
 				</ul>
 			</li> 

@@ -46,8 +46,8 @@
                         <h4 class="card-text d-inline"> Users List </h4>
                         <div>
                         
-                            <a href="{{route('supper.add')}}" class="card-link float-end btn btn-rounded btn-info btn-sm "><span class="btn-icon-start text-info"><i class="fa fa-plus color-info"></i>
-                            </span>Create User</a>
+                            <a href="{{route('subsciptionadd')}}" class="card-link float-end btn btn-rounded btn-info btn-sm "><span class="btn-icon-start text-info"><i class="fa fa-plus color-info"></i>
+                            </span>Make Subscription</a>
                           
                         </div>
                      
@@ -61,20 +61,20 @@
                                     <tr>
                                         <th>#</th>
                                   
-                                        <th>User Name</th>
-                                        <th>Name</th>
-                                        <th>Mobile</th>
-                                        <th>Email</th>
-                                        <th>Role</th>
+                                    
+                                        <th>Method</th>
+                                        <th>Duration</th>
+                                        <th>Rate</th>
+                                       
                                         <th>Created on</th>                                                                          
-                                                  
+                                   <!--      <th>Status</th>     -->                                    
                                         <th><i class="fas fa-arrow-circle-down"></i></th>
                                     </tr>
                                 </thead>
                               
                         <tbody style="width:100%; overflow-x:scroll;">
 
-@foreach ($userlist as $index => $item
+@foreach ($sublist as $index => $item
 )
                          
                             <tr>
@@ -83,17 +83,17 @@
                         
                          
                                 
-                                <td>{{$item->username}}</td>
-                                <td>{{$item->name}}</td>
-                                <td>{{$item->mobile}}</td>
-                                <td>{{$item->email}}</td> 
-                                <td>{{$item->role}}</td>
+                 
+                                <td>{{$method->firstWhere('id', $item->type)->method}}</td>
+                                <td>{{$item->duration}} Months</td>
+                                <td>₹ {{$item->rate}}</td>
+                               
                                 
                                 <td>{{ $item->updated_at->format('Y-m-d') }}</td>
 
                       
                                 <td style="display: flex; justify-content:center; gap: 10px;">
-                                    <form action="{{route('super.useredit')}}"
+                                    <form action="{{route('store_useredit')}}"
                                         style="width:auto; height:auto; box-shadow:none;" method="post">
                                         @csrf
                                         <input type="text" name="id" value="{{$item->id}}" hidden>
