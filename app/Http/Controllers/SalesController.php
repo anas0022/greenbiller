@@ -1135,6 +1135,7 @@ class SalesController extends Controller
                             'total_tax_percentage' => $total_tax_percentage,
                             'sales_qty' => $sale_qty,
                         'price_per_unit'=>  $price_per_unit
+                        
                         ];
                     }
                 }
@@ -1182,7 +1183,7 @@ class SalesController extends Controller
                 $upiUrl = "upi://pay?pa={$upiID}&am={$amount}&pn={$payeeName}&cu={$currency}";
                 $pay = QrCode::size(100)->generate($upiUrl);
                 $storeurl = route('store_itemsscan', ['id' => $store_view]);
-                $storeurlstore = QrCode::size(100)->generate($storeurl);
+                $storeurlstore = QrCode::size(80)->generate($storeurl);
     
                 if ($sale) {
                     $userids = $sale->created_by;
@@ -1280,14 +1281,14 @@ class SalesController extends Controller
     
                 $item_alqty = Item::whereIn('id', $sales_itemdata->pluck('item_id'))->get();
                 $url = route('qrview', ['id' => $sale->id]);
-                $qrCode = QrCode::size(100)->generate($url);
+                $qrCode = QrCode::size(80)->generate($url);
                 $upiID = $store->upi_code;
                 $payeeName = $store->store_name;
                 $currency = 'INR';
                 $upiUrl = "upi://pay?pa={$upiID}&pn={$payeeName}&am={$amount}&cu={$currency}";
-                $pay = QrCode::size(100)->generate($upiUrl);
+                $pay = QrCode::size(80)->generate($upiUrl);
                 $storeurl = route('store_itemsscan', ['id' => $store_view]);
-                $storeurlstore = QrCode::size(100)->generate($storeurl);
+                $storeurlstore = QrCode::size(80)->generate($storeurl);
     
                 if ($sale) {
                     $userids = $sale->created_by;
@@ -1296,7 +1297,7 @@ class SalesController extends Controller
                     $customer = Customer::whereIn('id', $customerIds)->get();
                 }
             }
-            return view('admin/invoice/invoice-sale-main', compact('unit_id','userids','response_data','tax_records','hsn_code', 'sales_itemdata', 'storeurlstore', 'qrCode', 'sale', 'pay', 'items', 'item_alqty', 'customer', 'tax', 'user', 'store', 'logo'));
+            return view('admin.invoice.invoice-sale-main', compact('unit_id','userids','response_data','tax_records','hsn_code', 'sales_itemdata', 'storeurlstore', 'qrCode', 'sale', 'pay', 'items', 'item_alqty', 'customer', 'tax', 'user', 'store', 'logo'));
         
         }
     

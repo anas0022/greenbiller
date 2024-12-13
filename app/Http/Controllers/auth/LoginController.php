@@ -43,10 +43,11 @@ class LoginController extends Controller
                         return redirect()->route('home')->with('plan', $user->plan);
                     } 
                     
- 
-                    Auth::logout();
-                    return back()->with('error', 'Your subscription has expired');
 
+                   
+                    \Log::info('Redirecting to expired route');
+                    return redirect()->route('expired');
+ 
                 default:
                     \Log::error('Unexpected User Type', [
                         'user_type' => $userType,
@@ -78,7 +79,7 @@ private function hasActiveSubscription($user)
     $expirationDate = $userUpdatedAt->addDays($subscription->duration);
 
 
-    return now()->greaterThan($expirationDate);
+    return now()->lessThan($expirationDate);
 }
 
     public function logout(Request $request)
@@ -87,6 +88,6 @@ private function hasActiveSubscription($user)
         $request->session()->invalidate(); 
         $request->session()->regenerateToken(); 
     
-        return redirect('/login'); 
+        return redirect('/'); 
     }
 }

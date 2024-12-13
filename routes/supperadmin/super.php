@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\auth\ExpiryController;
 use App\Http\Controllers\sub_method\SubMethodController;
 use App\Http\Controllers\subscription\SubscriptionController;
 use App\Http\Controllers\supperadmin\SupperAdminHomeController;
@@ -17,5 +18,7 @@ Route::group(['prefix' => 'supperadmin', 'middleware' => 'auth'], function () {
     Route::get('/sub-list', [SubscriptionController::class,'sub_list'])->name('sub.list');
     Route::post('/user-post',[UserController::class,'userpost'])->name('user.post');
     Route::post('/edituser', [UserEditController::class, 'edituser'])->name('super.useredit');
-    Route::post('/useredit', [UserEditController::class, 'useredit'])->name('super.userediting');
+    
+    Route::post('/usereditpost', [UserEditController::class,'usereditpost'])->name('edit.post');
+    Route::get('/expiry',[ExpiryController::class,'expired'])->name('expired');
 });

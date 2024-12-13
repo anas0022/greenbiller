@@ -2470,11 +2470,9 @@ function additem(item_id) {
                 total = total + parseFloat(item_total.value);
             }
             result.value = total;
-            //alert(total);
-            document.getElementById("grand_total").value = total;
-            //document.getElementById("subtotal_amt-s").innerHTML = total;
+           document.getElementById("grand_total").value = total;
             document.getElementById("subtotal_amt").value = total;
-            //totaldicount();
+         
             alldiscout();
         }
 
@@ -2593,21 +2591,7 @@ function additem(item_id) {
         }
 
     </script>
-    <!-- <script>
-        function totalamtsum() {
-            // alert();
-            var subtotal_amt = document.getElementById("subtotal_amt").value
-            var other_charges_amt = document.getElementById("other_charges_amt").value;
-            var discount_to_all_amt = document.getElementById("discount_to_all_amt").value;
-            var round_off_amt = document.getElementById("round_off_amt").value;
 
-
-
-            document.getElementById("total_amt").value = subtotal_amt;
-
-            alert(subtotal_amt);
-        }
-    </script> -->
     <script>
         function calculateTotalLiters() {
             const quantity = parseFloat(document.getElementById("quantity").value);

@@ -35,8 +35,9 @@
 
           
                 <div class="col-12">
-                    <form action="{{route('user.post')}}" method="post" enctype="multipart/form-data">
+                    <form action="{{route('edit.post')}}" method="post" enctype="multipart/form-data">
                         @csrf
+                        <input type="text" value="{{$items->id}}" name="id">
                         <div class="card">
                             <div class="card-header">
                                 <h4 class="card-text d-inline"> Edit User </h4>
@@ -85,10 +86,12 @@
                                         <div class="mb-3 row">
                                             <label class="col-sm-3 col-form-label">Plan</label>
                                             <div class="col-sm-9">
-                                             <select name="plan" id="" class="form-control">
-                                                <option value="">-select-</option>
-                                              
-                                             </select>
+                                                <select name="plan" id="" class="form-control">
+                                                    <option value="">-select-</option>
+                                                    @foreach ($subscriptions as $sub)
+                                                     <option value="{{$sub->id}}" {{ $sub->type == $subscription_type->id ? 'selected' : '' }}>{{$method->firstWhere('id',$sub->type)->method}}</option>
+                                                    @endforeach
+                                                 </select>
                                             </div>
                                         </div>
                                         

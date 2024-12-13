@@ -432,13 +432,13 @@
                                                 $totalQuantity = 0;
                                                 $totalAmount = 0;
                                                 $totalLiter = 0;
+                                                $priceTotal = 0;
                                             @endphp
                                             @foreach ($sales_itemdata as $index => $item)
                                                 @php
                                                     $quantity = $item->sales_qty;
                                                     $amount = $item->total_cost;
-                                                    // $liter = number_format(optional($item_alqty->firstWhere('id', $item->item_id))->alt_unit * $item->sales_qty);
-                                                    // Accumulate totals
+                                                   $priceTotal += $item->price_per_unit;
                                                     $totalQuantity += $quantity;
                                                     $totalAmount += $amount;
                                                     //$totalLiter += $liter;
@@ -725,14 +725,11 @@
                                                         <td>
                                                             <div class="bg-sky text-bold" style="font-size:12px; padding: 5px;"
                                                                 id="subtotal">
-                                                                {{ $sale->price_per_unit }}
-
-                                                                
+                                                               
+                                                                {{$sale->subtotal}}
 
                                                             </div>
-                                                            <script>
-                                                                var subtotal = document.getElementById('subtotal').value;
-                                                            </script>
+                                                         
                                                         </td>
                                                     </tr>
                                                 

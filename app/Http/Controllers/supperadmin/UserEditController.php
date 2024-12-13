@@ -27,13 +27,15 @@ class UserEditController extends Controller
         $sub = $items->plan;
         $subscription = Subscription::firstWhere('id',$sub)->first();
         $sub_method = $subscription->type;
+        $subscriptions= Subscription::all();
         $subscription_type = sub_method::firstWhere('id',$sub_method)->first();
-        echo($subscription_type);
-        die();
-        return view('supperadmin.users.edituser', compact('items', 'ware', 'role', 'country', 'logo', 'country', 'roles'));
+        $type = $subscription->pluck('type');
+        $method = sub_method::where('id',$type)->first();
+        return view('supperadmin.users.edituser', compact('items', 'ware', 'role', 'country', 'logo', 'country', 'roles','subscription','subscriptions','method','subscription_type'));
     }
 
-    public function useredit(Request $request)
+ 
+    public function usereditpost(Request $request)
     {
         try {
             // Basic validation
@@ -41,7 +43,7 @@ class UserEditController extends Controller
                 'name' => 'required',
                 'email' => 'required|email',
                 'mobile' => 'required',
-                'role' => 'required',
+             
                 'country_code' => 'required',
             ]);
 
@@ -61,7 +63,8 @@ class UserEditController extends Controller
             }
             $userlist->username = $username;
             $userlist->email = $request->input('email');
-            $userlist->role_id = $request->input('role');
+           
+            $userlist->plan = $request->input('plan');
             $userlist->mobile_code = $request->input('country_code');
 
             // Handle password update if provided
@@ -90,10 +93,10 @@ class UserEditController extends Controller
             }
 
             if ($userlist->save()) {
-                return redirect()->route('store_userlist')->with('success', 'User updated successfully!');
+                return redirect()->route('supper.userlist')->with('success', 'User updated successfully!');
             }
 
-            return redirect()->route('store_userlist')->with('error', 'Failed to update user');
+            return redirect()->route('supper.userlist')->with('error', 'Failed to update user');
 
         } catch (\Illuminate\Validation\ValidationException $e) {
             return redirect()->back()
