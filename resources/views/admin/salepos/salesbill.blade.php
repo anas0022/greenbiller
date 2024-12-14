@@ -1276,6 +1276,7 @@
 
 
 
+
                                 <!-- Expire check model END -->
 
 
@@ -1691,6 +1692,7 @@
                                                         <thead class="bg-gray">
                                                             <tr>
                                                                 <th width="20%">Item Name</th>
+                                                                {{-- <th width="5%">SL No</th> --}}
                                                                 <th width="10%">Quantity</th>
                                                                 <th width="8%">Unit</th>
                                                                 <th width="10%">Rate(inc.of.tax)</th>
@@ -2265,6 +2267,14 @@ function additem(item_id) {
                             '"> ' +
                             data.item_name + ' <input type="hidden" value="' + data.item_name + '" name="item_name[]"> <input type="hidden" value="' + data.hsn_code + '" name="hsn_code[]"> <input type="hidden" value="' + data.part_no + '" name="part_no[]"> </td>';
 
+                             htmlRows += '<td><input name="item_id[]" type="hidden" id="item_id_' +
+
+                            count +
+                            '" class="form-control form-control-sm itemRow" value="' +
+                            data.id +
+                            '"> ' +
+                            data.item_name + ' <input type="hidden" value="' + data.item_name + '" name="item_name[]"> <input type="hidden" value="' + data.hsn_code + '" name="hsn_code[]"> <input type="hidden" value="' + data.part_no + '" name="part_no[]"> </td>';
+
                         htmlRows += '<td> <div class="input-group input-group-sm"><span class="input-group-btn"> <button type="button" onclick="decrement_qty(1,' + count + ')" class="btn btn-default btn-flat"><i class="fa fa-minus text-danger"></i></button></span> <input name="sales_qty[]" type="text" id="qty_' + count + '" class="form-control no-padding text-center min_width" value="1"  >  <span class="input-group-btn">  <button type="button" onclick="increment_qty(1,' + count + ')" class="btn btn-default btn-flat"><i class="fa fa-plus text-success"></i> </button>  </span> </div> </td>';
                         htmlRows += '<td>';
 
@@ -2452,27 +2462,36 @@ function additem(item_id) {
             }
             var itemtotalamt = (((parseFloat(purchase_price) * parseFloat(qty)) + parseFloat(taxamt))) - parseFloat(discount_amt);
             document.getElementById("total_amount_" + count).value = itemtotalamt.toFixed(3);
+          
+        
             total_sum();
             alldiscout();
             totalamtsum();
         }
 
 
-        // geting total sum
         function total_sum() {
-            // alert('haii');
-            var result = document.getElementById("subtotal_amt");
+           
             var item_total,
                 i = 0,
                 total = 0;
+             
             while ((item_total = document.getElementById("total_amount_" + i++))) {
                 item_total.value = item_total.value.replace(/\\D/, "");
                 total = total + parseFloat(item_total.value);
             }
-            result.value = total;
-           document.getElementById("grand_total").value = total;
-            document.getElementById("subtotal_amt").value = total;
-         
+            i = 0;
+            subtotal = 0;
+
+            while ((price = document.getElementById("purchase_price_" + i++))) {
+                price.value = price.value.replace(/\\D/, "");
+                subtotal = subtotal + parseFloat(price.value);
+            }
+            document.getElementById("subtotal_amt").value = subtotal;
+           
+            document.getElementById("grand_total").value = total;
+           
+             
             alldiscout();
         }
 
@@ -2496,7 +2515,7 @@ function additem(item_id) {
 
             } else {
                 //document.getElementById("total_amt").value = 0;
-                var subtotal_amt = document.getElementById("subtotal_amt").value;
+                var subtotal_amt = document.getElementById("total_amount_").value;
                 document.getElementById("total_amt").value = subtotal_amt;
                 total_sum();
             }
@@ -2517,16 +2536,16 @@ function additem(item_id) {
             // alert(discount_to_all_type);
 
             if (discount_to_all_type == 'Percentage') {
-                var subtotal_amt = document.getElementById("subtotal_amt").value;
+                var subtotal_amt = document.getElementById("total_amount_").value;
                 var discount_peramt = ((subtotal_amt * discount_to_all_input) / 100);
                 document.getElementById("total_discount_amt").value = parseFloat(discount_peramt);
-                var subtotal_amt = document.getElementById("subtotal_amt").value;
+                var subtotal_amt = document.getElementById("total_amount_").value;
                 var other_charges_amt = document.getElementById("other_charges_amt").value;
                 var total_amt = (parseFloat(subtotal_amt) + parseFloat(other_charges_amt)) - parseFloat(discount_peramt)
                 document.getElementById("grand_total").value = total_amt;
             } else {
                 document.getElementById("total_discount_amt").value = discount_to_all_input;
-                var subtotal_amt = document.getElementById("subtotal_amt").value;
+                var subtotal_amt = document.getElementById("total_amount_").value;
                 var other_charges_amt = document.getElementById("other_charges_amt").value;
                 var total_amt = (parseFloat(subtotal_amt) + parseFloat(other_charges_amt)) - parseFloat(discount_to_all_input)
                 document.getElementById("grand_total").value = total_amt;

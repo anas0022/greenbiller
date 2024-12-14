@@ -26,6 +26,7 @@ use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\SaleExtimateController;
 use App\Http\Controllers\SalePurchaseOrderController;
 use App\Http\Controllers\SalereturnController;
+use App\Http\Controllers\SecondryController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\store\DashController;
 use App\Http\Controllers\StoreController;
@@ -302,5 +303,6 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'role:admin|superadm
     Route::get('/get-purchase-by-customer', [ReportsController::class, 'getPurchaseByCustomer'])->name('get.purchase.by.customer');
     Route::get('/getsupplierByStore', [ReportsController::class,'getsupplierByStore'])->name('getsupplierByStore');
     Route::get('/getPurchaseByCustomer', [ReportsController::class,'getPurchaseByCustomer'])->name('getPurchaseByCustomer');
+    Route::get('/seconderyunit-list',[SecondryController::class,'secondryunitlist'])->name('secondryunitlist');
 });
 

@@ -163,11 +163,7 @@
                             <li><a href="{{route('tax')}}">Tax List</a></li>
 							<li><a href="{{route('country')}}">Country Settings</a></li>
 							<li><a href="{{route('unit')}}">Unit List</a></li>
-                        
-			{{-- 				<li><a href="">Payment Types</a></li>
-							<li><a href="">Change Password</a></li> --}}
-                    
-								
+							<li><a href="{{route('secondryunitlist')}}">Secondery Unit List</a></li>
 						</ul>
                     </li>
 					
