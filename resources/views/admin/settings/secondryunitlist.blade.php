@@ -102,6 +102,7 @@
                                 <div class="modal-body">
                                     <form action="{{route('unit.post')}}" method="POST" enctype="multipart/form-data">
                                         @csrf
+                                        
                                         <div class="mb-3 row">
                                             <label class="col-sm-3 col-form-label">Secondry Name <span class="required">*</span>:</label>
                                             <div class="col-sm-9">

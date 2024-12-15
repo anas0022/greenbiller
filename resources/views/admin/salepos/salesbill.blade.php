@@ -76,7 +76,7 @@
 
 
 
-    @if($errors->any())
+    @if ($errors->any())
         <script>
             swal({
                 title: "Error!",
@@ -87,7 +87,7 @@
         </script>
     @endif
 
-    @if(session('success'))
+    @if (session('success'))
         <script>
             swal({
                 title: "Success!",
@@ -108,560 +108,550 @@
     </style>
 
 
-<div class="modal fade" id="add-item-model" tabindex="-1">
-                                                <div class="modal-dialog modal-lg">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header header-custom">
-                                                            <button type="button" class="close" data-dismiss="modal"
-                                                                aria-label="Close">
-                                                                <span aria-hidden="true">×</span>
-                                                            </button>
-                                                            <h4 class="modal-title text-center">Payments</h4>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <div class="row">
-                                                                <!-- LEFT HAND -->
-                                                      
-
-
-                                                                <form action="{{route('item_post')}}" method="post" enctype="multipart/form-data">
-
-
-@csrf
-
-
-            <div class="col-lg-4 mb-2">
-                <div class="form-group">
-                    <label class="form-label">Item Code<span class="required">*</span></label>
-                    <input type="text" name="item_code" class="form-control" value="IT-1-0000">
+    <div class="modal fade" id="add-item-model" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header header-custom">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                    <h4 class="modal-title text-center">Payments</h4>
                 </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-4 mb-2">
-                <div class="form-group">
-                    <label class="form-label">Item Name<span class="required
+                <div class="modal-body">
+                    <div class="row">
+                        <!-- LEFT HAND -->
+
+
+
+                        <form action="{{ route('item_post') }}" method="post" enctype="multipart/form-data">
+
+
+                            @csrf
+
+
+                            <div class="col-lg-4 mb-2">
+                                <div class="form-group">
+                                    <label class="form-label">Item Code<span class="required">*</span></label>
+                                    <input type="text" name="item_code" class="form-control" value="IT-1-0000">
+                                </div>
+                            </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-4 mb-2">
+                            <div class="form-group">
+                                <label class="form-label">Item Name<span class="required
         ">*</span></label>
 
-                    <input type="text" name="item_name" class="form-control" required="">
-                </div>
-            </div>
-            <div class="col-lg-4 mb-2" style="display:flex;">
-                <div class="form-group" >
-                    <label class="form-label">Category <span class="required">*</span></label>
-                    <input type="hidden" name="category" id="category_id">
-                    <div class="input-group mb-3">
-                        <select name="catSelect" id="catSelect"
-                            class="form-control selectpicker" data-live-search="true" required
-                            onchange="setParentValue()">
-                            <option value="">-select-</option>
-                            @foreach ($category as $cat)
-                                <option value="{{ $cat->id }}">{{ $cat->category_name }}</option>
-                            @endforeach
-                        </select>
-                        <button class="btn btn-primary" type="button" data-bs-toggle="modal"
-                            data-bs-target="#categoryModal"> + </button>
-                    </div>
-                </div>
+                                <input type="text" name="item_name" class="form-control" required="">
+                            </div>
+                        </div>
+                        <div class="col-lg-4 mb-2" style="display:flex;">
+                            <div class="form-group">
+                                <label class="form-label">Category <span class="required">*</span></label>
+                                <input type="hidden" name="category" id="category_id">
+                                <div class="input-group mb-3">
+                                    <select name="catSelect" id="catSelect" class="form-control selectpicker"
+                                        data-live-search="true" required onchange="setParentValue()">
+                                        <option value="">-select-</option>
+                                        @foreach ($category as $cat)
+                                            <option value="{{ $cat->id }}">{{ $cat->category_name }}</option>
+                                        @endforeach
+                                    </select>
+                                    <button class="btn btn-primary" type="button" data-bs-toggle="modal"
+                                        data-bs-target="#categoryModal"> + </button>
+                                </div>
+                            </div>
 
-                <script>
-                    function setParentValue() {
-                        var selectedValue = document.getElementById('catSelect').value;
-                        document.getElementById('category_id').value = selectedValue;
-                    }
-                </script>
+                            <script>
+                                function setParentValue() {
+                                    var selectedValue = document.getElementById('catSelect').value;
+                                    document.getElementById('category_id').value = selectedValue;
+                                }
+                            </script>
 
-            </div>
-            <div class="col-lg-4 mb-2">
-                <div class="form-group">
-                    <label class="form-label">Brand</label>
-                    <div class="input-group mb-3">
-                        <input type="hidden" name="brand" id="brandInput">
-                        <select name="brand_id" id="brand_id" class="form-control selectpicker"
-                            data-live-search="true" onchange="setbrandValue()">
-                            <option value="">-select-</option>
-                            @foreach ($brands as $name)
-                                <option value="{{ $name->id }}">{{ $name->barndname }}</option>
-                            @endforeach
+                        </div>
+                        <div class="col-lg-4 mb-2">
+                            <div class="form-group">
+                                <label class="form-label">Brand</label>
+                                <div class="input-group mb-3">
+                                    <input type="hidden" name="brand" id="brandInput">
+                                    <select name="brand_id" id="brand_id" class="form-control selectpicker"
+                                        data-live-search="true" onchange="setbrandValue()">
+                                        <option value="">-select-</option>
+                                        @foreach ($brands as $name)
+                                            <option value="{{ $name->id }}">{{ $name->barndname }}</option>
+                                        @endforeach
 
-                        </select>
-                        <button class="btn btn-primary" type="button" data-bs-toggle="modal"
-                            data-bs-target="#brandModal"> + </button>
-                    </div>
-                    <script>
-                        function setbrandValue() {
-                            var selectElement = document.getElementById('brand_id');
-                            var inputElement = document.getElementById('brandInput');
-                            var selectedBrand = selectElement.options[selectElement.selectedIndex].value;
+                                    </select>
+                                    <button class="btn btn-primary" type="button" data-bs-toggle="modal"
+                                        data-bs-target="#brandModal"> + </button>
+                                </div>
+                                <script>
+                                    function setbrandValue() {
+                                        var selectElement = document.getElementById('brand_id');
+                                        var inputElement = document.getElementById('brandInput');
+                                        var selectedBrand = selectElement.options[selectElement.selectedIndex].value;
 
-                            // Set the selected brand into the input field
-                            inputElement.value = selectedBrand;
-                        }
-                    </script>
-                </div>
-            </div>
-            <div class="col-lg-4 mb-2">
-                <div class="form-group">
-                    <label class="form-label">Unit<span class="required">*</span></label>
-                    <div class="input-group mb-3">
-                        <input type="hidden" name="unit" id="unitInput">
-                        <select name="unit_id" class="form-control selectpicker"
-                            data-live-search="true" required id="unitSelect"
-                            onchange="setunitValue()">
-                            <option value="">-select-</option>
-                            @foreach ($unit as $u)
-                                <option value="{{ $u->id }}">{{ $u->unit_name }}</option>
-                            @endforeach
+                                        // Set the selected brand into the input field
+                                        inputElement.value = selectedBrand;
+                                    }
+                                </script>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 mb-2">
+                            <div class="form-group">
+                                <label class="form-label">Unit<span class="required">*</span></label>
+                                <div class="input-group mb-3">
+                                    <input type="hidden" name="unit" id="unitInput">
+                                    <select name="unit_id" class="form-control selectpicker" data-live-search="true"
+                                        required id="unitSelect" onchange="setunitValue()">
+                                        <option value="">-select-</option>
+                                        @foreach ($unit as $u)
+                                            <option value="{{ $u->id }}">{{ $u->unit_name }}</option>
+                                        @endforeach
 
-                        </select>
-                        <button class="btn btn-primary" type="button" data-bs-toggle="modal"
-                            data-bs-target="#unitModal"> + </button>
-                    </div>
-                    <script>
-                        function setunitValue() {
-                            var selectElement = document.getElementById('unitSelect');
-                            var inputElement = document.getElementById('unitInput');
-                            var selectedUnit = selectElement.options[selectElement.selectedIndex].value;
+                                    </select>
+                                    <button class="btn btn-primary" type="button" data-bs-toggle="modal"
+                                        data-bs-target="#unitModal"> + </button>
+                                </div>
+                                <script>
+                                    function setunitValue() {
+                                        var selectElement = document.getElementById('unitSelect');
+                                        var inputElement = document.getElementById('unitInput');
+                                        var selectedUnit = selectElement.options[selectElement.selectedIndex].value;
 
-                            // Set the selected unit into the input field
-                            inputElement.value = selectedUnit;
-                        }
-                    </script>
-                </div>
-            </div>
+                                        // Set the selected unit into the input field
+                                        inputElement.value = selectedUnit;
+                                    }
+                                </script>
+                            </div>
+                        </div>
 
 
-            <div class="col-lg-4 mb-2">
-                <div class="form-group">
-                    <label class="form-label">SKU</label>
-                    <input type="text" name="sku" class="form-control">
-                </div>
-            </div>
-            <div class="col-lg-4 mb-2">
-                <div class="form-group">
-                    <label class="form-label">HSN Code</label>
-                    <input type="text" name="hsn_code" class="form-control">
-                </div>
-            </div>
-            <div class="col-lg-4 mb-2">
-                <div class="form-group">
-                    <label class="form-label">Alert Quantity</label>
-                    <input type="number" name="alert_quantity" class="form-control" min="0">
-                </div>
-            </div>
-            <div class="col-lg-4 mb-2">
-                <div class="form-group">
-                    <label class="form-label">Seller Points</label>
-                    <input type="text" name="sellerpoint" class="form-control">
-                </div>
-            </div>
+                        <div class="col-lg-4 mb-2">
+                            <div class="form-group">
+                                <label class="form-label">SKU</label>
+                                <input type="text" name="sku" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-lg-4 mb-2">
+                            <div class="form-group">
+                                <label class="form-label">HSN Code</label>
+                                <input type="text" name="hsn_code" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-lg-4 mb-2">
+                            <div class="form-group">
+                                <label class="form-label">Alert Quantity</label>
+                                <input type="number" name="alert_quantity" class="form-control" min="0">
+                            </div>
+                        </div>
+                        <div class="col-lg-4 mb-2">
+                            <div class="form-group">
+                                <label class="form-label">Seller Points</label>
+                                <input type="text" name="sellerpoint" class="form-control">
+                            </div>
+                        </div>
 
-            <div class="col-lg-4 mb-2">
-                <div class="form-group">
-                    <label class="form-label">Barcode</label>
-                    <input type="text" name="bar_code" class="form-control"
-                        onkeypress="return (event.key!='Enter')">
-                </div>
-            </div>
-            <div class="col-lg-4 mb-2">
-                <div class="form-group">
-                    <label class="form-label">Expire Date</label>
+                        <div class="col-lg-4 mb-2">
+                            <div class="form-group">
+                                <label class="form-label">Barcode</label>
+                                <input type="text" name="bar_code" class="form-control"
+                                    onkeypress="return (event.key!='Enter')">
+                            </div>
+                        </div>
+                        <div class="col-lg-4 mb-2">
+                            <div class="form-group">
+                                <label class="form-label">Expire Date</label>
 
-                    <div class="input-group mb-3">
-                        <!-- <span class="input-group-text"><i class="bi bi-calendar-date"></i></span> -->
-                        <input type="date" name="expiry_date" class="form-control">
-                    </div>
-
-
-                </div>
-            </div>
-            <div class="col-lg-4 mb-2">
-                <div class="form-group">
-                    <label class="form-label">Description</label>
-                    <textarea name="dis" class="form-control"></textarea>
-
-                </div>
-            </div>
-
-            <div class="col-lg-4 mb-2">
-                <div class="form-group">
-                    <label class="form-label">Store Name<span class="required">*</span></label>
-                    <input type="hidden" name="store_id" id="storeInput" readonly>
-                    <!-- Make it readonly -->
-                    <div class="input-group mb-3">
-                        <select id="storeSelect" name="" class="form-control selectpicker"
-                            data-live-search="true" required onchange="store()">
-                            <option value="">-Select-</option>
-                            @foreach ($store as $s)
-                                <option value="{{$s->id}}" data-name="{{$s->id}}">
-                                    {{$s->store_name}}
-                                </option>
-                                <!-- Assuming you have an 'id' field -->
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <script>
-                        function store() {
-                            var selectElement = document.getElementById('storeSelect');
-                            var inputElement = document.getElementById('storeInput');
-                            var storeIdElement = document.getElementById('storeId');
-
-                            var selectedOption = selectElement.options[selectElement.selectedIndex];
-                            var selectedId = selectedOption.value; // Store ID
-                            var selectedName = selectedOption.getAttribute('data-name'); // Store Name
-
-                            // Set the selected store name and ID into the respective input fields
-                            inputElement.value = selectedName;
-                            storeIdElement.value = selectedId;
-                        }
-                    </script>
-
-                    <input type="hidden" id="storeId" class="form-control" readonly>
-                </div>
-            </div>
+                                <div class="input-group mb-3">
+                                    <!-- <span class="input-group-text"><i class="bi bi-calendar-date"></i></span> -->
+                                    <input type="date" name="expiry_date" class="form-control">
+                                </div>
 
 
-        </div>
-        <hr class="solid">
-        <div class="row">
-            <div class="col-lg-4 mb-2">
-                <div class="form-group">
-                    <label class="form-label"> Discount Type</label>
-                    <input type="hidden" name="discount_type" id="typeInput">
-                    <select name="discount_type" class="form-control" id="typeSelect"
-                        onchange="settypeValue()" style="height:50px;">
-                        <option value="Percentage">Percentage(%)</option>
-                        <option value="Fixed">Fixed</option>
-                    </select>
-                </div>
-                <script>
-                    function settypeValue() {
-                        var selectElement = document.getElementById('typeSelect');
-                        var inputElement = document.getElementById('typeInput');
-                        var selectedType = selectElement.options[selectElement.selectedIndex].value;
+                            </div>
+                        </div>
+                        <div class="col-lg-4 mb-2">
+                            <div class="form-group">
+                                <label class="form-label">Description</label>
+                                <textarea name="dis" class="form-control"></textarea>
 
-                        // Set the selected discount type into the input field
-                        inputElement.value = selectedType;
-                    }
-                </script>
-            </div>
-            <div class="col-lg-4 mb-2">
-                <div class="form-group">
-                    <label class="form-label">Discount</label>
-                    <input type="text" name="discount" class="form-control">
-                </div>
-            </div>
-            <div class="col-lg-4 mb-2">
-                <div class="form-group">
-                    <label class="form-label">Image</label>
-                    <input type="file" name="picture" class="form-control">
-                    <span style="font-size: 10px;color: #B03838;">Max Width/Height: 1000px *
-                        1000px
-                        & Size: 1MB</span>
-                </div>
-            </div>
-        </div>
+                            </div>
+                        </div>
 
-        <hr class="solid">
-        <div class="row">
+                        <div class="col-lg-4 mb-2">
+                            <div class="form-group">
+                                <label class="form-label">Store Name<span class="required">*</span></label>
+                                <input type="hidden" name="store_id" id="storeInput" readonly>
+                                <!-- Make it readonly -->
+                                <div class="input-group mb-3">
+                                    <select id="storeSelect" name="" class="form-control selectpicker"
+                                        data-live-search="true" required onchange="store()">
+                                        <option value="">-Select-</option>
+                                        @foreach ($store as $s)
+                                            <option value="{{ $s->id }}" data-name="{{ $s->id }}">
+                                                {{ $s->store_name }}
+                                            </option>
+                                            <!-- Assuming you have an 'id' field -->
+                                        @endforeach
+                                    </select>
+                                </div>
 
+                                <script>
+                                    function store() {
+                                        var selectElement = document.getElementById('storeSelect');
+                                        var inputElement = document.getElementById('storeInput');
+                                        var storeIdElement = document.getElementById('storeId');
 
+                                        var selectedOption = selectElement.options[selectElement.selectedIndex];
+                                        var selectedId = selectedOption.value; // Store ID
+                                        var selectedName = selectedOption.getAttribute('data-name'); // Store Name
 
-            <div class="col-lg-4 mb-2">
-                <div class="form-group">
-                    <label class="form-label">Purchase Price<span
-                            class="required">*</span></label>
-                    <input type="text" name="purchase_value" id="purchase_price"
-                        class="form-control" placeholder="Total Price with Tax Amount"
-                        required="" onchange="purchaseprice()">
-                </div>
-            </div>
+                                        // Set the selected store name and ID into the respective input fields
+                                        inputElement.value = selectedName;
+                                        storeIdElement.value = selectedId;
+                                    }
+                                </script>
 
+                                <input type="hidden" id="storeId" class="form-control" readonly>
+                            </div>
+                        </div>
 
-            <div class="col-lg-4 mb-2">
-                <div class="form-group">
-                    <label class="form-label">Tax<span class="required">*</span></label>
-
-                    <div class="input-group mb-3">
-                        <input type="hidden" name="tax" id="taxInput">
-
-                        <select name="tax_id" id="tax_id" class="form-control selectpicker"
-                            data-live-search="true" required onchange="purchaseprice()">
-                            <option value="">Select Tax</option>
-                            @foreach ($tax as $t)
-                                <option value="{{ $t->id }}" data-percentage="{{ $t->per }}">
-                                    {{ $t->taxname }}
-                                </option>
-                            @endforeach
-                        </select>
-
-
-                        <button class="btn btn-primary" type="button" data-bs-toggle="modal"
-                            data-bs-target="#taxModal"> + </button>
-                    </div>
-                </div>
-            </div>
-
-
-
-
-
-            <div class="col-lg-4 mb-2">
-                <div class="form-group">
-                    <label class="form-label"> Tax Type<span class="required">*</span></label>
-
-                    <select name="tax_type" id="tax_type" class="form-control"
-                        onchange="purchaseprice()" style="height:50px;">
-                        <option value="Inclusive">Inclusive</option>
-                        <option value="Exclusive">Exclusive</option>
-                    </select>
-                </div>
-            </div>
-
-
-
-            <div class="col-lg-4 mb-2">
-                <div class="form-group">
-                    <label class="form-label">Price<span class="required">*</span></label>
-                    <input type="text" name="price" id="price" class="form-control"
-                        placeholder="Price of the Item without Tax" required="" readonly
-                        style="background-color: #ddd;">
-                </div>
-            </div>
-
-
-
-            <div class="col-lg-4 mb-2">
-                <div class="form-group">
-                    <label class="form-label">Profit Margin(%) <span class="required"
-                            data-bs-container="body" data-bs-toggle="popover"
-                            data-bs-placement="top" data-bs-content="Based on Purchase Price."
-                            title="Info"><i class="bi bi-info-circle"></i></span></label>
-                    <input type="text" name="profit_margin" id="profit_margin"
-                        class="form-control" placeholder="Profit in %"
-                        onchange="purchaseprice()">
-                </div>
-            </div>
-            <div class="col-lg-4 mb-2">
-                <div class="form-group">
-                    <label class="form-label">Sales Price</label>
-                    <input type="text" name="sales_price" id="sales_price" class="form-control"
-                        placeholder="Sales Price" required="">
-                </div>
-            </div>
-
-
-
-            <div class="col-lg-4 mb-2">
-                <div class="form-group">
-                    <label class="form-label">MRP <span class="required"
-                            data-bs-container="body" data-bs-toggle="popover"
-                            data-bs-placement="top" data-bs-content="Maximum Retail Price."
-                            title="Info"><i class="bi bi-info-circle"></i></span></label>
-                    <input type="text" name="mrp" class="form-control"
-                        placeholder="Maximum Retail Price">
-                </div>
-            </div>
-
-            <div class="col-lg-4 mb-2">
-                <div class="form-group">
-                    <label class="form-label">Show on app? <span class="required"
-                            data-bs-container="body" data-bs-toggle="popover"
-                            data-bs-placement="top"
-                            data-bs-content="On this togle to show this product in mobile app."
-                            title="Info"><i class="bi bi-info-circle"></i></span></label>
-                    <div class="form-check form-switch">
-                        <input type="hidden" name="app" id="apneed" value="none_app">
-                        <input class="form-check-input" type="checkbox" role="switch"
-                            id="inapp_view" name="inapp_view" value="1"
-                            onchange="showappprice()">
 
                     </div>
+                    <hr class="solid">
+                    <div class="row">
+                        <div class="col-lg-4 mb-2">
+                            <div class="form-group">
+                                <label class="form-label"> Discount Type</label>
+                                <input type="hidden" name="discount_type" id="typeInput">
+                                <select name="discount_type" class="form-control" id="typeSelect"
+                                    onchange="settypeValue()" style="height:50px;">
+                                    <option value="Percentage">Percentage(%)</option>
+                                    <option value="Fixed">Fixed</option>
+                                </select>
+                            </div>
+                            <script>
+                                function settypeValue() {
+                                    var selectElement = document.getElementById('typeSelect');
+                                    var inputElement = document.getElementById('typeInput');
+                                    var selectedType = selectElement.options[selectElement.selectedIndex].value;
+
+                                    // Set the selected discount type into the input field
+                                    inputElement.value = selectedType;
+                                }
+                            </script>
+                        </div>
+                        <div class="col-lg-4 mb-2">
+                            <div class="form-group">
+                                <label class="form-label">Discount</label>
+                                <input type="text" name="discount" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-lg-4 mb-2">
+                            <div class="form-group">
+                                <label class="form-label">Image</label>
+                                <input type="file" name="picture" class="form-control">
+                                <span style="font-size: 10px;color: #B03838;">Max Width/Height: 1000px *
+                                    1000px
+                                    & Size: 1MB</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="solid">
+                    <div class="row">
+
+
+
+                        <div class="col-lg-4 mb-2">
+                            <div class="form-group">
+                                <label class="form-label">Purchase Price<span class="required">*</span></label>
+                                <input type="text" name="purchase_value" id="purchase_price" class="form-control"
+                                    placeholder="Total Price with Tax Amount" required=""
+                                    onchange="purchaseprice()">
+                            </div>
+                        </div>
+
+
+                        <div class="col-lg-4 mb-2">
+                            <div class="form-group">
+                                <label class="form-label">Tax<span class="required">*</span></label>
+
+                                <div class="input-group mb-3">
+                                    <input type="hidden" name="tax" id="taxInput">
+
+                                    <select name="tax_id" id="tax_id" class="form-control selectpicker"
+                                        data-live-search="true" required onchange="purchaseprice()">
+                                        <option value="">Select Tax</option>
+                                        @foreach ($tax as $t)
+                                            <option value="{{ $t->id }}"
+                                                data-percentage="{{ $t->per }}">
+                                                {{ $t->taxname }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+
+
+                                    <button class="btn btn-primary" type="button" data-bs-toggle="modal"
+                                        data-bs-target="#taxModal"> + </button>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+
+                        <div class="col-lg-4 mb-2">
+                            <div class="form-group">
+                                <label class="form-label"> Tax Type<span class="required">*</span></label>
+
+                                <select name="tax_type" id="tax_type" class="form-control"
+                                    onchange="purchaseprice()" style="height:50px;">
+                                    <option value="Inclusive">Inclusive</option>
+                                    <option value="Exclusive">Exclusive</option>
+                                </select>
+                            </div>
+                        </div>
+
+
+
+                        <div class="col-lg-4 mb-2">
+                            <div class="form-group">
+                                <label class="form-label">Price<span class="required">*</span></label>
+                                <input type="text" name="price" id="price" class="form-control"
+                                    placeholder="Price of the Item without Tax" required="" readonly
+                                    style="background-color: #ddd;">
+                            </div>
+                        </div>
+
+
+
+                        <div class="col-lg-4 mb-2">
+                            <div class="form-group">
+                                <label class="form-label">Profit Margin(%) <span class="required"
+                                        data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top"
+                                        data-bs-content="Based on Purchase Price." title="Info"><i
+                                            class="bi bi-info-circle"></i></span></label>
+                                <input type="text" name="profit_margin" id="profit_margin" class="form-control"
+                                    placeholder="Profit in %" onchange="purchaseprice()">
+                            </div>
+                        </div>
+                        <div class="col-lg-4 mb-2">
+                            <div class="form-group">
+                                <label class="form-label">Sales Price</label>
+                                <input type="text" name="sales_price" id="sales_price" class="form-control"
+                                    placeholder="Sales Price" required="">
+                            </div>
+                        </div>
+
+
+
+                        <div class="col-lg-4 mb-2">
+                            <div class="form-group">
+                                <label class="form-label">MRP <span class="required" data-bs-container="body"
+                                        data-bs-toggle="popover" data-bs-placement="top"
+                                        data-bs-content="Maximum Retail Price." title="Info"><i
+                                            class="bi bi-info-circle"></i></span></label>
+                                <input type="text" name="mrp" class="form-control"
+                                    placeholder="Maximum Retail Price">
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 mb-2">
+                            <div class="form-group">
+                                <label class="form-label">Show on app? <span class="required"
+                                        data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top"
+                                        data-bs-content="On this togle to show this product in mobile app."
+                                        title="Info"><i class="bi bi-info-circle"></i></span></label>
+                                <div class="form-check form-switch">
+                                    <input type="hidden" name="app" id="apneed" value="none_app">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="inapp_view"
+                                        name="inapp_view" value="1" onchange="showappprice()">
+
+                                </div>
+                            </div>
+                        </div>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                var apneed = document.getElementById('apneed');
+                                var toggle = document.getElementById('toggle-one');
+                                toggle.addEventListener('change', function() {
+                                    if (toggle.checked) {
+                                        apneed.value = "app";
+                                    }
+                                });
+                            });
+                        </script>
+                        <script>
+                            function showappprice() {
+
+                                var x = document.getElementById("fixed");
+                                if (x.style.display === "none") {
+                                    x.style.display = "block";
+                                } else {
+                                    x.style.display = "none";
+                                }
+
+                            }
+                        </script>
+
+                        <div id="fixed" class="col-lg-4 mb-2" style="display:none">
+                            <div class="form-group">
+                                <label class="form-label">App Price <span class="required" data-bs-container="body"
+                                        data-bs-toggle="popover" data-bs-placement="top"
+                                        data-bs-content="Price of the item in app." title="Info"><i
+                                            class="bi bi-info-circle"></i></span></label>
+                                <input type="text" name="pp_Price" class="form-control"
+                                    placeholder="Price to show on app">
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <hr class="solid">
+                    <div class="row">
+                        <div class="col-lg-4 mb-2">
+                            <div class="form-group">
+                                <input type="hidden" name="ware_house" id="warehouseInput">
+                                <label class="form-label">Warehouse<span class="required">*</span></label>
+
+                                <select name="warehouse_id" class="form-control selectpicker" data-live-search="true"
+                                    required onchange="warehousechange()" id="warehouseSelect">
+                                    <option value="">-Select-</option>
+                                    @foreach ($ware as $house)
+                                        <option value="{{ $house->id }}" data-name="{{ $house->id }}">
+                                            {{ $house->name }}
+                                        </option>
+                                    @endforeach
+
+                                </select>
+                            </div>
+                        </div>
+                        <script>
+                            function warehousechange() {
+                                var selectElement = document.getElementById('warehouseSelect');
+                                var inputElement = document.getElementById('warehouseInput');
+                                inputElement.value = selectElement.value;
+                            }
+                        </script>
+                        <div class="col-lg-4 mb-2">
+                            <div class="form-group">
+                                <label class="form-label"> Opening Stock </label>
+                                <input type="text" name="opening_stock" class="form-control" value="0">
+                            </div>
+                        </div>
+                    </div>
+                    <button name="save" type="submit" class="btn btn-primary">Save</button>
                 </div>
+                <hr class="solid">
+                <div class="card-header">
+
+                    <a></a>
+
+                </div>
+
             </div>
+
+            </form>
+
             <script>
-                document.addEventListener('DOMContentLoaded', function () {
-                    var apneed = document.getElementById('apneed');
-                    var toggle = document.getElementById('toggle-one');
-                    toggle.addEventListener('change', function () {
-                        if (toggle.checked) {
-                            apneed.value = "app";
-                        }
-                    });
+                function updatePrice() {
+                    // Get the purchase price and tax percentage
+                    var purchasePrice = parseFloat(document.getElementById('purchasePrice').value) || 0;
+                    var taxPercentage = parseFloat(document.getElementById('tax-percentage').value) || 0;
+
+                    // Calculate the price without tax
+                    var priceWithoutTax = purchasePrice / (1 + (taxPercentage / 100));
+
+                    // Update the price field
+                    document.getElementById('price').value = priceWithoutTax.toFixed(2); // Format to two decimal places
+
+                    // Set the sales price equal to the purchase price
+                    document.getElementById('sales_price').value = purchasePrice.toFixed(2); // Set sales price
+                }
+
+                // Update the price when the purchase price changes
+                document.getElementById('purchasePrice').addEventListener('input', updatePrice);
+                document.getElementById('tax-select').addEventListener('change', function() {
+                    // Update the tax percentage input when the tax select changes
+                    var selectedOption = this.options[this.selectedIndex];
+                    var percentage = selectedOption.getAttribute('data-percentage') || 0;
+                    document.getElementById('tax-percentage').value = percentage;
+                    updatePrice(); // Recalculate the price whenever tax percentage changes
                 });
-            </script>
-            <script>
-                function showappprice() {
 
-                    var x = document.getElementById("fixed");
-                    if (x.style.display === "none") {
-                        x.style.display = "block";
+
+
+                function purchaseprice() {
+                    var price = document.getElementById("price").value;
+                    // var tax_id = document.getElementById("tax_id").value;
+
+
+
+                    var taxid = document.getElementById("tax_id");
+                    var taxoption = taxid.options[taxid.selectedIndex];
+                    var taxvalue = taxoption.getAttribute('data-percentage');
+
+
+
+                    var purchase_price = document.getElementById("purchase_price").value;
+                    var tax_type = document.getElementById("tax_type").value;
+                    var profit_margin = document.getElementById("profit_margin").value;
+
+                    //alert(profit_margin);
+                    var sales_price = document.getElementById("sales_price").value;
+
+                    var tax_percentage = taxvalue;
+
+                    if (tax_type == "Exclusive") {
+
+                        var taxamount = (parseFloat(purchase_price) * (parseFloat(taxvalue) / 100));
+                        var pricewithouttax = parseFloat(purchase_price) + parseFloat(taxamount);
+                        document.getElementById("price").value = pricewithouttax;
+                        var profit_margin = document.getElementById("profit_margin").value;
+
+                        if (profit_margin) {
+                            var marginvalue = (purchase_price * profit_margin) / 100;
+                            var salePrice = parseFloat(purchase_price) + parseFloat(marginvalue);
+                        } else {
+                            var salePrice = purchase_price;
+                        }
+                        document.getElementById("sales_price").value = salePrice;
+
+
                     } else {
-                        x.style.display = "none";
+
+                        // GST Amount = Amount Including GST - (Amount Including GST / (1 + (Tax Rate/100)))
+                        // Amount Excluding GST = Amount Including GST - GST Amount
+                        var taxamount = parseFloat(purchase_price) - (parseFloat(purchase_price) / (1 + tax_percentage / 100));
+                        var pricewithouttax = parseFloat(purchase_price) - parseFloat(taxamount);
+                        document.getElementById("price").value = pricewithouttax;
+                        var profit_margin = document.getElementById("profit_margin").value;
+
+                        if (profit_margin) {
+                            var marginvalue = (purchase_price * profit_margin) / 100;
+                            var salePrice = parseFloat(purchase_price) + parseFloat(marginvalue);
+                        } else {
+                            var salePrice = purchase_price;
+                        }
+                        document.getElementById("sales_price").value = salePrice;
                     }
 
-                }
 
-            </script>
-
-            <div id="fixed" class="col-lg-4 mb-2" style="display:none">
-                <div class="form-group">
-                    <label class="form-label">App Price <span class="required"
-                            data-bs-container="body" data-bs-toggle="popover"
-                            data-bs-placement="top" data-bs-content="Price of the item in app."
-                            title="Info"><i class="bi bi-info-circle"></i></span></label>
-                    <input type="text" name="pp_Price" class="form-control"
-                        placeholder="Price to show on app">
-                </div>
-            </div>
-
-
-        </div>
-        <hr class="solid">
-        <div class="row">
-            <div class="col-lg-4 mb-2">
-                <div class="form-group">
-                    <input type="hidden" name="ware_house" id="warehouseInput">
-                    <label class="form-label">Warehouse<span class="required">*</span></label>
-
-                    <select name="warehouse_id" class="form-control selectpicker"
-                        data-live-search="true" required onchange="warehousechange()"
-                        id="warehouseSelect">
-                        <option value="">-Select-</option>
-                        @foreach ($ware as $house)
-                            <option value="{{ $house->id }}" data-name="{{$house->id}}">
-                                {{ $house->name }}
-                            </option>
-                        @endforeach
-
-                    </select>
-                </div>
-            </div>
-            <script>
-                function warehousechange() {
-                    var selectElement = document.getElementById('warehouseSelect');
-                    var inputElement = document.getElementById('warehouseInput');
-                    inputElement.value = selectElement.value;
                 }
             </script>
-            <div class="col-lg-4 mb-2">
-                <div class="form-group">
-                    <label class="form-label"> Opening Stock </label>
-                    <input type="text" name="opening_stock" class="form-control" value="0">
-                </div>
-            </div>
+
         </div>
-        <button name="save" type="submit" class="btn btn-primary">Save</button>
+        <!-- /.modal-content -->
     </div>
-    <hr class="solid">
-    <div class="card-header">
-
-        <a></a>
-
+    <!-- /.modal-dialog -->
     </div>
+    <!-- **********************MODALS***************** -->
 
-</div>
-
-</form>
-
-<script>
-        function updatePrice() {
-            // Get the purchase price and tax percentage
-            var purchasePrice = parseFloat(document.getElementById('purchasePrice').value) || 0;
-            var taxPercentage = parseFloat(document.getElementById('tax-percentage').value) || 0;
-
-            // Calculate the price without tax
-            var priceWithoutTax = purchasePrice / (1 + (taxPercentage / 100));
-
-            // Update the price field
-            document.getElementById('price').value = priceWithoutTax.toFixed(2); // Format to two decimal places
-
-            // Set the sales price equal to the purchase price
-            document.getElementById('sales_price').value = purchasePrice.toFixed(2); // Set sales price
-        }
-
-        // Update the price when the purchase price changes
-        document.getElementById('purchasePrice').addEventListener('input', updatePrice);
-        document.getElementById('tax-select').addEventListener('change', function () {
-            // Update the tax percentage input when the tax select changes
-            var selectedOption = this.options[this.selectedIndex];
-            var percentage = selectedOption.getAttribute('data-percentage') || 0;
-            document.getElementById('tax-percentage').value = percentage;
-            updatePrice(); // Recalculate the price whenever tax percentage changes
-        });
-
-
-
-        function purchaseprice() {
-            var price = document.getElementById("price").value;
-            // var tax_id = document.getElementById("tax_id").value;
-
-
-
-            var taxid = document.getElementById("tax_id");
-            var taxoption = taxid.options[taxid.selectedIndex];
-            var taxvalue = taxoption.getAttribute('data-percentage');
-
-
-
-            var purchase_price = document.getElementById("purchase_price").value;
-            var tax_type = document.getElementById("tax_type").value;
-            var profit_margin = document.getElementById("profit_margin").value;
-
-            //alert(profit_margin);
-            var sales_price = document.getElementById("sales_price").value;
-
-            var tax_percentage = taxvalue;
-
-            if (tax_type == "Exclusive") {
-
-                var taxamount = (parseFloat(purchase_price) * (parseFloat(taxvalue) / 100));
-                var pricewithouttax = parseFloat(purchase_price) + parseFloat(taxamount);
-                document.getElementById("price").value = pricewithouttax;
-                var profit_margin = document.getElementById("profit_margin").value;
-
-                if (profit_margin) {
-                    var marginvalue = (purchase_price * profit_margin) / 100;
-                    var salePrice = parseFloat(purchase_price) + parseFloat(marginvalue);
-                } else {
-                    var salePrice = purchase_price;
-                }
-                document.getElementById("sales_price").value = salePrice;
-
-
-            } else {
-
-                // GST Amount = Amount Including GST - (Amount Including GST / (1 + (Tax Rate/100)))
-                // Amount Excluding GST = Amount Including GST - GST Amount
-                var taxamount = parseFloat(purchase_price) - (parseFloat(purchase_price) / (1 + tax_percentage / 100));
-                var pricewithouttax = parseFloat(purchase_price) - parseFloat(taxamount);
-                document.getElementById("price").value = pricewithouttax;
-                var profit_margin = document.getElementById("profit_margin").value;
-
-                if (profit_margin) {
-                    var marginvalue = (purchase_price * profit_margin) / 100;
-                    var salePrice = parseFloat(purchase_price) + parseFloat(marginvalue);
-                } else {
-                    var salePrice = purchase_price;
-                }
-                document.getElementById("sales_price").value = salePrice;
-            }
-
-
-        }
-
-
-    </script>
-   
-                                                                </div>
-                                                                <!-- /.modal-content -->
-                                                            </div>
-                                                            <!-- /.modal-dialog -->
-                                                        </div>
-                                                        <!-- **********************MODALS***************** -->
-
-                                                        <!-- <div class="col-sm-3">
+    <!-- <div class="col-sm-3">
                                         <button type="button" id="pay_all" name="" class="btn bg-purple btnhold btn-block btn-flat btn-lg Alt_a" title="By Cash &amp; Save [Alt+A]">
                                             <i class="fa fa-money" aria-hidden="true"></i>
                                             Pay All
@@ -671,11 +661,11 @@
 
 
 
-                                                    </div>
-                                                </div>
-                                            </div>
+    </div>
+    </div>
+    </div>
 
-                                            
+
     <div class="content-wrapper" style="min-height: 602px">
 
         <div class="wrapper" style="height: auto">
@@ -692,7 +682,7 @@
                             <ul class="nav navbar-nav">
 
                                 <li class="">
-                                    <a href="{{route('add_sales_biller')}}"><i
+                                    <a href="{{ route('add_sales_biller') }}"><i
                                             class="fa fa-calculator text-yellow"></i><span> New
                                             Invoice</span></a>
                                 </li>
@@ -700,7 +690,8 @@
 
                             <ul class="nav navbar-nav">
                                 <li class="">
-                                    <a href="{{route('saleslist')}}"><i class="fa fa-list text-yellow"></i> <span>Sales
+                                    <a href="{{ route('saleslist') }}"><i class="fa fa-list text-yellow"></i>
+                                        <span>Sales
                                             List</span></a>
                                 </li>
 
@@ -771,7 +762,7 @@
                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                         <img src="{{ asset('pos_assets/avatar1.png') }}" class="user-image"
                                             alt="User Image" />
-                                        <span class="hidden-xs">{{Auth::user()->name}}</span>
+                                        <span class="hidden-xs">{{ Auth::user()->name }}</span>
                                     </a>
 
                                     <ul class="dropdown-menu">
@@ -780,10 +771,10 @@
                                             <img src="{{ asset('pos_assets/avatar1.png') }}" class="img-circle"
                                                 alt="User Image" />
                                             <p>
-                                                {{Auth::user()->name}}
+                                                {{ Auth::user()->name }}
                                                 <!-- <small>Year 2023</small> -->
                                                 <small class="text-uppercase text-bold">Role:
-                                                    {{Auth::user()->role}}</small>
+                                                    {{ Auth::user()->role }}</small>
                                             </p>
                                         </li>
                                         <!-- Menu Body -->
@@ -819,7 +810,8 @@
                                 <div class="modal-dialog modal-lg">
                                     <div class="modal-content">
                                         <div class="modal-header header-custom">
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <button type="button" class="close" data-dismiss="modal"
+                                                aria-label="Close">
                                                 <label aria-hidden="true">×</label>
                                             </button>
                                             <h4 class="modal-title text-center">Edit Customer</h4>
@@ -854,7 +846,8 @@
                                                                 <div class="form-group">
                                                                     <label class="form-label">Email</label>
                                                                     <input name="email" type="email"
-                                                                        class="form-control form-control-sm" id="email">
+                                                                        class="form-control form-control-sm"
+                                                                        id="email">
                                                                 </div>
                                                             </div>
                                                             <div class="col-lg-6 mb-2">
@@ -899,28 +892,30 @@
                                                             <div class="col-lg-6 mb-2">
                                                                 <div class="form-group">
                                                                     <label class="form-label">Address</label>
-                                                                    <textarea name="address" id="address"
-                                                                        class="form-control form-control-sm"></textarea>
+                                                                    <textarea name="address" id="address" class="form-control form-control-sm"></textarea>
                                                                 </div>
                                                             </div>
                                                             <div class="col-lg-6 mb-2">
                                                                 <div class="form-group">
                                                                     <label class="form-label">City</label>
-                                                                    <input type="text" name="city" id="city"
+                                                                    <input type="text" name="city"
+                                                                        id="city"
                                                                         class="form-control form-control-sm">
                                                                 </div>
                                                             </div>
                                                             <div class="col-lg-6 mb-2">
                                                                 <div class="form-group">
                                                                     <label class="form-label">State</label>
-                                                                    <input type="text" name="state" id="state"
+                                                                    <input type="text" name="state"
+                                                                        id="state"
                                                                         class="form-control form-control-sm">
                                                                 </div>
                                                             </div>
                                                             <div class="col-lg-6 mb-2">
                                                                 <div class="form-group">
                                                                     <label class="form-label">Postcode</label>
-                                                                    <input type="text" name="postcode" id="postcode"
+                                                                    <input type="text" name="postcode"
+                                                                        id="postcode"
                                                                         class="form-control form-control-sm">
                                                                 </div>
                                                             </div>
@@ -933,9 +928,11 @@
                                                                         class="form-control form-control-sm selectpicker"
                                                                         data-live-search="true"
                                                                         onchange="document.getElementById('countryInput').value = this.value;">
-                                                                        <option id="country">-SELECT COUNTRY -</option>
+                                                                        <option id="country">-SELECT COUNTRY -
+                                                                        </option>
                                                                         @foreach ($country as $c)
-                                                                            <option value="{{ $c->id }}">{{ $c->name }}
+                                                                            <option value="{{ $c->id }}">
+                                                                                {{ $c->name }}
                                                                             </option>
                                                                         @endforeach
                                                                     </select>
@@ -952,8 +949,9 @@
                                                                 <div class="form-group">
                                                                     <label class="form-label">Copy Address ?</label>
                                                                     <div class="form-check form-switch">
-                                                                        <input class="form-check-input" type="checkbox"
-                                                                            role="switch" id="same" name="same"
+                                                                        <input class="form-check-input"
+                                                                            type="checkbox" role="switch"
+                                                                            id="same" name="same"
                                                                             onchange="sameasabove()">
                                                                     </div>
                                                                 </div>
@@ -961,9 +959,7 @@
                                                             <div class="col-lg-6 mb-2">
                                                                 <div class="form-group">
                                                                     <label class="form-label">Address</label>
-                                                                    <textarea name="address_shipping"
-                                                                        id="address_shipping"
-                                                                        class="form-control form-control-sm"></textarea>
+                                                                    <textarea name="address_shipping" id="address_shipping" class="form-control form-control-sm"></textarea>
                                                                 </div>
                                                             </div>
                                                             <div class="col-lg-6 mb-2">
@@ -1003,7 +999,8 @@
                                                                         <option id="ship_country">-SELECT COUNTRY-
                                                                         </option>
                                                                         @foreach ($country as $c)
-                                                                            <option value="{{ $c->id }}">{{ $c->name }}
+                                                                            <option value="{{ $c->id }}">
+                                                                                {{ $c->name }}
                                                                             </option>
                                                                         @endforeach
                                                                     </select>
@@ -1040,13 +1037,16 @@
                                                                             document.getElementById("pricelevelInput").value = document.getElementById('pricelevelSelect').value;
                                                                         }
                                                                     </script>
-                                                                    <input type="hidden" name="price_level_type_value"
+                                                                    <input type="hidden"
+                                                                        name="price_level_type_value"
                                                                         id="pricelevelInput">
                                                                     <select name="price_level_type"
                                                                         id="pricelevelSelect"
                                                                         class="form-control form-control-sm selectpicker"
-                                                                        data-live-search="true" onchange="pricelevel()">
-                                                                        <option value="" id="price_level"></option>
+                                                                        data-live-search="true"
+                                                                        onchange="pricelevel()">
+                                                                        <option value="" id="price_level">
+                                                                        </option>
                                                                         <option value="Increase" data-tokens="0">
                                                                             Increase</option>
                                                                         <option value="Decrease" data-tokens="1">
@@ -1069,73 +1069,74 @@
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-warning"
                                                     data-dismiss="modal">Close</button>
-                                                <button type="submit" id="" class="btn btn-primary">Save</button>
+                                                <button type="submit" id=""
+                                                    class="btn btn-primary">Save</button>
                                             </div>
 
                                         </form>
-                                  
+
 
                                         <script>
-                                        $(document).ready(function() {
-                                            $('#customerEditForm').on('submit', function(e) {
-                                           
-                                                e.preventDefault();
-                                                
-                                                $.ajax({
-                                                    type: 'POST',
-                                                    url: "{{ route('customer_edit') }}",
-                                                    data: $(this).serialize(),
-                                                    success: function(response) {
-                                                        if(response.success) {
-                                                            // Show success message
-                                                            swal({
-                                                                title: "Success!",
-                                                                text: response.message,
-                                                                icon: "success",
-                                                                type: "success"
-                                                            });
-                                                            
-                                                            // Close modal
-                                                            $('#customer-modal').modal('hide');
-                                                            
-                                                            // Optionally refresh the customer select if needed
-                                                            if (typeof refreshCustomerSelect === 'function') {
-                                                                refreshCustomerSelect(response.customer);
+                                            $(document).ready(function() {
+                                                $('#customerEditForm').on('submit', function(e) {
+
+                                                    e.preventDefault();
+
+                                                    $.ajax({
+                                                        type: 'POST',
+                                                        url: "{{ route('customer_edit') }}",
+                                                        data: $(this).serialize(),
+                                                        success: function(response) {
+                                                            if (response.success) {
+                                                                // Show success message
+                                                                swal({
+                                                                    title: "Success!",
+                                                                    text: response.message,
+                                                                    icon: "success",
+                                                                    type: "success"
+                                                                });
+
+                                                                // Close modal
+                                                                $('#customer-modal').modal('hide');
+
+                                                                // Optionally refresh the customer select if needed
+                                                                if (typeof refreshCustomerSelect === 'function') {
+                                                                    refreshCustomerSelect(response.customer);
+                                                                }
                                                             }
+                                                        },
+                                                        error: function(xhr) {
+                                                            let errorMessage = 'Something went wrong!';
+
+                                                            if (xhr.responseJSON && xhr.responseJSON.message) {
+                                                                errorMessage = xhr.responseJSON.message;
+                                                            }
+
+                                                            swal({
+                                                                title: "Error!",
+                                                                text: errorMessage,
+                                                                icon: "error",
+                                                                type: "error"
+                                                            });
                                                         }
-                                                    },
-                                                    error: function(xhr) {
-                                                        let errorMessage = 'Something went wrong!';
-                                                        
-                                                        if (xhr.responseJSON && xhr.responseJSON.message) {
-                                                            errorMessage = xhr.responseJSON.message;
-                                                        }
-                                                        
-                                                        swal({
-                                                            title: "Error!",
-                                                            text: errorMessage,
-                                                            icon: "error",
-                                                            type: "error"
-                                                        });
-                                                    }
+                                                    });
                                                 });
                                             });
-                                        });
-                                        
-                                        // Optional: Function to refresh customer select if needed
-                                        function refreshCustomerSelect(customer) {
-                                            var select = $('#customer_id'); // Adjust selector as needed
-                                            var option = select.find('option[value="' + customer.id + '"]');
-                                            
-                                            if (option.length) {
-                                                option.text(customer.customer_name);
+
+                                            // Optional: Function to refresh customer select if needed
+                                            function refreshCustomerSelect(customer) {
+                                                var select = $('#customer_id'); // Adjust selector as needed
+                                                var option = select.find('option[value="' + customer.id + '"]');
+
+                                                if (option.length) {
+                                                    option.text(customer.customer_name);
+                                                }
+
+                                                // If using bootstrap-select, refresh it
+                                                if (select.hasClass('selectpicker')) {
+                                                    select.selectpicker('refresh');
+                                                }
                                             }
-                                            
-                                            // If using bootstrap-select, refresh it
-                                            if (select.hasClass('selectpicker')) {
-                                                select.selectpicker('refresh');
-                                            }
-                                        }
                                         </script>
                                         <!-- edit customer -->
 
@@ -1152,7 +1153,7 @@
 
 
 
-                            <form  method="POST" action="{{ route('addsale') }}" class="form-horizontal" >
+                            <form method="POST" action="{{ route('addsale') }}" class="form-horizontal">
 
 
                                 @csrf
@@ -1185,8 +1186,9 @@
                                                             <div class="form-group">
                                                                 <label for="discount_to_all_input">Discount</label>
                                                                 <input type="text" class="form-control"
-                                                                    id="discount_to_all_amt" name="discount_to_all_amt"
-                                                                    placeholder="" value="0" oninput="alldiscout()" />
+                                                                    id="discount_to_all_amt"
+                                                                    name="discount_to_all_amt" placeholder=""
+                                                                    value="0" oninput="alldiscout()" />
 
 
                                                             </div>
@@ -1197,7 +1199,8 @@
                                                             <div class="form-group">
                                                                 <label for="discount_type">Discount Type</label>
                                                                 <select class="form-control" id="discount_to_all_type"
-                                                                    name="discount_to_all_type" onchange="alldiscout()">
+                                                                    name="discount_to_all_type"
+                                                                    onchange="alldiscout()">
                                                                     <option value="Percentage" selected="selected">
                                                                         Percentage%
                                                                     </option>
@@ -1248,8 +1251,7 @@
                                                     <div class="col-md-12">
                                                         <div class="box-body">
                                                             <div class="form-group">
-                                                                <textarea class="form-control" id="invoice_terms"
-                                                                    name="invoice_terms"
+                                                                <textarea class="form-control" id="invoice_terms" name="invoice_terms"
                                                                     placeholder="Enter Invoice Terms and Conditions"></textarea>
                                                             </div>
                                                         </div>
@@ -1273,6 +1275,7 @@
 
 
                                 <!-- **********************MODALS END***************** -->
+
 
 
 
@@ -1347,7 +1350,8 @@
                                                             tabindex="-1" aria-hidden="true" onchange="store()">
                                                             <option value="">-Select-</option>
                                                             @foreach ($stores as $store)
-                                                                <option value="{{$store->id}}">{{$store->store_name}}
+                                                                <option value="{{ $store->id }}">
+                                                                    {{ $store->store_name }}
                                                                 </option>
                                                             @endforeach
                                                         </select>
@@ -1362,7 +1366,8 @@
                                                         data-original-title="Warehouse">
                                                         <span class="input-group-addon"><i
                                                                 class="fa fa-building text-red"></i></span>
-                                                        <select name="sales_type" id="sales_type" class="form-control"
+                                                        <select name="sales_type" id="sales_type"
+                                                            class="form-control"
                                                             onchange="store(); notax(this.value)">
                                                             <option value="0">B2B</option>
                                                             <option value="1">B2C</option>
@@ -1394,8 +1399,9 @@
                                             </div>
                                         </div>
                                         <div class="col-md-4">
-                                            <input type="text" class="form-control" data-toggle="tooltip" title=""
-                                                placeholder="Invioce Number" id="sale_code" name="sale_code" value="" />
+                                            <input type="text" class="form-control" data-toggle="tooltip"
+                                                title="" placeholder="Invioce Number" id="sale_code"
+                                                name="sale_code" value="" />
                                         </div>
                                     </div>
                                     <script>
@@ -1403,7 +1409,6 @@
                                             store();
                                             notax(value);
                                         }
-
                                     </script>
 
                                     <script>
@@ -1415,7 +1420,6 @@
                                                 checkbox.checked = true; // Unchecked otherwise
                                             }
                                         }
-
                                     </script>
                                     <script>
                                         function store() {
@@ -1432,7 +1436,7 @@
                                                         store_id: store_id,
                                                         sales_type: sales_type
                                                     },
-                                                    success: function (response) {
+                                                    success: function(response) {
                                                         var data = jQuery.parseJSON(response);
                                                         // var data = JSON.stringify(response);
                                                         // alert(data.newSalescode);
@@ -1477,20 +1481,25 @@
                                                     tabindex="-1" aria-hidden="true" onchange="customercheck()">
                                                     <option value="">-Select-</option>
                                                     @foreach ($customers as $cu)
-                                                        <option value="{{$cu->id}}" data-name="{{$cu->customer_name}}"
-                                                            data-mobile="{{$cu->mobile}}" data-email="{{$cu->email}}"
-                                                            data-gst_number="{{$cu->gst_number}}"
-                                                            data-credit="{{$cu->credit_limit}}"
-                                                            data-previous_due="{{$cu->previous_due}}"
-                                                            data-address="{{$cu->address}}" data-city="{{$cu->city}}"
-                                                            data-state="{{$cu->state}}" data-postcode="{{$cu->postcode}}"
-                                                            data-country="{{$cu->country}}"
-                                                            data-data-ship_country="{{$cu->ship_address}}"
-                                                            data-ship_state="{{$cu->ship_state}}"
-                                                            data-ship_postcode="{{$cu->ship_postcode}}"
-                                                            data-pricelevel_type="{{$cu->price_leveltype}}"
-                                                            data-price_level="{{$cu->price_level}}"
-                                                            data-tax_number="{{$cu->tax_number}}">{{$cu->customer_name}}
+                                                        <option value="{{ $cu->id }}"
+                                                            data-name="{{ $cu->customer_name }}"
+                                                            data-mobile="{{ $cu->mobile }}"
+                                                            data-email="{{ $cu->email }}"
+                                                            data-gst_number="{{ $cu->gst_number }}"
+                                                            data-credit="{{ $cu->credit_limit }}"
+                                                            data-previous_due="{{ $cu->previous_due }}"
+                                                            data-address="{{ $cu->address }}"
+                                                            data-city="{{ $cu->city }}"
+                                                            data-state="{{ $cu->state }}"
+                                                            data-postcode="{{ $cu->postcode }}"
+                                                            data-country="{{ $cu->country }}"
+                                                            data-data-ship_country="{{ $cu->ship_address }}"
+                                                            data-ship_state="{{ $cu->ship_state }}"
+                                                            data-ship_postcode="{{ $cu->ship_postcode }}"
+                                                            data-pricelevel_type="{{ $cu->price_leveltype }}"
+                                                            data-price_level="{{ $cu->price_level }}"
+                                                            data-tax_number="{{ $cu->tax_number }}">
+                                                            {{ $cu->customer_name }}
                                                         </option>
                                                     @endforeach
                                                 </select>
@@ -1550,7 +1559,6 @@
                                                     document.getElementById('price_level').value = price_level;
 
                                                 }
-
                                             </script>
                                             <div class="form-group" style="margin-bottom:0px !important;">
 
@@ -1574,13 +1582,16 @@
                                                         data: {
                                                             customer_id: customer_id
                                                         },
-                                                        success: function (response) {
+                                                        success: function(response) {
                                                             var customerdata = JSON.stringify(response);
-                                                            response.forEach(function (customerdata) {
+                                                            response.forEach(function(customerdata) {
                                                                 //alert(customerdata.id);
-                                                                document.getElementById('prevdue').innerHTML = 'Previous Due : ' + customerdata.previous_due;
-                                                                document.getElementById('creditlmt').innerHTML = 'Credit Limit : ' + customerdata.credit_limit;
-                                                                document.getElementById('customer_credit_limit').value = customerdata.credit_limit;
+                                                                document.getElementById('prevdue').innerHTML = 'Previous Due : ' + customerdata
+                                                                    .previous_due;
+                                                                document.getElementById('creditlmt').innerHTML = 'Credit Limit : ' +
+                                                                    customerdata.credit_limit;
+                                                                document.getElementById('customer_credit_limit').value = customerdata
+                                                                    .credit_limit;
 
 
                                                             });
@@ -1591,7 +1602,6 @@
 
 
                                                 }
-
                                             </script>
 
                                         </div>
@@ -1625,7 +1635,7 @@
                                                 <span class="input-group-addon pointer show_item_service"
                                                     title="New Item?" data-toggle="modal"
                                                     data-target="#add-item-model"><i
-                                                        class="fa fa-plus text-primary fa-lg" ></i></span>
+                                                        class="fa fa-plus text-primary fa-lg"></i></span>
                                             </div>
 
 
@@ -1652,9 +1662,7 @@
                                             <script>
                                                 function notax() {
                                                     if
-}
-
-
+                                                }
                                             </script>
                                         </div>
 
@@ -1691,9 +1699,14 @@
                                                         id="purchase_table">
                                                         <thead class="bg-gray">
                                                             <tr>
-                                                                <th width="20%">Item Name</th>
-                                                                {{-- <th width="5%">SL No</th> --}}
-                                                                <th width="10%">Quantity</th>
+                                                                <th width="15%">Item Name</th>
+                                                                @foreach ($logo as $lo)
+                                                                    @if ($lo->slno == 1)
+                                                                        <th width="10%">SL No</th>
+                                                                    @endif
+                                                                @endforeach
+
+                                                                <th width="5%">Quantity</th>
                                                                 <th width="8%">Unit</th>
                                                                 <th width="10%">Rate(inc.of.tax)</th>
                                                                 <th width="10%">Price/Unit</th>
@@ -1711,7 +1724,7 @@
                                                             style=" font-size: 16px;font-weight: bold;overflow: scroll;"
                                                             id="item-results">
 
-                                                           
+
                                                         </tbody>
 
                                                     </table>
@@ -1765,7 +1778,8 @@
 
                                         <div class="col-md-2 text-right">
                                             <label>Other Charges: <a class="fa fa-pencil-square-o cursor-pointer"
-                                                    data-toggle="modal" data-target="#othercharge-modal"></a></label>
+                                                    data-toggle="modal"
+                                                    data-target="#othercharge-modal"></a></label>
                                             <br />
 
                                             <input type="text" id="other_charges_amt" name="other_charge"
@@ -1791,7 +1805,8 @@
                                                             <div class="col-md-6">
                                                                 <div class="box-body">
                                                                     <div class="form-group">
-                                                                        <label for="discount_input">Other Charge</label>
+                                                                        <label for="discount_input">Other
+                                                                            Charge</label>
                                                                         <input name="other_charges_input"
                                                                             id="other_charges_input" type="text"
                                                                             class="form-control form-control-sm"
@@ -1803,7 +1818,8 @@
                                                                 <div class="box-body">
                                                                     <div class="form-group">
                                                                         <label for="discount_type">Tax</label>
-                                                                        <input type="hidden" name="tax" id="taxInput">
+                                                                        <input type="hidden" name="tax"
+                                                                            id="taxInput">
                                                                         <select name="othercharges_tax_id"
                                                                             id="othercharges_tax_id"
                                                                             class="form-control selectpicker"
@@ -1822,8 +1838,8 @@
                                                                                 placeholder="Tax Amount" readonly>
                                                                         </select>
 
-                                                                        <input type="hidden" name="tax_type" id=""
-                                                                            value="inclusive">
+                                                                        <input type="hidden" name="tax_type"
+                                                                            id="" value="inclusive">
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -1834,7 +1850,8 @@
                                                             data-dismiss="modal">
                                                             Close
                                                         </button>
-                                                        <button type="button" class="btn btn-primary discount_update"
+                                                        <button type="button"
+                                                            class="btn btn-primary discount_update"
                                                             data-dismiss="modal">
                                                             Update
                                                         </button>
@@ -1852,8 +1869,9 @@
 
                                             <span style="font-size: 19px" class="tot_disc text-bold"></span>
 
-                                            <input type="text" id="total_discount_amt" name="total_discount_amt"
-                                                class="form-control form-control-sm" readonly
+                                            <input type="text" id="total_discount_amt"
+                                                name="total_discount_amt" class="form-control form-control-sm"
+                                                readonly
                                                 style="background-color: #ddd; font-size:18px !important; text-align:right"
                                                 value="0">
                                         </div>
@@ -1872,7 +1890,7 @@
 
                                     <div class="row" style="margin-top: 10px !important;">
                                         <div class="col-md-12 text-right">
-                                         
+
                                             <div class="col-sm-3" style="float: right;">
                                                 <button type="button"
                                                     class="btn btnhold btn-success btn-block btn-flat btn-lg Alt_c"
@@ -1890,8 +1908,8 @@
                                                 <div class="modal-dialog modal-lg">
                                                     <div class="modal-content">
                                                         <div class="modal-header header-custom">
-                                                            <button type="button" class="close" data-dismiss="modal"
-                                                                aria-label="Close">
+                                                            <button type="button" class="close"
+                                                                data-dismiss="modal" aria-label="Close">
                                                                 <span aria-hidden="true">×</span>
                                                             </button>
                                                             <h4 class="modal-title text-center">Payments</h4>
@@ -1903,7 +1921,8 @@
 
 
                                                                     <div>
-                                                                        <input type="hidden" name="payment_row_count"
+                                                                        <input type="hidden"
+                                                                            name="payment_row_count"
                                                                             id="payment_row_count" value="1" />
 
                                                                         <div class="col-md-12 payments_div">
@@ -1920,7 +1939,8 @@
                                                                                                     name="paid_amount"
                                                                                                     placeholder=""
                                                                                                     onkeyup="paymet_given()" />
-                                                                                                <span id="amount_1_msg"
+                                                                                                <span
+                                                                                                    id="amount_1_msg"
                                                                                                     style="display: none"
                                                                                                     class="text-danger"></span>
                                                                                             </div>
@@ -1936,7 +1956,8 @@
                                                                                                     name="paymenttypes"
                                                                                                     class="form-control selectpicker"
                                                                                                     data-live-search="true">
-                                                                                                    <option value="">
+                                                                                                    <option
+                                                                                                        value="">
                                                                                                         -Select-
                                                                                                     </option>
                                                                                                     <option
@@ -1966,13 +1987,14 @@
                                                                                                     name="account_id"
                                                                                                     class="form-control selectpicker"
                                                                                                     data-live-search="true">
-                                                                                                    <option value="0">
+                                                                                                    <option
+                                                                                                        value="0">
                                                                                                         -None-
                                                                                                     </option>
                                                                                                     @foreach ($account as $acc)
                                                                                                         <option
-                                                                                                            value="{{$acc->id}}">
-                                                                                                            {{$acc->account_name}}
+                                                                                                            value="{{ $acc->id }}">
+                                                                                                            {{ $acc->account_name }};l
                                                                                                         </option>
                                                                                                     @endforeach
 
@@ -1991,11 +2013,7 @@
                                                                                                 <label
                                                                                                     for="payment_note_1">Payment
                                                                                                     Note</label>
-                                                                                                <textarea type="text"
-                                                                                                    class="form-control"
-                                                                                                    id="payment_note_1"
-                                                                                                    name="payment_note_1"
-                                                                                                    placeholder=""></textarea>
+                                                                                                <textarea type="text" class="form-control" id="payment_note_1" name="payment_note_1" placeholder=""></textarea>
                                                                                                 <span
                                                                                                     id="payment_note_1_msg"
                                                                                                     style="display: none"
@@ -2011,7 +2029,7 @@
                                                                         <!-- col-md-12 -->
                                                                     </div>
 
-                                                                 
+
                                                                 </div>
                                                                 <!-- col-md-9 -->
                                                                 <style>
@@ -2040,7 +2058,8 @@
                                                                                                 id="totalitemqty_1"
                                                                                                 name="totalitemqty_1"
                                                                                                 class="form-control form-control-sm diaplaylabel"
-                                                                                                readonly value="0">
+                                                                                                readonly
+                                                                                                value="0">
 
                                                                                         </span>
 
@@ -2057,7 +2076,8 @@
                                                                                                 id="total_amount_print"
                                                                                                 name="subtotal_amt_1"
                                                                                                 class="form-control form-control-sm diaplaylabel"
-                                                                                                readonly value="0">
+                                                                                                readonly
+                                                                                                value="0">
                                                                                         </span>
 
 
@@ -2078,7 +2098,8 @@
 
                                                                         <button type="submit" name="saveprint"
                                                                             class="btn btn-success btn-lg make_sale btn-lg">
-                                                                            <i class="fa fa-print"></i> Save &amp; Print
+                                                                            <i class="fa fa-print"></i> Save &amp;
+                                                                            Print
                                                                         </button>
                                                                     </div>
                                                                 </div>
@@ -2086,7 +2107,7 @@
                                                             </div>
                                                             <!-- /.modal-dialog -->
                                                         </div>
-                                                    
+
 
 
 
@@ -2154,107 +2175,212 @@
 
 
 
-  
+
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<script>
-    $(document).ready(function() {
-        // AJAX form submission
-        $('#saleform').on('submit', function (event) {
-            event.preventDefault(); // Prevent the default form submission
-            var formData = $(this).serialize(); // Get form data
+    <script>
+        $(document).ready(function() {
+            // AJAX form submission
+            $('#saleform').on('submit', function(event) {
+                event.preventDefault(); // Prevent the default form submission
+                var formData = $(this).serialize(); // Get form data
 
-            $.ajax({
-                url: '{{ route('addsale') }}',
-                method: 'POST',
-                data: formData,
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // Include CSRF token
-                },
-                success: function(response) {
-                    if (response.success) {
-                        $('html').html(response.view); // Replace body content with the new view
+                $.ajax({
+                    url: '{{ route('addsale') }}',
+                    method: 'POST',
+                    data: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr(
+                            'content') // Include CSRF token
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            $('html').html(response
+                                .view); // Replace body content with the new view
+                        }
+                    },
+                    error: function(xhr) {
+                        alert('Something went wrong');
                     }
-                },
-                error: function(xhr) {
-                    alert('Something went wrong');
-                }
+                });
             });
         });
-    });
+    </script>
+   <div class="modal fade" id="slno-modal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                    aria-label="Close">
+                    <span aria-hidden="true"></span>
+                </button>
+                <h4 class="modal-title">Set Serial Number</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="box-body">
+                            <div class="form-group">
+                                <label for="discount_input">Sl 
+                                    Number</label>
+                                  
+                                    <input type="hidden" id="item_id">
+                                <input name="slno"
+                                    id="slno" type="text"
+                                    class="form-control form-control-sm"
+                                    value="0">
+                            </div>
+                        </div>
+                    </div>
+                 
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-warning"
+                    data-dismiss="modal">
+                    Close
+                </button>
+                <button type="button"
+                    class="btn btn-primary discount_update"
+                  onclick="slupdate()">
+                    Update
+                </button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<script>
+    function slupdate() {
+        var id = document.getElementById("item_id").value; // Get the item ID
+        var slno = document.getElementById("slno").value; // Get the serial number
+
+        // Confirm the action
+        swal({
+            title: "Are you sure?",
+            text: "You want to update the serial number?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then((isConfirm) => {
+            if (isConfirm) {
+                $.ajax({
+                    url: "{{ route('slupdate') }}",
+                    method: 'POST',
+                    data: {
+                        '_token': "{{ csrf_token() }}",
+                        'id': id,
+                        'slno': slno 
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response && response.status === 200) {
+                            swal({
+                                title: "Serial Number Added !",
+                                text: response.message,
+                                type: "success",
+                                confirmButtonText: "Done",
+                                confirmButtonColor: "#1dbf73"
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            swal("Warning!", "Serial Number Added  but response was unexpected", "warning");
+                            setTimeout(() => {
+                                location.reload();
+                            }, 1500);
+                        }
+                    },
+                    error: function(xhr) {
+                        console.log('Error details:', xhr.responseText);
+                        swal("Warning!", "Serial Number   might have Added. Please refresh the page.", "warning");
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1500);
+                    }
+                });
+            }
+        });
+    }
 </script>
-
-
+    <script>
+        function updatesl(id) {
+            document.getElementById('item_id').value=id;
+        }
+    </script>
 
     <script>
-let debounceTimer;
-function searchitem() {
-    clearTimeout(debounceTimer);
-    
-    debounceTimer = setTimeout(() => {
-        const search = document.getElementById("search").value;
-        const store_id = document.getElementById("store_id").value;
+        let debounceTimer;
 
-        if (!store_id) {
-            swal("Warning!", "Please select a store", "warning");
-            return;
-        }
+        function searchitem() {
+            clearTimeout(debounceTimer);
 
-        if (search === '') {
-            document.getElementById("ui-id-1").style.display = "none";
-            return;
-        }
+            debounceTimer = setTimeout(() => {
+                const search = document.getElementById("search").value;
+                const store_id = document.getElementById("store_id").value;
 
-        document.getElementById("ui-id-1").style.display = "block";
-        document.getElementById("ui-id-1").innerHTML = `<div class="alert alert-info m-2" role="alert">
+                if (!store_id) {
+                    swal("Warning!", "Please select a store", "warning");
+                    return;
+                }
+
+                if (search === '') {
+                    document.getElementById("ui-id-1").style.display = "none";
+                    return;
+                }
+
+                document.getElementById("ui-id-1").style.display = "block";
+                document.getElementById("ui-id-1").innerHTML = `<div class="alert alert-info m-2" role="alert">
     <i class="fa fa-spinner fa-spin"></i> Searching...
 </div>`;
 
-   
-        $.ajax({
-            type: "GET",
-            url: "{{ route('search-items') }}",
-            data: {
-                search: search,
-                store_id: store_id
-            },
-            success: function (response) {
-                const results = response.map(test => {
-                    const stockColor = (test.opening_stock < 10) ? 'red' : 'green';
-                    return `
+
+                $.ajax({
+                    type: "GET",
+                    url: "{{ route('search-items') }}",
+                    data: {
+                        search: search,
+                        store_id: store_id
+                    },
+                    success: function(response) {
+                        const results = response.map(test => {
+                            const stockColor = (test.opening_stock < 10) ? 'red' : 'green';
+                            return `
                         <li class="ui-menu-item" role="presentation">
                             <a href="javascript:void(0)" onclick="additem(${test.id})" class="ui-corner-all" tabindex="-1" style="display:flex;">
                                 ${test.item_name} [ ${test.part_no} ] 
                                 <p style="color:${stockColor};">( Stock ${test.opening_stock} )</p>
                             </a>
                         </li>`;
-                }).join('');
+                        }).join('');
 
-                document.getElementById("ui-id-1").innerHTML = results || '<li>No results found</li>';
-            },
-            error: function () {
-                document.getElementById("ui-id-1").innerHTML = "Error loading items.";
-            }
-        });
-    }, 300); // Adjust the delay as necessary
-}
+                        document.getElementById("ui-id-1").innerHTML = results ||
+                            '<li>No results found</li>';
+                    },
+                    error: function() {
+                        document.getElementById("ui-id-1").innerHTML = "Error loading items.";
+                    }
+                });
+            }, 300); // Adjust the delay as necessary
+        }
 
-function additem(item_id) {
-    document.getElementById("ui-id-1").style.display = "none";
-    document.getElementById("search").value = "";
+        function additem(item_id) {
+            document.getElementById("ui-id-1").style.display = "none";
+            document.getElementById("search").value = "";
 
-    $.ajax({
-        type: "GET",
-        url: "{{ route('add-item') }}",
-        data: {
-            item_id: item_id,
-        },
-        success: function (response) {
-            const count = $(".itemRow").length;
-            let htmlRows = "";
+            $.ajax({
+                type: "GET",
+                url: "{{ route('add-item') }}",
+                data: {
+                    item_id: item_id,
+                },
+                success: function(response) {
+                    const count = $(".itemRow").length;
+                    let htmlRows = "";
 
-            response.forEach(data => {
+                    response.forEach(data => {
                         var count = $(".itemRow").length;
                         var htmlRows = "";
                         htmlRows += "<tr>";
@@ -2265,102 +2391,127 @@ function additem(item_id) {
                             '" class="form-control form-control-sm itemRow" value="' +
                             data.id +
                             '"> ' +
-                            data.item_name + ' <input type="hidden" value="' + data.item_name + '" name="item_name[]"> <input type="hidden" value="' + data.hsn_code + '" name="hsn_code[]"> <input type="hidden" value="' + data.part_no + '" name="part_no[]"> </td>';
-
-                             htmlRows += '<td><input name="item_id[]" type="hidden" id="item_id_' +
-
+                            data.item_name + ' <input type="hidden" value="' + data.item_name +
+                            '" name="item_name[]"> <input type="hidden" value="' + data.hsn_code +
+                            '" name="hsn_code[]"> <input type="hidden" value="' + data.part_no +
+                            '" name="part_no[]"> </td>';
+                    // ... existing code ...
+@foreach ($logo as $lo)
+    @if ($lo->slno == 1)
+        htmlRows +=
+            '<td><div class="input-group input-group-sm"><input type="text" class="form-control no-padding text-center min_width" value="'+data.slno+'"><span class="input-group-btn">' +
+            (data.slno == 0 ? 
+                '<button type="button" class="btn btn-default btn-flat" onclick="updatesl(' + data.id + ')" data-toggle="modal" data-target="#slno-modal"><i class="fa fa-plus text-success"></i></button>' 
+                : '') +
+            '</span></div></td>';
+    @endif
+@endforeach
+// ... existing code ...
+                        htmlRows +=
+                            '<td> <div class="input-group input-group-sm"><span class="input-group-btn"> <button type="button" onclick="decrement_qty(1,' +
                             count +
-                            '" class="form-control form-control-sm itemRow" value="' +
-                            data.id +
-                            '"> ' +
-                            data.item_name + ' <input type="hidden" value="' + data.item_name + '" name="item_name[]"> <input type="hidden" value="' + data.hsn_code + '" name="hsn_code[]"> <input type="hidden" value="' + data.part_no + '" name="part_no[]"> </td>';
-
-                        htmlRows += '<td> <div class="input-group input-group-sm"><span class="input-group-btn"> <button type="button" onclick="decrement_qty(1,' + count + ')" class="btn btn-default btn-flat"><i class="fa fa-minus text-danger"></i></button></span> <input name="sales_qty[]" type="text" id="qty_' + count + '" class="form-control no-padding text-center min_width" value="1"  >  <span class="input-group-btn">  <button type="button" onclick="increment_qty(1,' + count + ')" class="btn btn-default btn-flat"><i class="fa fa-plus text-success"></i> </button>  </span> </div> </td>';
+                            ')" class="btn btn-default btn-flat"><i class="fa fa-minus text-danger"></i></button></span> <input name="sales_qty[]" type="text" id="qty_' +
+                            count +
+                            '" class="form-control no-padding text-center min_width" value="1"  >  <span class="input-group-btn">  <button type="button" onclick="increment_qty(1,' +
+                            count +
+                            ')" class="btn btn-default btn-flat"><i class="fa fa-plus text-success"></i> </button>  </span> </div> </td>';
                         htmlRows += '<td>';
 
                         // Unit ID exists in the data, pre-select the option in the dropdown
                         htmlRows += '<select class="form-control form-control-sm"  name="unit_id[]" >';
                         htmlRows += '<option value="">select</option>';
-                        @if($unit->isNotEmpty())
+                        @if ($unit->isNotEmpty())
                             @foreach ($unit as $unitvalue)
-                                htmlRows += '<option value="{{ $unitvalue->id }}" data-name="{{ $unitvalue->unit_name }}">{{ $unitvalue->unit_name }}</option>';
+                                htmlRows +=
+                                    '<option value="{{ $unitvalue->id }}" data-name="{{ $unitvalue->unit_name }}">{{ $unitvalue->unit_name }}</option>';
                             @endforeach
                         @else
                             htmlRows += '<option value="">No units available</option>';
                         @endif
-                           
+
                         htmlRows +=
-                '<td> <input name="rate_inc_tax[]" id="rate_inc_tax_' +
-                count +
-                '" type="text" class="form-control form-control-sm" value="" oninput="cal_division(' + count + ')"></td>';
+                            '<td> <input name="rate_inc_tax[]" id="rate_inc_tax_' +
+                            count +
+                            '" type="text" class="form-control form-control-sm" value="" oninput="cal_division(' +
+                            count + ')"></td>';
 
-            htmlRows +=
-                '<td> <input name="purchase_price[]" id="purchase_price_' +
-                count +
-                '" type="text"  oninput="update_calculation(' +
-                count +
-                ')" class="form-control form-control-sm" value="' +
-                (data.purchase_price ? data.purchase_price : "00") +
-                '"></td>';
-            htmlRows += '<td> <input name="discount_amt[]" id="discount_' + count + '" type="text" oninput="cal_division(' + count + ')" class="form-control form-control-sm" value="' + (data.discount ? data.discount : "00") + '"><select class="underselect" name="item_discount_type[]" id="item_discount_type_' + count + '" onchange="cal_division(' + count + ')"><option value="percent">Percent</option><option value="fixed">Fixed</option></select></td>';
-            htmlRows += '<td>';
+                        htmlRows +=
+                            '<td> <input name="purchase_price[]" id="purchase_price_' +
+                            count +
+                            '" type="text"  oninput="update_calculation(' +
+                            count +
+                            ')" class="form-control form-control-sm" value="' +
+                            (data.purchase_price ? data.purchase_price : "00") +
+                            '"></td>';
+                        htmlRows += '<td> <input name="discount_amt[]" id="discount_' + count +
+                            '" type="text" oninput="cal_division(' + count +
+                            ')" class="form-control form-control-sm" value="' + (data.discount ? data
+                                .discount : "00") +
+                            '"><select class="underselect" name="item_discount_type[]" id="item_discount_type_' +
+                            count + '" onchange="cal_division(' + count +
+                            ')"><option value="percent">Percent</option><option value="fixed">Fixed</option></select></td>';
+                        htmlRows += '<td>';
 
-            // Tax ID does not exist, show the select dropdown
-            htmlRows += '<select name="tax_id[]" id="taxid_' + count + '" class="form-control form-control-sm" onchange="calculatetax(' + count + ');">';
-            htmlRows += '<option value="">select</option>';
-            @foreach ($tax as $taxvalue)
-                htmlRows += '<option ';
-                if (data['tax_id'] == {{$taxvalue->id}}) {
-                    htmlRows += 'selected ';
-                }
-                htmlRows += 'value="{{$taxvalue->id}}" data-id="{{$taxvalue->per}}">{{$taxvalue->taxname}}</option>';
-            @endforeach
-            htmlRows += '</select>';
-            htmlRows += '<input type="text"  id="taxInput_' + count + '"  value="' + data['tax_id'] + '" hidden>';
+                        // Tax ID does not exist, show the select dropdown
+                        htmlRows += '<select name="tax_id[]" id="taxid_' + count +
+                            '" class="form-control form-control-sm" onchange="calculatetax(' + count +
+                            ');">';
+                        htmlRows += '<option value="">select</option>';
+                        @foreach ($tax as $taxvalue)
+                            htmlRows += '<option ';
+                            if (data['tax_id'] == {{ $taxvalue->id }}) {
+                                htmlRows += 'selected ';
+                            }
+                            htmlRows +=
+                                'value="{{ $taxvalue->id }}" data-id="{{ $taxvalue->per }}">{{ $taxvalue->taxname }}</option>';
+                        @endforeach
+                        htmlRows += '</select>';
+                        htmlRows += '<input type="text"  id="taxInput_' + count + '"  value="' + data[
+                            'tax_id'] + '" hidden>';
 
-            htmlRows += '</td>';
-            htmlRows +=
-                '<td> <input name="tax_amt[]" id="tax_amt_' +
-                count +
-                '" type="text" class="form-control form-control-sm" value="00" readonly style="background-color: #ddd;"></td>';
+                        htmlRows += '</td>';
+                        htmlRows +=
+                            '<td> <input name="tax_amt[]" id="tax_amt_' +
+                            count +
+                            '" type="text" class="form-control form-control-sm" value="00" readonly style="background-color: #ddd;"></td>';
 
-            htmlRows +=
-                '<td><input type="text" id="mrp_' +
-                count +
-                '" value="' +
-                (data.mrp ? data.mrp : "00") +
-                '" name="mrp[]" class="form-control form-control-sm"></td>'
+                        htmlRows +=
+                            '<td><input type="text" id="mrp_' +
+                            count +
+                            '" value="' +
+                            (data.mrp ? data.mrp : "00") +
+                            '" name="mrp[]" class="form-control form-control-sm"></td>'
 
-            htmlRows +=
-                '<td> <input name="total_amount[]" id="total_amount_' +
-                count +
-                '" type="text" class="form-control form-control-sm total" value="' +
-                (data.purchase_price ? data.purchase_price : '000') +
-                '" readonly style="background-color: #ddd;" oninput="total_sum()" ></td>';
-            // htmlRows +=
-            //     '<td> <input name="bach_no[]" id="bach_no_' +
-            //     count +
-            //     '" type="text" class="form-control form-control-sm" ></td>';
-            // htmlRows +=
-            //     '<td> <input name="expire_date[]" id="expiry_date_' +
-            //     count +
-            //     '" type="date" class="form-control form-control-sm"></td>';
-            htmlRows +=
-                '<td> <button onclick="delete_row(' +
-                count +
-                ')" type="button" class="btn btn-danger shadow btn-xs sharp"><i class="fa fa-trash"></i></button></td></tr>';
+                        htmlRows +=
+                            '<td> <input name="total_amount[]" id="total_amount_' +
+                            count +
+                            '" type="text" class="form-control form-control-sm total" value="' +
+                            (data.purchase_price ? data.purchase_price : '000') +
+                            '" readonly style="background-color: #ddd;" oninput="total_sum()" ></td>';
+                        // htmlRows +=
+                        //     '<td> <input name="bach_no[]" id="bach_no_' +
+                        //     count +
+                        //     '" type="text" class="form-control form-control-sm" ></td>';
+                        // htmlRows +=
+                        //     '<td> <input name="expire_date[]" id="expiry_date_' +
+                        //     count +
+                        //     '" type="date" class="form-control form-control-sm"></td>';
+                        htmlRows +=
+                            '<td> <button onclick="delete_row(' +
+                            count +
+                            ')" type="button" class="btn btn-danger shadow btn-xs sharp"><i class="fa fa-trash"></i></button></td></tr>';
 
-            $("#purchase_table").append(htmlRows);
-            document.getElementById("totalitemqty").value = (parseFloat(count) + 1);
-            document.getElementById('totalitemqty_1').value = (parseFloat(count) + 1);
-            totalamtsum()
-            calculatingtax(count);
-            itemTotal(count);
-            total_sum();
-            alldiscout();
-            
+                        $("#purchase_table").append(htmlRows);
+                        document.getElementById("totalitemqty").value = (parseFloat(count) + 1);
+                        document.getElementById('totalitemqty_1').value = (parseFloat(count) + 1);
+                        totalamtsum()
+                        calculatingtax(count);
+                        itemTotal(count);
+                        total_sum();
+                        alldiscout();
 
-        });
+
+                    });
                 },
             });
 
@@ -2460,38 +2611,44 @@ function additem(item_id) {
             } else {
                 var discount_amt = discount;
             }
-            var itemtotalamt = (((parseFloat(purchase_price) * parseFloat(qty)) + parseFloat(taxamt))) - parseFloat(discount_amt);
+            var itemtotalamt = (((parseFloat(purchase_price) * parseFloat(qty)) + parseFloat(taxamt))) - parseFloat(
+                discount_amt);
             document.getElementById("total_amount_" + count).value = itemtotalamt.toFixed(3);
-          
-        
             total_sum();
             alldiscout();
             totalamtsum();
         }
 
 
+        // geting total sum
         function total_sum() {
-           
             var item_total,
                 i = 0,
                 total = 0;
-             
+
+            // Reset subtotal amount for each item
             while ((item_total = document.getElementById("total_amount_" + i++))) {
                 item_total.value = item_total.value.replace(/\\D/, "");
-                total = total + parseFloat(item_total.value);
+                total += parseFloat(item_total.value);
             }
-            i = 0;
-            subtotal = 0;
 
-            while ((price = document.getElementById("purchase_price_" + i++))) {
-                price.value = price.value.replace(/\\D/, "");
-                subtotal = subtotal + parseFloat(price.value);
+            // Calculate subtotal only once for all items
+            var subtotalamt = 0;
+            for (var j = 0; j < i; j++) {
+                var qty = document.getElementById("qty_" + j);
+                var purchase_price = document.getElementById("purchase_price_" + j);
+                if (qty && purchase_price) {
+                    subtotalamt += (parseFloat(purchase_price.value) * parseFloat(qty.value));
+                }
             }
-            document.getElementById("subtotal_amt").value = subtotal;
-           
+
+            // Set the subtotal amount
+            document.getElementById("subtotal_amt").value = subtotalamt.toFixed(
+                3); // Ensure to use the correct ID for subtotal_amt
+
+            // Set the grand total
             document.getElementById("grand_total").value = total;
-           
-             
+
             alldiscout();
         }
 
@@ -2515,7 +2672,7 @@ function additem(item_id) {
 
             } else {
                 //document.getElementById("total_amt").value = 0;
-                var subtotal_amt = document.getElementById("total_amount_").value;
+                var subtotal_amt = document.getElementById("subtotal_amt").value;
                 document.getElementById("total_amt").value = subtotal_amt;
                 total_sum();
             }
@@ -2532,22 +2689,27 @@ function additem(item_id) {
             var discount_to_all_input = document.getElementById("discount_to_all_amt").value;
             document.getElementById("total_discount_amt").value = discount_to_all_input;
             var discount_to_all_type = document.getElementById("discount_to_all_type").value;
-
-            // alert(discount_to_all_type);
+            var item_total,
+                i = 0,
+                total = 0;
+            while ((item_total = document.getElementById("total_amount_" + i++))) {
+                item_total.value = item_total.value.replace(/\\D/, "");
+                total += parseFloat(item_total.value);
+            }
 
             if (discount_to_all_type == 'Percentage') {
-                var subtotal_amt = document.getElementById("total_amount_").value;
-                var discount_peramt = ((subtotal_amt * discount_to_all_input) / 100);
+
+                var discount_peramt = ((total * discount_to_all_input) / 100);
                 document.getElementById("total_discount_amt").value = parseFloat(discount_peramt);
-                var subtotal_amt = document.getElementById("total_amount_").value;
+
                 var other_charges_amt = document.getElementById("other_charges_amt").value;
-                var total_amt = (parseFloat(subtotal_amt) + parseFloat(other_charges_amt)) - parseFloat(discount_peramt)
+                var total_amt = (parseFloat(total) + parseFloat(other_charges_amt)) - parseFloat(discount_peramt)
                 document.getElementById("grand_total").value = total_amt;
             } else {
                 document.getElementById("total_discount_amt").value = discount_to_all_input;
-                var subtotal_amt = document.getElementById("total_amount_").value;
+
                 var other_charges_amt = document.getElementById("other_charges_amt").value;
-                var total_amt = (parseFloat(subtotal_amt) + parseFloat(other_charges_amt)) - parseFloat(discount_to_all_input)
+                var total_amt = (parseFloat(total) + parseFloat(other_charges_amt)) - parseFloat(discount_to_all_input)
                 document.getElementById("grand_total").value = total_amt;
             }
 
@@ -2555,9 +2717,6 @@ function additem(item_id) {
             totalamtsum()
 
         }
-
-
-
     </script>
 
 
@@ -2584,7 +2743,6 @@ function additem(item_id) {
     </script>
 
     <script>
-
         function unitvalue(count) {
 
             var unitSelect = document.getElementById('unitselect_' + count);
@@ -2598,19 +2756,30 @@ function additem(item_id) {
             if (gotAttri === 'Ltr') {
                 document.getElementById('totallitters_' + count + '').style.display = "block";
                 document.getElementById('totalnos_' + count + '').style.display = "none";
-            }
-            else if (gotAttri === 'Nos') {
+            } else if (gotAttri === 'Nos') {
                 document.getElementById('totalnos_' + count + '').style.display = "block";
                 document.getElementById('totallitters_' + count + '').style.display = "none";
-            }
-            else {
+            } else {
                 document.getElementById('totalnos_' + count + '').style.display = "none";
                 document.getElementById('totallitters_' + count + '').style.display = "none";
             }
         }
-
     </script>
+    <!-- <script>
+        function totalamtsum() {
+            // alert();
+            var subtotal_amt = document.getElementById("subtotal_amt").value
+            var other_charges_amt = document.getElementById("other_charges_amt").value;
+            var discount_to_all_amt = document.getElementById("discount_to_all_amt").value;
+            var round_off_amt = document.getElementById("round_off_amt").value;
 
+
+
+            document.getElementById("total_amt").value = subtotal_amt;
+
+            alert(subtotal_amt);
+        }
+    </script> -->
     <script>
         function calculateTotalLiters() {
             const quantity = parseFloat(document.getElementById("quantity").value);
@@ -2688,7 +2857,7 @@ function additem(item_id) {
     <!-- Pace Loader -->
     <script src="{{ asset('pos_assets/js/pace.min.js') }}"></script>
     <!-- <script type="text/javascript">
-        $(document).ajaxStart(function () {
+        $(document).ajaxStart(function() {
             Pace.restart();
         });
     </script> -->
@@ -2726,8 +2895,8 @@ function additem(item_id) {
         var store_module = false;
     </script>
     <!-- <script src="pos_assets/js/pos.js"></script> -->
-    <ul class="ui-autocomplete ui-front ui-menu ui-widget ui-widget-content ui-corner-all" id="ui-id-1" tabindex="0"
-        style="display: none"></ul>
+    <ul class="ui-autocomplete ui-front ui-menu ui-widget ui-widget-content ui-corner-all" id="ui-id-1"
+        tabindex="0" style="display: none"></ul>
 
 </body>
 

@@ -1118,7 +1118,6 @@ class SalesController extends Controller
                 
                         $total_tax_percentage = 0;
                 
-                        // Calculate total tax percentage for the current HSN code
                         foreach ($tax_records as $tax) {
                             $count = $tax_ids->filter(function ($id) use ($tax) {
                                 return $id == $tax->id;
@@ -1134,7 +1133,7 @@ class SalesController extends Controller
                             'rate_inclusive_tax'=>$rate_inclusive_tax,
                             'total_tax_percentage' => $total_tax_percentage,
                             'sales_qty' => $sale_qty,
-                        'price_per_unit'=>  $price_per_unit
+                            'price_per_unit'=>  $price_per_unit
                         
                         ];
                     }

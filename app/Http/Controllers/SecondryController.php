@@ -14,4 +14,9 @@ class SecondryController extends Controller
         $logo = Coresetting::all();
         return view('admin.settings.secondryunitlist' , compact('secondry','logo'));
     }
+    public function secondrypost(){
+        $secondry = Secondryunit::where('created_by', Auth::user()->id);
+        $logo = Coresetting::all();
+        return view('admin.settings.secondryunitlist' , compact('secondry','logo'));
+    }
 }

@@ -61,6 +61,16 @@
                                             <input type="text" name="item_code" class="form-control" value="IT-1-0000">
                                         </div>
                                     </div>
+                                    <div class="col-lg-4 mb-2">
+                                        <div class="form-group">
+                                            <label class="form-label">Serial No<span class="required">*</span></label>
+                                    @foreach ($logo as $c )
+                                    @if($c->slno == 1)
+                                    <input name="slno"   value="1" type="text" class="form-control" id="flexSwitchCheckDefault">
+                                        </div>
+                                    </div>
+                             @endif
+                         @endforeach
                                 </div>
                                 <div class="row">
                                     <div class="col-lg-4 mb-2">

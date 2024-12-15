@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Coresetting;
+use App\Models\Item;
 use Illuminate\Http\Request;
 use App\Models\Brand;
 
@@ -92,5 +93,15 @@ class ItemsController extends Controller
     
         return back()->with('error', 'Brand not found');
     }
-    
+    public function slupdate(Request $request) {
+       
+        $slupdate = Item::find($request->input('id')); 
+        if ($slupdate) {
+ 
+            $slupdate->slno = $request->input('slno'); 
+            $slupdate->save(); 
+            return response()->json(['status' => 200, 'message' => 'Serial number updated successfully.']);
+        }
+        return response()->json(['status' => 404, 'message' => 'Item not found.']);
+    }
 }

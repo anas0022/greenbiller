@@ -21,21 +21,19 @@ class Coresetting extends Model
         'ccavenue_testmode', 'ccavenue_merchant_id', 'ccavenue_access_code', 
         'ccavenue_working_key', 'if_fixeddelivery', 'delivery_charge', 'if_handlingcharge', 
         'handling_charge', 'if_firebase', 'firebase_API', 'firebase_config', 
-        'if_onesignal', 'onesignal_id', 'onesignal_key'
+        'if_onesignal', 'onesignal_id', 'onesignal_key','slno'
     ];
 
-    /**
-     * Updates the settings if they exist; otherwise, creates a new record.
-     */
+    
     public static function updateOrCreateSettings(array $data)
     {
-        // Fetch the first record or create it with the provided data
+       
         $settings = self::first();
 
         if ($settings) {
-            $settings->update($data); // Update if record exists
+            $settings->update($data); 
         } else {
-            $settings = self::create($data); // Create new if no record exists
+            $settings = self::create($data); 
         }
 
         return $settings;

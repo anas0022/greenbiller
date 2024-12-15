@@ -21,6 +21,7 @@ class CoresettingsController extends Controller
         // Assign form data to model fields
         $coreset->site_title = $request->input('site_title');
         $coreset->version = $request->input('version');
+      
         $coreset->site_description = $request->input('site_description');
         $coreset->siteurl = $request->input('siteurl');
         $coreset->whatsapp_no = $request->input('whatsapp_no');
@@ -84,6 +85,7 @@ class CoresettingsController extends Controller
         $coreset->if_onesignal = $request->input('if_onesignal');
         $coreset->onesignal_id = $request->input('onesignal_id');
         $coreset->onesignal_key = $request->input('onesignal_key');
+        $coreset->slno = $request->input('slno');
 
         // Save the record
         if ($coreset->save()) {

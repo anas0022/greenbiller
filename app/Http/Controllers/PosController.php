@@ -41,7 +41,7 @@ class PosController extends Controller
         $items = Item::where('id', $request->input('id'))->first();
 
         $account = Account::all();
-        return view('admin.salepos.salesbill',compact('customers','stores', 'ware', 'tax', 'store', 'unit',   'account', 'brands', 'category', 'items', 'country'));
+        return view('admin.salepos.salesbill',compact('customers','stores', 'ware', 'tax', 'store', 'unit',   'account', 'brands', 'category', 'items', 'country','logo'));
 
 
 

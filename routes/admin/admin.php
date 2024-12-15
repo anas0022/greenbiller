@@ -304,5 +304,6 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'role:admin|superadm
     Route::get('/getsupplierByStore', [ReportsController::class,'getsupplierByStore'])->name('getsupplierByStore');
     Route::get('/getPurchaseByCustomer', [ReportsController::class,'getPurchaseByCustomer'])->name('getPurchaseByCustomer');
     Route::get('/seconderyunit-list',[SecondryController::class,'secondryunitlist'])->name('secondryunitlist');
+    Route::post('/slupdate',[ItemsController::class,'slupdate'])->name('slupdate');
 });
 
