@@ -32,10 +32,23 @@
                     </div>
 
                     <div class="mb-3 row">
-                        <label class="col-sm-3 col-form-label">Duration (Monthly)<span class="required">*</span></label>
+                        <label class="col-sm-3 col-form-label">Duration (days)<span class="required">*</span></label>
                         <div class="col-sm-9">
                           <input type="text" name="duration" id="" class="form-control">
 
+
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label class="col-sm-3 col-form-label">Add App<span class="required">*</span></label>
+                        <div class="col-sm-9" style="display: flex; gap:15px;">
+                            <label for="">Sale Executive App</label>
+                            <input name="executive" class="form-check-input"  value="1" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+                  
+                         <label for="">Dealers App</label>
+                         <input name="dealer" class="form-check-input"  value="1" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+                         <label for="">Customer App</label>
+                         <input name="customer" class="form-check-input"  value="1" type="checkbox" role="switch" id="flexSwitchCheckDefault">
 
                         </div>
                     </div>

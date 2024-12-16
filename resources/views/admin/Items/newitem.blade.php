@@ -61,7 +61,7 @@
                                             <input type="text" name="item_code" class="form-control" value="IT-1-0000">
                                         </div>
                                     </div>
-                                    <div class="col-lg-4 mb-2">
+                                  {{--   <div class="col-lg-4 mb-2">
                                         <div class="form-group">
                                             <label class="form-label">Serial No<span class="required">*</span></label>
                                     @foreach ($logo as $c )
@@ -70,7 +70,7 @@
                                         </div>
                                     </div>
                              @endif
-                         @endforeach
+                         @endforeach --}}
                                 </div>
                                 <div class="row">
                                     <div class="col-lg-4 mb-2">

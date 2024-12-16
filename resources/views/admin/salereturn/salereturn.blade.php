@@ -1285,8 +1285,14 @@
                                                     id="purchase_table">
                                                     <thead class="bg-gray">
                                                         <tr>
-                                                            <th width="20%">Item Name</th>
-                                                            <th width="10%">Quantity</th>
+                                                            <th width="15%">Item Name</th>
+                                                            @foreach ($logo as $lo)
+                                                                @if ($lo->slno == 1)
+                                                                    <th width="10%">SL No</th>
+                                                                @endif
+                                                            @endforeach
+
+                                                            <th width="5%">Quantity</th>
                                                             <th width="8%">Unit</th>
                                                             <th width="10%">Rate(inc.of.tax)</th>
                                                             <th width="10%">Price/Unit</th>
@@ -1577,6 +1583,110 @@
     </script>
 
 
+<div class="modal fade" id="slno-modal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                    aria-label="Close">
+                    <span aria-hidden="true"></span>
+                </button>
+                <h4 class="modal-title">Set Serial Number</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="box-body">
+                            <div class="form-group">
+                                <label for="discount_input">Sl 
+                                    Number</label>
+                                  
+                                    <input type="hidden" id="item_id">
+                                <input name="slno"
+                                    id="slno" type="text"
+                                    class="form-control form-control-sm"
+                                    value="0">
+                            </div>
+                        </div>
+                    </div>
+                 
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-warning"
+                    data-dismiss="modal">
+                    Close
+                </button>
+                <button type="button"
+                    class="btn btn-primary discount_update"
+                  onclick="slupdate()">
+                    Update
+                </button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<script>
+    function slupdate() {
+        var id = document.getElementById("item_id").value; // Get the item ID
+        var slno = document.getElementById("slno").value; // Get the serial number
+
+        // Confirm the action
+        swal({
+            title: "Are you sure?",
+            text: "You want to update the serial number?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then((isConfirm) => {
+            if (isConfirm) {
+                $.ajax({
+                    url: "{{ route('slupdate') }}",
+                    method: 'POST',
+                    data: {
+                        '_token': "{{ csrf_token() }}",
+                        'id': id,
+                        'slno': slno 
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response && response.status === 200) {
+                            swal({
+                                title: "Serial Number Added !",
+                                text: response.message,
+                                type: "success",
+                                confirmButtonText: "Done",
+                                confirmButtonColor: "#1dbf73"
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            swal("Warning!", "Serial Number Added  but response was unexpected", "warning");
+                            setTimeout(() => {
+                                location.reload();
+                            }, 1500);
+                        }
+                    },
+                    error: function(xhr) {
+                        console.log('Error details:', xhr.responseText);
+                        swal("Warning!", "Serial Number   might have Added. Please refresh the page.", "warning");
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1500);
+                    }
+                });
+            }
+        });
+    }
+</script>
+    <script>
+        function updatesl(id) {
+            document.getElementById('item_id').value=id;
+        }
+    </script>
+
     <script>
         function searchitem() {
             const search = document.getElementById("search").value;
@@ -1714,6 +1824,17 @@
                             '" name="item_name[]"> <input type="hidden" value="' + data.hsn_code +
                             '" name="hsn_code[]"> <input type="hidden" value="' + data.part_no +
                             '" name="part_no[]"> </td>';
+               
+                            @foreach ($logo as $lo)
+    @if ($lo->slno == 1)
+        htmlRows +=
+            '<td><div class="input-group input-group-sm"><input type="text" class="form-control no-padding text-center min_width" value="'+data.slno+'"><span class="input-group-btn">' +
+            (data.slno == 0 ? 
+                '<button type="button" class="btn btn-default btn-flat" onclick="updatesl(' + data.id + ')" data-toggle="modal" data-target="#slno-modal"><i class="fa fa-plus text-success"></i></button>' 
+                : '') +
+            '</span></div></td>';
+    @endif
+@endforeach
 
                         htmlRows +=
                             '<td> <div class="input-group input-group-sm"><span class="input-group-btn"> <button type="button" onclick="decrement_qty(1,' +
@@ -1939,26 +2060,36 @@
         }
 
 
-        // geting total sum
         function total_sum() {
-            // alert('haii');
-            var result = document.getElementById("subtotal_amt");
             var item_total,
                 i = 0,
                 total = 0;
+
+            // Reset subtotal amount for each item
             while ((item_total = document.getElementById("total_amount_" + i++))) {
                 item_total.value = item_total.value.replace(/\\D/, "");
-                total = total + parseFloat(item_total.value);
+                total += parseFloat(item_total.value);
             }
-            result.value = total;
-            //alert(total);
+
+            // Calculate subtotal only once for all items
+            var subtotalamt = 0;
+            for (var j = 0; j < i; j++) {
+                var qty = document.getElementById("qty_" + j);
+                var purchase_price = document.getElementById("purchase_price_" + j);
+                if (qty && purchase_price) {
+                    subtotalamt += (parseFloat(purchase_price.value) * parseFloat(qty.value));
+                }
+            }
+
+            // Set the subtotal amount
+            document.getElementById("subtotal_amt").value = subtotalamt.toFixed(
+                3); // Ensure to use the correct ID for subtotal_amt
+
+            // Set the grand total
             document.getElementById("grand_total").value = total;
-            //document.getElementById("subtotal_amt-s").innerHTML = total;
-            document.getElementById("subtotal_amt").value = total;
-            //totaldicount();
+
             alldiscout();
         }
-
 
 
         function othercharge() {
@@ -1993,33 +2124,37 @@
 
 
 
-            var discount_to_all_input = document.getElementById("discount_to_all_amt").value;
-            document.getElementById("total_discount_amt").value = discount_to_all_input;
-            var discount_to_all_type = document.getElementById("discount_to_all_type").value;
+var discount_to_all_input = document.getElementById("discount_to_all_amt").value;
+document.getElementById("total_discount_amt").value = discount_to_all_input;
+var discount_to_all_type = document.getElementById("discount_to_all_type").value;
+var item_total,
+    i = 0,
+    total = 0;
+while ((item_total = document.getElementById("total_amount_" + i++))) {
+    item_total.value = item_total.value.replace(/\\D/, "");
+    total += parseFloat(item_total.value);
+}
 
-            // alert(discount_to_all_type);
+if (discount_to_all_type == 'Percentage') {
 
-            if (discount_to_all_type == 'Percentage') {
-                var subtotal_amt = document.getElementById("subtotal_amt").value;
-                var discount_peramt = ((subtotal_amt * discount_to_all_input) / 100);
-                document.getElementById("total_discount_amt").value = parseFloat(discount_peramt);
-                var subtotal_amt = document.getElementById("subtotal_amt").value;
-                var other_charges_amt = document.getElementById("other_charges_amt").value;
-                var total_amt = (parseFloat(subtotal_amt) + parseFloat(other_charges_amt)) - parseFloat(discount_peramt)
-                document.getElementById("grand_total").value = total_amt;
-            } else {
-                document.getElementById("total_discount_amt").value = discount_to_all_input;
-                var subtotal_amt = document.getElementById("subtotal_amt").value;
-                var other_charges_amt = document.getElementById("other_charges_amt").value;
-                var total_amt = (parseFloat(subtotal_amt) + parseFloat(other_charges_amt)) - parseFloat(
-                    discount_to_all_input)
-                document.getElementById("grand_total").value = total_amt;
-            }
+    var discount_peramt = ((total * discount_to_all_input) / 100);
+    document.getElementById("total_discount_amt").value = parseFloat(discount_peramt);
 
-            document.getElementById('total_amount_print').value = document.getElementById('grand_total').value;
-            totalamtsum()
+    var other_charges_amt = document.getElementById("other_charges_amt").value;
+    var total_amt = (parseFloat(total) + parseFloat(other_charges_amt)) - parseFloat(discount_peramt)
+    document.getElementById("grand_total").value = total_amt;
+} else {
+    document.getElementById("total_discount_amt").value = discount_to_all_input;
 
-        }
+    var other_charges_amt = document.getElementById("other_charges_amt").value;
+    var total_amt = (parseFloat(total) + parseFloat(other_charges_amt)) - parseFloat(discount_to_all_input)
+    document.getElementById("grand_total").value = total_amt;
+}
+
+document.getElementById('total_amount_print').value = document.getElementById('grand_total').value;
+totalamtsum()
+
+}
     </script>
 
 

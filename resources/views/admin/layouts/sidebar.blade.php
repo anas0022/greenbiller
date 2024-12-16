@@ -19,6 +19,7 @@
 							<li><a href="{{route('salereturn_list')}}">Sales Return</a></li>
 							<li><a href="{{route('salextimate')}}">Estimate</a></li>
 							<li><a href="{{route('Purchase_order_sale')}}">Purchase Order</a></li>
+							<li><a href="#">Payment in</a></li>
 						{{-- 	<li><a href="{{route('reciept')}}">Reciept</a></li> --}}
 						</ul>
                     </li>
@@ -56,6 +57,7 @@
                             <li><a href="{{route('new_purchase')}}">New Purchase</a></li>
 							<li><a href="{{route('purchase_list')}}">Purchase List</a></li>
                      <li><a href="{{route('purchase.return.list')}}">Purchase Return List</a></li>  
+					 <li><a href="#">Payment Out</a></li>
                             </li>
                             
                         </ul>

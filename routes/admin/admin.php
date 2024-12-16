@@ -27,6 +27,7 @@ use App\Http\Controllers\SaleExtimateController;
 use App\Http\Controllers\SalePurchaseOrderController;
 use App\Http\Controllers\SalereturnController;
 use App\Http\Controllers\SecondryController;
+use App\Http\Controllers\SerialController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\store\DashController;
 use App\Http\Controllers\StoreController;
@@ -305,5 +306,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'role:admin|superadm
     Route::get('/getPurchaseByCustomer', [ReportsController::class,'getPurchaseByCustomer'])->name('getPurchaseByCustomer');
     Route::get('/seconderyunit-list',[SecondryController::class,'secondryunitlist'])->name('secondryunitlist');
     Route::post('/slupdate',[ItemsController::class,'slupdate'])->name('slupdate');
+    Route::post('/serial', [SerialController::class, 'serialpost'])->name('serial.post');
+    // In routes/web.php or routes/api.php
+Route::get('/getSerialNumbers/{id}', [SerialController::class, 'getSerialNumbers'])->name('getSerialNumbers');
 });
 

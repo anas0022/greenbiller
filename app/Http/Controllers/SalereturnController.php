@@ -38,7 +38,7 @@ class SalereturnController extends Controller
         $ware = Warehouse::all();
         $sale = Sale::latest('id')->first();
       
-      
+      $logo = Coresetting::all();
         $saleCode = $sale
             ? str_pad($sale->count_id + 1, 4, '0', STR_PAD_LEFT)
             : '0001';
@@ -74,7 +74,7 @@ class SalereturnController extends Controller
         $items = Item::where('id', $request->input('id'))->first();
 
         $account = Account::all();
-        return view('admin.salereturn.salereturn', compact('prefix', 'customers', 'tax', 'saleCode', 'storeId', 'stores', 'ware', 'taxes', 'store', 'unit', 'account', 'brands', 'category', 'items', 'country'));
+        return view('admin.salereturn.salereturn', compact('prefix', 'customers', 'tax', 'saleCode', 'storeId', 'stores', 'ware', 'taxes', 'store', 'unit', 'account', 'brands', 'category', 'items', 'country','logo'));
 
 
     }

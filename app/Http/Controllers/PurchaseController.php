@@ -19,6 +19,7 @@ use App\Models\Sale;
 use App\Models\salespayment;
 use App\Models\second_store;
 use App\Models\Second_wareitems;
+use App\Models\Serial;
 use App\Models\Store;
 use App\Models\UserList;
 use Illuminate\Support\Facades\DB;
@@ -46,6 +47,7 @@ class PurchaseController extends Controller
         $category = category::all();
         $account = Account::all();
         $country = countrysettings::all();
+        $serial = Serial::where('id');
         return view('admin.purchase.addpurchase', compact('supplier', 'account', 'ware', 'tax', 'store', 'unit', 'logo', 'category', 'brands', 'country'));
     }
     public function getSuppliers(Request $request)

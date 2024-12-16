@@ -27,6 +27,9 @@ class SubscriptionController extends Controller
 
         $subscription = new Subscription();
         $subscription->duration = $request->input('duration');
+        $subscription->customer_app = $request->input('customer');
+        $subscription->dealers_app = $request->input('dealer');
+        $subscription->executive_app = $request->input('executive');
         $subscription->store_count = $request->input('store_count');
         $subscription->rate = $request->input('rate');
         $subscription->note = $request->input('note');

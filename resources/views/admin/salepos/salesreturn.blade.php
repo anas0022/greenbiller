@@ -980,8 +980,14 @@
                                                         <thead class="bg-gray" >
 
                                                             <tr>
-                                                                <th width="20%">Item Name</th>
-                                                                <th width="10%">Quantity</th>
+                                                                <th width="15%">Item Name</th>
+                                                                @foreach ($logo as $lo)
+                                                                    @if ($lo->slno == 1)
+                                                                        <th width="10%">SL No</th>
+                                                                    @endif
+                                                                @endforeach
+
+                                                                <th width="5%">Quantity</th>
                                                                 <th width="8%">Unit</th>
                                                                 <th width="10%">Rate(inc.of.tax)</th>
                                                                 <th width="10%">Price/Unit</th>
@@ -1466,58 +1472,59 @@
             });
         });
     </script>
-
     <script>
-        function searchitem() {
-            var search = document.getElementById("search").value;
-            var store_id = document.getElementById("store_id").value;
-            // alert(store_id);
-            if (store_id == '') {
-                // alert('Please select the store');
-                swal("Warning!", "Please select a store", "warning");
-            }
-            if (search == '') {
-                document.getElementById("ui-id-1").style.display = "none";
-                document.getElementById("ui-id-1").innerHTML = response;
+        let debounceTimer;
 
-            }
-            document.getElementById("ui-id-1").style.display = "block";
-            document.getElementById("ui-id-1").innerHTML = `<div class="alert alert-info m-2" role="alert">
+        function searchitem() {
+            clearTimeout(debounceTimer);
+
+            debounceTimer = setTimeout(() => {
+                const search = document.getElementById("search").value;
+                const store_id = document.getElementById("store_id").value;
+
+                if (!store_id) {
+                    swal("Warning!", "Please select a store", "warning");
+                    return;
+                }
+
+                if (search === '') {
+                    document.getElementById("ui-id-1").style.display = "none";
+                    return;
+                }
+
+                document.getElementById("ui-id-1").style.display = "block";
+                document.getElementById("ui-id-1").innerHTML = `<div class="alert alert-info m-2" role="alert">
     <i class="fa fa-spinner fa-spin"></i> Searching...
 </div>`;
 
-            $.ajax({
-                type: "GET",
-                url: "{{ route('search-items') }}",
-                data: {
-                    search: search,
-                    store_id: store_id
-                },
-                success: function(response) {
-                    //  var data = jQuery.parseJSON(response)
-                    // var json_obj = JSON.parse(response);
-                    var test = JSON.stringify(response);
-                    //  var data = JSON.parse(response);
-                    // alert(test);
-                    document.getElementById("ui-id-1").style.display = "block";
-                    document.getElementById("ui-id-1").innerHTML = "";
 
-                    response.forEach(function(test) {
-                        var searchs = document.getElementById("ui-id-1").innerHTML;
-                                    
-                        var stockColor = (test.opening_stock < 10) ? 'red' : 'green';
-                   
-                   document.getElementById("ui-id-1").innerHTML = searchs + 
-                       '<li class="ui-menu-item" role="presentation" >' +
-                       '<a href="javascript:void(0)" onclick="additem(' + test.id + ')" class="ui-corner-all" tabindex="-1" style="display:flex; ">' + 
-                       test.item_name + ' [ ' + test.part_no + ' ] ' + 
-                        '<p style="color:' + stockColor + ';"  id="stock">( Stock ' + test.opening_stock + ' )</p>' + 
-                       '</a></li>';
+                $.ajax({
+                    type: "GET",
+                    url: "{{ route('search-items') }}",
+                    data: {
+                        search: search,
+                        store_id: store_id
+                    },
+                    success: function(response) {
+                        const results = response.map(test => {
+                            const stockColor = (test.opening_stock < 10) ? 'red' : 'green';
+                            return `
+                        <li class="ui-menu-item" role="presentation">
+                            <a href="javascript:void(0)" onclick="additem(${test.id})" class="ui-corner-all" tabindex="-1" style="display:flex;">
+                                ${test.item_name} [ ${test.part_no} ] 
+                                <p style="color:${stockColor};">( Stock ${test.opening_stock} )</p>
+                            </a>
+                        </li>`;
+                        }).join('');
 
-                    });
-
-                },
-            });
+                        document.getElementById("ui-id-1").innerHTML = results ||
+                            '<li>No results found</li>';
+                    },
+                    error: function() {
+                        document.getElementById("ui-id-1").innerHTML = "Error loading items.";
+                    }
+                });
+            }, 300); // Adjust the delay as necessary
         }
 
         function additem(item_id) {
@@ -1526,14 +1533,15 @@
 
             $.ajax({
                 type: "GET",
-                // url: "controller/add-item-purchase.php",
                 url: "{{ route('add-item') }}",
                 data: {
                     item_id: item_id,
                 },
                 success: function(response) {
-                    var data = JSON.stringify(response);
-                    response.forEach(function(data) {
+                    const count = $(".itemRow").length;
+                    let htmlRows = "";
+
+                    response.forEach(data => {
                         var count = $(".itemRow").length;
                         var htmlRows = "";
                         htmlRows += "<tr>";
@@ -1548,7 +1556,18 @@
                             '" name="item_name[]"> <input type="hidden" value="' + data.hsn_code +
                             '" name="hsn_code[]"> <input type="hidden" value="' + data.part_no +
                             '" name="part_no[]"> </td>';
-
+                    // ... existing code ...
+@foreach ($logo as $lo)
+    @if ($lo->slno == 1)
+        htmlRows +=
+            '<td><div class="input-group input-group-sm"><input type="text" class="form-control no-padding text-center min_width" value="'+data.slno+'"><span class="input-group-btn">' +
+            (data.slno == 0 ? 
+                '<button type="button" class="btn btn-default btn-flat" onclick="updatesl(' + data.id + ')" data-toggle="modal" data-target="#slno-modal"><i class="fa fa-plus text-success"></i></button>' 
+                : '') +
+            '</span></div></td>';
+    @endif
+@endforeach
+// ... existing code ...
                         htmlRows +=
                             '<td> <div class="input-group input-group-sm"><span class="input-group-btn"> <button type="button" onclick="decrement_qty(1,' +
                             count +
@@ -1560,7 +1579,7 @@
                         htmlRows += '<td>';
 
                         // Unit ID exists in the data, pre-select the option in the dropdown
-                        htmlRows += '<select class="form-control form-control-sm"  name="unit_id[]">';
+                        htmlRows += '<select class="form-control form-control-sm"  name="unit_id[]" >';
                         htmlRows += '<option value="">select</option>';
                         @if ($unit->isNotEmpty())
                             @foreach ($unit as $unitvalue)
@@ -1599,7 +1618,7 @@
                             '" class="form-control form-control-sm" onchange="calculatetax(' + count +
                             ');">';
                         htmlRows += '<option value="">select</option>';
-                        @foreach ($taxes as $taxvalue)
+                        @foreach ($tax as $taxvalue)
                             htmlRows += '<option ';
                             if (data['tax_id'] == {{ $taxvalue->id }}) {
                                 htmlRows += 'selected ';
@@ -1652,6 +1671,7 @@
                         total_sum();
                         alldiscout();
 
+
                     });
                 },
             });
@@ -1673,34 +1693,28 @@
             total_sum();
             alldiscout();
         }
-     
-             //increacing quantity
-             function increment_qty(value, count) {
+        //increacing quantity
+        function increment_qty(value, count) {
             var qty = document.getElementById("qty_" + count).value;
             document.getElementById("qty_" + count).value = parseFloat(qty) + value;
-             cal_division(count);
-            totalamtsum();
-             calculatingtax(count);
-             itemTotal(count);
-             update_calculation(count);
-             total_sum();
-             alldiscout();
-
-            
-                    
+            cal_division(count);
+            calculatingtax(count);
+            itemTotal(count);
+            update_calculation(count);
+            total_sum();
+            alldiscout();
         }
         //decrecing quantity
         function decrement_qty(value, count) {
             var qty = document.getElementById("qty_" + count).value;
             if (qty != 0) {
                 document.getElementById("qty_" + count).value = parseFloat(qty) - value;
-                 cal_division(count);
-                totalamtsum();
-                 calculatingtax(count);
-                 itemTotal(count);
-                 update_calculation(count);
-                 total_sum();
-                 alldiscout();
+                cal_division(count);
+                calculatingtax(count);
+                itemTotal(count);
+                update_calculation(count);
+                total_sum();
+                alldiscout();
             }
 
         }
@@ -1710,12 +1724,9 @@
             var taxid = document.getElementById("taxid_" + counts);
             var taxoption = taxid.options[taxid.selectedIndex];
             var taxvalue = taxoption.getAttribute('data-id');
-
             var qty = document.getElementById("qty_" + counts).value;
             var purchase_price = (parseFloat(amt_inc_tax) * 100) / (100 + parseFloat(taxvalue));
             document.getElementById("purchase_price_" + counts).value = purchase_price;
-           
-           
             calculatingtax(counts);
             itemTotal(counts);
             total_sum();
@@ -1772,21 +1783,33 @@
 
         // geting total sum
         function total_sum() {
-            // alert('haii');
-            var result = document.getElementById("subtotal_amt");
             var item_total,
                 i = 0,
                 total = 0;
+
+            // Reset subtotal amount for each item
             while ((item_total = document.getElementById("total_amount_" + i++))) {
                 item_total.value = item_total.value.replace(/\\D/, "");
-                total = total + parseFloat(item_total.value);
+                total += parseFloat(item_total.value);
             }
-            result.value = total;
-            //alert(total);
+
+            // Calculate subtotal only once for all items
+            var subtotalamt = 0;
+            for (var j = 0; j < i; j++) {
+                var qty = document.getElementById("qty_" + j);
+                var purchase_price = document.getElementById("purchase_price_" + j);
+                if (qty && purchase_price) {
+                    subtotalamt += (parseFloat(purchase_price.value) * parseFloat(qty.value));
+                }
+            }
+
+            // Set the subtotal amount
+            document.getElementById("subtotal_amt").value = subtotalamt.toFixed(
+                3); // Ensure to use the correct ID for subtotal_amt
+
+            // Set the grand total
             document.getElementById("grand_total").value = total;
-            //document.getElementById("subtotal_amt-s").innerHTML = total;
-            document.getElementById("subtotal_amt").value = total;
-            //totaldicount();
+
             alldiscout();
         }
 
@@ -1827,23 +1850,27 @@
             var discount_to_all_input = document.getElementById("discount_to_all_amt").value;
             document.getElementById("total_discount_amt").value = discount_to_all_input;
             var discount_to_all_type = document.getElementById("discount_to_all_type").value;
-
-            // alert(discount_to_all_type);
+            var item_total,
+                i = 0,
+                total = 0;
+            while ((item_total = document.getElementById("total_amount_" + i++))) {
+                item_total.value = item_total.value.replace(/\\D/, "");
+                total += parseFloat(item_total.value);
+            }
 
             if (discount_to_all_type == 'Percentage') {
-                var subtotal_amt = document.getElementById("subtotal_amt").value;
-                var discount_peramt = ((subtotal_amt * discount_to_all_input) / 100);
+
+                var discount_peramt = ((total * discount_to_all_input) / 100);
                 document.getElementById("total_discount_amt").value = parseFloat(discount_peramt);
-                var subtotal_amt = document.getElementById("subtotal_amt").value;
+
                 var other_charges_amt = document.getElementById("other_charges_amt").value;
-                var total_amt = (parseFloat(subtotal_amt) + parseFloat(other_charges_amt)) - parseFloat(discount_peramt)
+                var total_amt = (parseFloat(total) + parseFloat(other_charges_amt)) - parseFloat(discount_peramt)
                 document.getElementById("grand_total").value = total_amt;
             } else {
                 document.getElementById("total_discount_amt").value = discount_to_all_input;
-                var subtotal_amt = document.getElementById("subtotal_amt").value;
+
                 var other_charges_amt = document.getElementById("other_charges_amt").value;
-                var total_amt = (parseFloat(subtotal_amt) + parseFloat(other_charges_amt)) - parseFloat(
-                    discount_to_all_input)
+                var total_amt = (parseFloat(total) + parseFloat(other_charges_amt)) - parseFloat(discount_to_all_input)
                 document.getElementById("grand_total").value = total_amt;
             }
 
@@ -1956,54 +1983,7 @@
         document.getElementById('total_amount_print').value =
             document.getElementById('grand_total').value;
     </script>
- 
- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
- <script>
-     function deleteItem(saleId) {
-         Swal.fire({
-             title: "Are you sure?",
-             text: "You won't be able to revert this!",
-             icon: "warning",
-             showCancelButton: true,
-             confirmButtonColor: "#3085d6",
-             cancelButtonColor: "#d33",
-             confirmButtonText: "Yes, delete it!"
-         }).then((result) => {
-             if (result.isConfirmed) {
-                 $.ajax({
-                     url: "{{ route('item_delete_salebill') }}", // URL to send the request to
-                     type: "POST",
-                     data: {
-                         _token: "{{ csrf_token() }}",
-                         id: saleId
-                     },
-                     success: function(response) {
-                         Swal.fire({
-                             title: "Deleted!",
-                             text: response.message,
-                             icon: "success",
-                             confirmButtonText: "OK"
-                         }).then(() => {
-                            
-                             $('#deleteForm-' + saleId).closest('tr').remove();
-                             window.location.reload();
-                         });
-                     },
-                     error: function(xhr) {
-                         Swal.fire({
-                             title: "Error!",
-                             text: "An error occurred while deleting the item. Please try again.",
-                             icon: "error",
-                             confirmButtonText: "OK"
-                         });
-                     }
-                 });
-             }
-         });
-     }
- </script>
- 
     <!-- Bootstrap 3.3.6 -->
     <script src="{{ asset('pos_assets/js/bootstrap.min.js') }}"></script>
 

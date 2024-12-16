@@ -2395,7 +2395,7 @@
                             '" name="item_name[]"> <input type="hidden" value="' + data.hsn_code +
                             '" name="hsn_code[]"> <input type="hidden" value="' + data.part_no +
                             '" name="part_no[]"> </td>';
-                    // ... existing code ...
+               
 @foreach ($logo as $lo)
     @if ($lo->slno == 1)
         htmlRows +=
@@ -2406,7 +2406,7 @@
             '</span></div></td>';
     @endif
 @endforeach
-// ... existing code ...
+
                         htmlRows +=
                             '<td> <div class="input-group input-group-sm"><span class="input-group-btn"> <button type="button" onclick="decrement_qty(1,' +
                             count +
