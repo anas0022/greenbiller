@@ -591,7 +591,7 @@
             <!-- /.modal-content -->
         </div>
     </div>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
     <script>
         $('#item_post').on('submit', function(e) {
             e.preventDefault();
@@ -842,8 +842,6 @@
 
                                                     },
                                                 });
-
-
 
 
 
@@ -1462,7 +1460,7 @@
                                                 <div class="modal-content">
                                                     <div class="modal-header bg-primary text-white">
                                                         <h4 class="modal-title">Set Serial Number</h4>
-                                                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                                        <button type="button" class="close text-white" data-bs-dismiss="modal" aria-label="Close">
                                                             <span aria-hidden="true">&times;</span>
                                                         </button>
                                                     </div>
@@ -1478,13 +1476,14 @@
                                                                             <button class="btn btn-primary form-control-sm" style="height:50px; margin-left: 8px;" onclick="addSerialNumber()" type="button">Add</button>
                                                                         </div>
                                                                     </div>
-                                                                    <div id="serialNumbersList"></div> <!-- Container to display added serial numbers -->
+                                                                    <div id="serialNumbersList"></div> 
+                                                                     <div id="selectedSerialInputs"></div><!-- Container to display added serial numbers -->
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <div class="modal-footer">
-                                                        <button type="button" class="btn btn-warning" data-dismiss="modal">Close</button>
+                                                        <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Close</button>
                                                         <button type="button" class="btn btn-primary discount_update" onclick="slupdate()">Save</button>
                                                     </div>
                                                 </div>
@@ -1492,47 +1491,89 @@
                                             </div>
                                             <!-- /.modal-dialog -->
                                         </div>
-                                        <div id="selectedSerialInputs"></div><script>
+                                       
+                                        <script>
                                             document.addEventListener('DOMContentLoaded', function() {
-                                                // Load checkbox states from localStorage
+                                      
                                                 const checkboxes = document.querySelectorAll('.form-check-input');
                                                 checkboxes.forEach(checkbox => {
                                                     const serialNumber = checkbox.id.replace('checkbox_', ''); // Extract serial number from checkbox ID
                                                     if (localStorage.getItem(serialNumber) === 'true') {
-                                                        checkbox.checked = true; // Set checkbox to checked if stored value is true
+                                                        checkbox.checked = true; 
                                                         updateSerialInput(checkbox, serialNumber); // Update input fields accordingly
+                                                    } else if(location.load){
+                                                        checkbox.checked = false; // Ensure checkbox is unchecked if stored value is false
                                                     }
                                                 });
                                             });
                                             
                                             function updateSerialInput(checkbox, serialNumber) {
                                                 const selectedSerialInputs = document.getElementById('selectedSerialInputs');
-                                            
+                                                const checkinputs = document.querySelectorAll('#checkinput'); // Reference to the specific input field
+                                                // Reference to the specific input field
+                                                
                                                 if (checkbox.checked) {
+                                                    // Hide the checkbox
+                                                    checkbox.style.display = "none";
+                                                 
+                                               
+                                                    
+                                                    const associatedInput = checkbox.nextElementSibling; // Assuming the input is the next sibling
+                                                    if (associatedInput) {
+                                                        associatedInput.style.display = "none"; // Hide the associated input
+                                                    }
                                                     // Create a new input field for the selected serial number
                                                     const newInput = document.createElement('input');
                                                     newInput.type = 'text';
                                                     newInput.value = serialNumber;
                                                     newInput.className = 'form-control form-control-sm mb-2'; // Add classes for styling
                                                     newInput.readOnly = true; // Make it read-only
-                                            
-                                                    // Append the new input field to the container
-                                                    selectedSerialInputs.appendChild(newInput);
-                                            
-                                                    // Store the checkbox state in localStorage
-                                                    localStorage.setItem(serialNumber, 'true');
+                                        
+
+                                                    // Create a container for the input and button
+                                                    const container = document.createElement('div');
+                                                    container.className = 'd-flex align-items-center mb-2'; // Flexbox for alignment
+
+                                                    const newbutton = document.createElement('button');
+                                                    newbutton.type = 'button';
+                                                    newbutton.className = 'btn btn-danger btn-sm ms-2'; // Updated class for styling
+                                                    newbutton.innerText = 'Remove'; // Set button text
+                                                    newbutton.onclick = function() { // Add click event to remove input
+                                                        selectedSerialInputs.removeChild(container); // Remove the container
+                                                        checkbox.style.display = "block"; // Show the checkbox again
+                                                        checkbox.checked = false; // Uncheck the checkbox
+                                                        checkinput.style.display = "block"; // Show the specific input field again
+                                                        delete checkedStates[serialNumber]; // Remove from checkedStates
+                                                    };
+
+                                                    // Append input and button to the container
+                                                    container.appendChild(newInput);
+                                                    container.appendChild(newbutton);
+                                                    selectedSerialInputs.appendChild(container); // Append the container to the main element
+                                                    // Store the checked state
+                                                    checkedStates[serialNumber] = true;
+
+                                                    // Show the specific input field when the button is clicked
+                                                    newbutton.onclick = function() {
+                                                        checkinput.style.display = "block"; // Show the specific input field
+                                                    };
                                                 } else {
-                                                    // If unchecked, remove the corresponding input field
+                                                    // If unchecked, remove the corresponding container
                                                     const inputs = selectedSerialInputs.getElementsByTagName('input');
                                                     for (let i = 0; i < inputs.length; i++) {
                                                         if (inputs[i].value === serialNumber) {
-                                                            selectedSerialInputs.removeChild(inputs[i]);
-                                                            break; // Exit the loop after removing the input
+                                                            // Remove the entire container that holds the input and button
+                                                            selectedSerialInputs.removeChild(inputs[i].parentElement); // Remove the container
+                                                            break; // Exit the loop after removing the container
                                                         }
+                                                        const associatedInput = checkbox.nextElementSibling; // Assuming the input is the next sibling
+                                                    if (associatedInput) {
+                                                        associatedInput.style.display = "block"; // Hide the associated input
+                                                    }
                                                     }
                                             
-                                                    // Update the checkbox state in localStorage
-                                                    localStorage.setItem(serialNumber, 'false');
+                                                    // Update the checked state
+                                                    checkedStates[serialNumber] = false;
                                                 }
                                             }
                                             </script>
@@ -1557,7 +1598,8 @@
                                                     },
                                                     success: function(response) {
                                                         console.log("Response: ", response); // Log the response
-                                                        $('#slno-modal').modal('hide'); // Hide the modal after saving
+                                                        var modal = bootstrap.Modal.getInstance(document.getElementById('slno-modal'));
+                                                        modal.hide();
                                                         // Optionally update the UI here
                                                     },
                                                     error: function(xhr) {
@@ -1598,22 +1640,13 @@
                                                 const checkboxes = document.querySelectorAll('.form-check-input');
                                                 checkboxes.forEach(checkbox => {
                                                     const serialNumber = checkbox.id.replace('checkbox_', ''); // Extract serial number from checkbox ID
-                                                    if (localStorage.getItem(serialNumber) === 'true') {
-                                                        checkbox.checked = true; // Set checkbox to checked if stored value is true
-                                                        updateSerialInput(checkbox, serialNumber); // Update input fields accordingly
-                                                    } else {
-                                                        checkbox.checked = false; // Ensure checkbox is unchecked if not stored
-                                                    }
+                                                    checkbox.checked = checkedStates[serialNumber] || false; // Restore the checked state
                                                 });
                                             });
 
                                             // When the modal is closed, save the checkbox states
                                             $('#slno-modal').on('hidden.bs.modal', function () {
-                                                const checkboxes = document.querySelectorAll('.form-check-input');
-                                                checkboxes.forEach(checkbox => {
-                                                    const serialNumber = checkbox.id.replace('checkbox_', ''); // Extract serial number from checkbox ID
-                                                    localStorage.setItem(serialNumber, checkbox.checked); // Store the checkbox state in localStorage
-                                                });
+                                                // Do not uncheck the checkboxes, just hide the modal
                                             });
 
                                             // AJAX call to fetch serial numbers
@@ -1622,7 +1655,8 @@
                                                 document.getElementById("serialNumbersList").innerHTML = '';
                                                 document.getElementById('item_id').value = id;
                                                 document.getElementById("slno").value = ''; // Clear the input field
-                                                $('#slno-modal').modal('show'); // Show the modal
+                                                var modal = new bootstrap.Modal(document.getElementById('slno-modal'));
+                                                modal.show();
 
                                                 // Fetch serial numbers for the item
                                                 $.ajax({
@@ -1632,10 +1666,20 @@
                                                         response.forEach(function(serial) {
                                                             var serialNumberDiv = document.createElement("div");
                                                             serialNumberDiv.className = "serial-number-item mb-2";
-                                                            var isChecked = localStorage.getItem(serial.slno) === 'true'; // Check localStorage for the checkbox state
+                                                            // Add item_id to the checkbox and input IDs
+                                                            var isChecked = localStorage.getItem(`${id}_${serial.slno}`) === 'true';
                                                             serialNumberDiv.innerHTML = `
-                                                                <input type="checkbox" class="form-check-input" id="checkbox_${serial.slno}" onchange="updateSerialInput(this, '${serial.slno}')" ${isChecked ? 'checked' : ''}> 
-                                                                <input type="text" value="${serial.slno}" class="form-control form-control-sm" readonly style="width:70%;">
+                                                                <input type="checkbox" 
+                                                                       class="form-check-input" 
+                                                                       id="checkbox_${id}_${serial.slno}" 
+                                                                       onchange="updateSerialInput(this, '${serial.slno}', ${id})" 
+                                                                       ${isChecked ? 'checked' : ''}> 
+                                                                <input type="text" 
+                                                                       value="${serial.slno}" 
+                                                                       class="form-control form-control-sm" 
+                                                                       readonly 
+                                                                       style="width:70%;" 
+                                                                       id="checkinput_${id}_${serial.slno}">
                                                             `;
                                                             document.getElementById("serialNumbersList").appendChild(serialNumberDiv);
                                                         });
@@ -1708,7 +1752,7 @@
             calculateTotal();
         }
     </script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 
 
     <script>
@@ -2038,13 +2082,38 @@
 
         //delecting a row in table
         function delete_row(count) {
-            document.getElementById("purchase_table").deleteRow(count);
-            var count = $(".itemRow").length;
-            var totalitemqty = parseFloat(count) - 1;
-            document.getElementById("totalitemqty").innerHTML = totalitemqty;
-
-
+            var table = document.getElementById("purchase_table");
+            var rows = table.getElementsByTagName("tr");
+            var rowToDelete = null;
+            
+            // Find the row with the matching item ID
+            for (var i = 1; i < rows.length; i++) {
+                var itemIdInput = rows[i].querySelector(`#item_id_${count}`);
+                if (itemIdInput) {
+                    rowToDelete = rows[i];
+                    break;
+                }
+            }
+            
+            if (rowToDelete) {
+                // Remove the row
+                rowToDelete.remove();
+                
+                // Reindex remaining rows
+                reindexRows();
+                
+                // Update total item count
+                var remainingRows = $(".itemRow").length;
+                document.getElementById("totalitemqty").value = remainingRows;
+                
+                // Recalculate all totals
             total_sum();
+                updateGSTTotals();
+                
+                // Update any other dependent calculations
+                calculatingtax(count);
+                itemTotal(count);
+            }
         }
         //increacing quantity
         function increment_qty(value, count) {
@@ -2138,7 +2207,7 @@
             var item_discount_type = document.getElementById("item_discount_type_" + count).value;
 
             if (item_discount_type == 'percent') {
-                var discount_amt = ((parseFloat(purchase_price) * parseFloat(discount)) / 100);
+                var discount_amt = ((parseFloat(purchase_price) * parseFloat(discount))) / 100;
             } else {
                 var discount_amt = discount;
             }
@@ -2297,7 +2366,17 @@
             });
         }
     </script>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 @endsection
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize all modals
+    var modals = document.querySelectorAll('.modal');
+    modals.forEach(function(modal) {
+        new bootstrap.Modal(modal);
+    });
+});
+</script>
