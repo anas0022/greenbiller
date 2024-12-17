@@ -2,10 +2,19 @@
 
 @section('title', 'Home Page')
 
+<!-- Add these CSS and JS files -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <link href="{{ asset('admin-assets/css/toast.css') }}" rel="stylesheet">
 <script src="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.min.js"></script>
 <link rel="stylesheet" type="text/css" href="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.css">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+<!-- Add after your existing CSS/JS includes at the top -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+
 @section('content')
 
     @if ($errors->any())
@@ -187,14 +196,17 @@
                                         <div class="input-group mb-3">
                                             <select id="storeSelect" name="store_id" class="form-control selectpicker"
                                                 data-live-search="true" required onchange="store()">
-                                                <option value="">-Select-</option>
-                                                @foreach ($store as $s)
-                                                    <option value="{{ $s->id }}" data-name="{{ $s->id }}">
-                                                        {{ $s->store_name }}
-                                                    </option>
-
-                                                @endforeach
-                                            </select>
+                                                <select id="storeSelect" name="store_id"
+                                                    class="form-control selectpicker" data-live-search="true" required
+                                                    onchange="store()">
+                                                    <option value="">-Select-</option>
+                                                    @foreach ($store as $s)
+                                                        <option value="{{ $s->id }}"
+                                                            data-name="{{ $s->id }}">
+                                                            {{ $s->store_name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
                                         </div>
 
 
@@ -530,9 +542,7 @@
                                             class="form-control selectpicker" data-live-search="true">
                                             <option value="">-Select-</option>
                                             @foreach ($store as $c)
-
                                                 <option value="{{ $c->id }}">{{ $c->store_name }}</option>
-
                                             @endforeach
                                         </select>
                                     </div>
@@ -554,9 +564,7 @@
                                             class="form-control selectpicker" data-live-search="true">
                                             <option value="">-Select-</option>
                                             @foreach ($country as $c)
-
                                                 <option value="{{ $c->id }}">{{ $c->name }}</option>
-
                                             @endforeach
                                         </select>
                                     </div>
@@ -591,6 +599,90 @@
             <!-- /.modal-content -->
         </div>
     </div>
+
+   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    @foreach ($serialsGrouped as $itemId => $serials)
+        <div class="custom-popup" id="popup-{{ $itemId }}">
+            <div class="popup-content">
+                <div class="popup-header bg-primary">
+                    <h4 class="popup-title">Set Serial Number - Item {{ $itemId }}</h4>
+                    <button type="button" class="popup-close" onclick="closePopup({{ $itemId }})">&times;</button>
+                    </div>
+                <div class="popup-body">
+                                    <div class="form-group">
+                                        <label for="discount_input">Sl Number</label>
+                                        <div class="input-group" style="display: flex; align-items: center;">
+                            <input type="hidden" name="item_id" id="item_id_{{ $itemId }}" value="{{ $itemId }}">
+                                            <input name="slno" id="slno_{{ $itemId }}" type="text"
+                                   class="form-control form-control-sm" value="0" 
+                                   style="height:50px;" onkeypress="return (event.key!='Enter')">
+                                            <button class="btn btn-primary form-control-sm"
+                                                style="height:50px; margin-left: 8px;"
+                                    onclick="addSerialNumber({{ $itemId }})" type="button">Add</button>
+                                        </div>
+                                    </div>
+
+                                    <div id="serialList_{{ $itemId }}">
+                        @foreach($serials as $serial)
+                                            <div class="serial-item d-flex align-items-center mb-2">
+                                                <div class="form-check me-2">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        id="serial_{{ $itemId }}_{{ $serial->id }}"
+                                                        value="{{ $serial->id }}">
+                                                </div>
+                                                <input type="text" class="form-control form-control-sm"
+                                                    value="{{ $serial->slno }}" readonly>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                <div class="popup-footer">
+                    <button type="button" class="btn btn-warning" onclick="closePopup({{ $itemId }})">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="slupdate({{ $itemId }})">Save</button>
+                </div>
+            </div>
+        </div>
+    @endforeach
+
+    <style>
+        .item-serials {
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            height: 100%;
+        }
+
+        .item-serials .card-header {
+            padding: 0.5rem 1rem;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .item-serials .card-body {
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .serial-item {
+            border-bottom: 1px solid #eee;
+            padding: 5px;
+        }
+
+        .serial-item:last-child {
+            border-bottom: none;
+        }
+
+        #serialList {
+            margin: 0 -0.5rem;
+        }
+
+        .serial-item input[type="text"] {
+            background-color: #f8f9fa;
+        }
+
+        .form-check-input {
+            cursor: pointer;
+        }
+    </style>
 
     <script>
         $('#item_post').on('submit', function(e) {
@@ -718,6 +810,7 @@
 
         }
     </script>
+    <!-- Update your script order at the top -->
 
 
     <div>
@@ -766,49 +859,49 @@
 
                                             </div>
                                         </div><!--
-                                        <script>
-                                            /*   function selectall() {
-                                                                                      function storeselect();
-                                                                                      function supplierselect();
-                                                                                  } */
-                                            function supplierselect() {
-                                                var storeId = document.getElementById('store_id').value;
+                                            <script>
+                                                /*   function selectall() {
+                                                                                                                                  function storeselect();
+                                                                                                                                  function supplierselect();
+                                                                                                                              } */
+                                                function supplierselect() {
+                                                    var storeId = document.getElementById('store_id').value;
 
 
-                                                if (!storeId) {
-                                                    alert('Please select a store.');
-                                                    return;
-                                                }
-
-                                                $.ajax({
-                                                    url: `{{ route('get.suppliers') }}`,
-                                                    type: 'GET',
-                                                    data: {
-                                                        store_id: storeId
-                                                    },
-                                                    alert('dfs');
-                                                    success: function(data) {
-                                                        alert(data)
-                                                        var data = jQuery.parseJSON(data);
-                                                        let supplierSelect = $('#suppSelect');
-                                                        supplierSelect.empty();
-                                                        supplierSelect.append('<option value="">-Select-</option>');
-
-
-                                                        $.each(data, function(key, supplier) {
-                                                            supplierSelect.append(
-                                                                `<option value="${supplier.id}">${supplier.name}</option>`);
-                                                        });
-
-                                                        supplierSelect.selectpicker('refresh');
-                                                    },
-                                                    error: function(xhr) {
-                                                        console.error("Error occurred:", xhr.responseText);
-                                                        alert('An error occurred while fetching suppliers.');
+                                                    if (!storeId) {
+                                                        alert('Please select a store.');
+                                                        return;
                                                     }
-                                                });
-                                            }
-                                        </script> -->
+
+                                                    $.ajax({
+                                                        url: `{{ route('get.suppliers') }}`,
+                                                        type: 'GET',
+                                                        data: {
+                                                            store_id: storeId
+                                                        },
+                                                        alert('dfs');
+                                                        success: function(data) {
+                                                            alert(data)
+                                                            var data = jQuery.parseJSON(data);
+                                                            let supplierSelect = $('#suppSelect');
+                                                            supplierSelect.empty();
+                                                            supplierSelect.append('<option value="">-Select-</option>');
+
+
+                                                            $.each(data, function(key, supplier) {
+                                                                supplierSelect.append(
+                                                                    `<option value="${supplier.id}">${supplier.name}</option>`);
+                                                            });
+
+                                                            supplierSelect.selectpicker('refresh');
+                                                        },
+                                                        error: function(xhr) {
+                                                            console.error("Error occurred:", xhr.responseText);
+                                                            alert('An error occurred while fetching suppliers.');
+                                                        }
+                                                    });
+                                                }
+                                            </script> -->
                                         <script>
                                             function storeselect() {
 
@@ -859,10 +952,8 @@
                                                         required id="suppSelect" name="supplier_id">
                                                         <option value="">-Select-</option>
                                                         @foreach ($supplier as $su)
-
                                                             <option value="{{ $su->id }}">{{ $su->name }}
                                                             </option>
-
                                                         @endforeach
                                                     </select>
                                                     <button class="btn btn-primary" type="button" data-bs-toggle="modal"
@@ -871,18 +962,18 @@
                                             </div>
                                         </div>
                                         <!--     <div class="col-lg-6 mb-2">
-                                            <div class="form-group">
-                                                <label class="form-label">Purchase Code <span
-                                                        class="required">*</span></label>
-                                                <div class="input-group mb-3" style="display:flex; gap:10px;">
-                                                    <input type="text" name="prefix" id="prefix"
-                                                        class="form-control form-control-sm" readonly>
-                                                    <input type="text" name="purchase_code" id="purchase_code"
-                                                        class="form-control form-control-sm" readonly>
+                                                <div class="form-group">
+                                                    <label class="form-label">Purchase Code <span
+                                                            class="required">*</span></label>
+                                                    <div class="input-group mb-3" style="display:flex; gap:10px;">
+                                                        <input type="text" name="prefix" id="prefix"
+                                                            class="form-control form-control-sm" readonly>
+                                                        <input type="text" name="purchase_code" id="purchase_code"
+                                                            class="form-control form-control-sm" readonly>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-     -->
+         -->
 
 
                                         <script>
@@ -903,7 +994,7 @@
                                                 var inputElement = document.getElementById('suppInput'); // Input field
 
                                                 var selectedValue = selectElement.options[selectElement.selectedIndex]
-                                                .value; // Get selected value (supplier name)
+                                                    .value; // Get selected value (supplier name)
 
                                                 // Set the selected supplier name into the input field
                                                 inputElement.value = selectedValue;
@@ -1030,40 +1121,40 @@
                                                                     @if ($lo->slno == 1)
                                                                         <th rowspan="2"
                                                                             style="width:5%; color: #fff !important;"
-                                                                            class="itemRow">SlNo</th>
-                                                                            @endif
-                                                                            @endforeach
-                                                                        <th rowspan="2"
-                                                                            style="width:15%;min-width: 180px;color: #fff !important;">
-                                                                            Quantity</th>
-                                                                        <th rowspan="2"
-                                                                            style="width:10%;color: #fff !important;">
-                                                                            Price/Unit</th>
-                                                                        <th rowspan="2"
-                                                                            style="width:10%;color: #fff !important;">
-                                                                            Unit</th>
-                                                                        <th rowspan="2"
-                                                                            style="width:10%;color: #fff !important;">
-                                                                            Discount</th>
-                                                                        <th rowspan="2"
-                                                                            style="width:7.5%;color: #fff !important;">
-                                                                            Tax
-                                                                        </th>
-                                                                        <th rowspan="2"
-                                                                            style="width:7.5%;color: #fff !important;">
-                                                                            Tax Amount</th>
-                                                                        <th rowspan="2"
-                                                                            style="width:7.5%;color: #fff !important;">
-                                                                            Total
-                                                                            Amount</th>
-                                                                        <!--     <th rowspan="2" style="width:10%;color: #fff !important;"> Bach
-                                                                No</th>
-                                                            <th rowspan="2" style="width:7.5%;color: #fff !important;">
-                                                                Expire Date</th> -->
-                                                                        <th rowspan="2"
-                                                                            style="width:5%;color: #fff !important;">
-                                                                            Action
-                                                                        </th>
+                                                                           >SlNo</th>
+                                                                    @endif
+                                                                @endforeach
+                                                                <th rowspan="2"
+                                                                    style="width:15%;min-width: 180px;color: #fff !important;">
+                                                                    Quantity</th>
+                                                                <th rowspan="2"
+                                                                    style="width:10%;color: #fff !important;">
+                                                                    Price/Unit</th>
+                                                                <th rowspan="2"
+                                                                    style="width:10%;color: #fff !important;">
+                                                                    Unit</th>
+                                                                <th rowspan="2"
+                                                                    style="width:10%;color: #fff !important;">
+                                                                    Discount</th>
+                                                                <th rowspan="2"
+                                                                    style="width:7.5%;color: #fff !important;">
+                                                                    Tax
+                                                                </th>
+                                                                <th rowspan="2"
+                                                                    style="width:7.5%;color: #fff !important;">
+                                                                    Tax Amount</th>
+                                                                <th rowspan="2"
+                                                                    style="width:7.5%;color: #fff !important;">
+                                                                    Total
+                                                                    Amount</th>
+                                                                <!--     <th rowspan="2" style="width:10%;color: #fff !important;"> Bach
+                                                                    No</th>
+                                                                <th rowspan="2" style="width:7.5%;color: #fff !important;">
+                                                                    Expire Date</th> -->
+                                                                <th rowspan="2"
+                                                                    style="width:5%;color: #fff !important;">
+                                                                    Action
+                                                                </th>
                                                             </tr>
                                                         </thead>
                                                         <tbody id="item-results">
@@ -1454,261 +1545,151 @@
                                             </div>
 
                                         </div>
-                                        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
-                                        <div class="modal fade" id="slno-modal" tabindex="-1">
-                                            <div class="modal-dialog" style="max-width: 400px;"> <!-- Set a custom max-width -->
-                                                <div class="modal-content">
-                                                    <div class="modal-header bg-primary text-white">
-                                                        <h4 class="modal-title">Set Serial Number</h4>
-                                                        <button type="button" class="close text-white" data-bs-dismiss="modal" aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <div class="row">
-                                                            <div class="col-md-12">
-                                                                <div class="box-body">
-                                                                    <div class="form-group">
-                                                                        <label for="discount_input">Sl Number</label>
-                                                                        <div class="input-group" style="display: flex; align-items: center;">
-                                                                            <input type="hidden" name="item_id" id="item_id" >
-                                                                            <input name="slno" id="slno" type="text" class="form-control form-control-sm" value="0" style="height:50px;"       onkeypress="return (event.key!='Enter')">
-                                                                            <button class="btn btn-primary form-control-sm" style="height:50px; margin-left: 8px;" onclick="addSerialNumber()" type="button">Add</button>
+                                        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                                      
+                                        @foreach ($serialsGrouped as $itemId => $serials)
+                                            <div class="modal fade" id="slno-modal-{{ $itemId }}" tabindex="-1">
+                                                <div class="modal-dialog" style="max-width: 400px;">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header bg-primary text-white">
+                                                            <h4 class="modal-title">Set Serial Number</h4>
+                                                            <button type="button" class="close text-white"
+                                                                data-bs-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div class="row">
+                                                                <div class="col-md-12">
+                                                                    <div class="box-body">
+                                                                        <div class="form-group">
+                                                                            <label for="discount_input">Sl Number</label>
+                                                                            <div class="input-group"
+                                                                                style="display: flex; align-items: center;">
+                                                                                <input type="hidden" name="item_id"
+                                                                                    id="item_id_{{ $itemId }}"
+                                                                                    value="{{ $itemId }}">
+                                                                                <input name="slno"
+                                                                                    id="slno_{{ $itemId }}"
+                                                                                    type="text"
+                                                                                    class="form-control form-control-sm"
+                                                                                    value="0" style="height:50px;"
+                                                                                    onkeypress="return (event.key!='Enter')">
+                                                                                <button
+                                                                                    class="btn btn-primary form-control-sm"
+                                                                                    style="height:50px; margin-left: 8px;"
+                                                                                    onclick="addSerialNumber({{ $itemId }})"
+                                                                                    type="button">Add</button>
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <div id="serialList_{{ $itemId }}">
+                                                                            @foreach ($serials as $serial)
+                                                                                <div
+                                                                                    class="serial-item d-flex align-items-center mb-2">
+                                                                                    <div class="form-check me-2">
+                                                                                        <input class="form-check-input"
+                                                                                            type="checkbox"
+                                                                                            id="serial_{{ $itemId }}_{{ $serial->id }}"
+                                                                                            value="{{ $serial->id }}">
+                                                                                    </div>
+                                                                                    <input type="text"
+                                                                                        class="form-control form-control-sm"
+                                                                                        value="{{ $serial->slno }}"
+                                                                                        readonly>
+                                                                                </div>
+                                                                            @endforeach
                                                                         </div>
                                                                     </div>
-                                                                    <div id="serialNumbersList"></div> 
-                                                                     <div id="selectedSerialInputs"></div><!-- Container to display added serial numbers -->
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Close</button>
-                                                        <button type="button" class="btn btn-primary discount_update" onclick="slupdate()">Save</button>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-warning"
+                                                                onclick="closeModal({{ $itemId }})" 
+                                                                data-bs-dismiss="modal">Close</button>
+                                                            <button type="button" class="btn btn-primary discount_update"
+                                                                onclick="slupdate({{ $itemId }})">Save</button>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <!-- /.modal-content -->
                                             </div>
-                                            <!-- /.modal-dialog -->
-                                        </div>
-                                       
+                                        @endforeach
                                         <script>
-                                            document.addEventListener('DOMContentLoaded', function() {
-                                      
-                                                const checkboxes = document.querySelectorAll('.form-check-input');
+                                            function openSerialModal(itemId) {
+                                                try {
+                                                    console.log('Opening modal for item:', itemId);
+                                                    const modalElement = document.getElementById(`slno-modal-${itemId}`);
+
+                                                    if (!modalElement) {
+                                                        console.error('Modal element not found for item:', itemId);
+                                                        return;
+                                                    }
+
+                                                    // Make sure Bootstrap is available
+                                                    if (typeof bootstrap === 'undefined') {
+                                                        console.error('Bootstrap is not loaded');
+                                                        return;
+                                                    }
+
+                                                    const modal = new bootstrap.Modal(modalElement);
+                                                    modal.show();
+                                                } catch (error) {
+                                                    console.error('Error showing modal:', error);
+                                                }
+                                            }
+
+                                            function addSerialNumber(itemId) {
+                                                const slnoInput = document.getElementById(`slno_${itemId}`);
+                                                const serialList = document.getElementById(`serialList_${itemId}`);
+
+                                                const serialNumber = slnoInput.value;
+                                                if (serialNumber) {
+                                                    const serialDiv = document.createElement('div');
+                                                    serialDiv.className = 'serial-item d-flex align-items-center mb-2';
+                                                    serialDiv.innerHTML = `
+            <div class="form-check me-2">
+                <input class="form-check-input" type="checkbox" value="${serialNumber}">
+            </div>
+            <input type="text" class="form-control form-control-sm" value="${serialNumber}" readonly>
+        `;
+                                                    serialList.appendChild(serialDiv);
+                                                    slnoInput.value = ''; // Clear input after adding
+                                                }
+                                            }
+
+                                            function slupdate(itemId) {
+                                                const selectedSerials = [];
+                                                const checkboxes = document.querySelectorAll(`#serialList_${itemId} input[type="checkbox"]:checked`);
+
                                                 checkboxes.forEach(checkbox => {
-                                                    const serialNumber = checkbox.id.replace('checkbox_', ''); // Extract serial number from checkbox ID
-                                                    if (localStorage.getItem(serialNumber) === 'true') {
-                                                        checkbox.checked = true; 
-                                                        updateSerialInput(checkbox, serialNumber); // Update input fields accordingly
-                                                    } else if(location.load){
-                                                        checkbox.checked = false; // Ensure checkbox is unchecked if stored value is false
-                                                    }
+                                                    selectedSerials.push(checkbox.value);
                                                 });
-                                            });
-                                            
-                                            function updateSerialInput(checkbox, serialNumber) {
-                                                const selectedSerialInputs = document.getElementById('selectedSerialInputs');
-                                                const checkinputs = document.querySelectorAll('#checkinput'); // Reference to the specific input field
-                                                // Reference to the specific input field
-                                                
-                                                if (checkbox.checked) {
-                                                    // Hide the checkbox
-                                                    checkbox.style.display = "none";
-                                                 
-                                               
-                                                    
-                                                    const associatedInput = checkbox.nextElementSibling; // Assuming the input is the next sibling
-                                                    if (associatedInput) {
-                                                        associatedInput.style.display = "none"; // Hide the associated input
-                                                    }
-                                                    // Create a new input field for the selected serial number
-                                                    const newInput = document.createElement('input');
-                                                    newInput.type = 'text';
-                                                    newInput.value = serialNumber;
-                                                    newInput.className = 'form-control form-control-sm mb-2'; // Add classes for styling
-                                                    newInput.readOnly = true; // Make it read-only
-                                        
 
-                                                    // Create a container for the input and button
-                                                    const container = document.createElement('div');
-                                                    container.className = 'd-flex align-items-center mb-2'; // Flexbox for alignment
+                                                console.log(`Selected serials for item ${itemId}:`, selectedSerials);
 
-                                                    const newbutton = document.createElement('button');
-                                                    newbutton.type = 'button';
-                                                    newbutton.className = 'btn btn-danger btn-sm ms-2'; // Updated class for styling
-                                                    newbutton.innerText = 'Remove'; // Set button text
-                                                    newbutton.onclick = function() { // Add click event to remove input
-                                                        selectedSerialInputs.removeChild(container); // Remove the container
-                                                        checkbox.style.display = "block"; // Show the checkbox again
-                                                        checkbox.checked = false; // Uncheck the checkbox
-                                                        checkinput.style.display = "block"; // Show the specific input field again
-                                                        delete checkedStates[serialNumber]; // Remove from checkedStates
-                                                    };
-
-                                                    // Append input and button to the container
-                                                    container.appendChild(newInput);
-                                                    container.appendChild(newbutton);
-                                                    selectedSerialInputs.appendChild(container); // Append the container to the main element
-                                                    // Store the checked state
-                                                    checkedStates[serialNumber] = true;
-
-                                                    // Show the specific input field when the button is clicked
-                                                    newbutton.onclick = function() {
-                                                        checkinput.style.display = "block"; // Show the specific input field
-                                                    };
-                                                } else {
-                                                    // If unchecked, remove the corresponding container
-                                                    const inputs = selectedSerialInputs.getElementsByTagName('input');
-                                                    for (let i = 0; i < inputs.length; i++) {
-                                                        if (inputs[i].value === serialNumber) {
-                                                            // Remove the entire container that holds the input and button
-                                                            selectedSerialInputs.removeChild(inputs[i].parentElement); // Remove the container
-                                                            break; // Exit the loop after removing the container
-                                                        }
-                                                        const associatedInput = checkbox.nextElementSibling; // Assuming the input is the next sibling
-                                                    if (associatedInput) {
-                                                        associatedInput.style.display = "block"; // Hide the associated input
-                                                    }
-                                                    }
-                                            
-                                                    // Update the checked state
-                                                    checkedStates[serialNumber] = false;
-                                                }
-                                            }
-                                            </script>
-                                        <script>
-                                            function slupdate() {
-                                           
-                                                var itemId = document.getElementById('item_id').value; // Get the item ID
-                                                var serialNumbers = Array.from(document.querySelectorAll('input[name="slno[]"]')).map(input => input.value); // Get all serial numbers
-                                        
-                                                if (serialNumbers.length === 0) {
-                                                    alert("Please add at least one serial number."); // Alert if no serial numbers are added
-                                                    return;
-                                                }
-                                        
-                                                $.ajax({
-                                                    url: "{{ route('serial.post') }}", // URL for the AJAX request
-                                                    method: 'POST',
-                                                    data: {
-                                                        '_token': "{{ csrf_token() }}", // CSRF token for security
-                                                        'item_id': itemId,
-                                                        'slno': serialNumbers
-                                                    },
-                                                    success: function(response) {
-                                                        console.log("Response: ", response); // Log the response
-                                                        var modal = bootstrap.Modal.getInstance(document.getElementById('slno-modal'));
-                                                        modal.hide();
-                                                        // Optionally update the UI here
-                                                    },
-                                                    error: function(xhr) {
-                                                        console.error(xhr.responseText); // Log any errors
-                                                    }
-                                                });
-                                            }
-                                        </script>
-                                        <script>
-                                            function addSerialNumber() {
-                                                var slnoInput = document.getElementById("slno");
-                                                var slnoValue = slnoInput.value;
-
-                                                if (slnoValue) {
-                                                    // Create a new div to hold the serial number
-                                                    var serialNumberDiv = document.createElement("div");
-                                                    serialNumberDiv.className = "serial-number-item mb-2"; // Added margin-bottom for spacing
-                                                    serialNumberDiv.innerHTML = `
-                                                        <input type="text" name="slno[]" value="${slnoValue}" class="form-control form-control-sm" readonly>
-                                                        <button type="button" class="btn btn-danger btn-sm" onclick="removeSerialNumber(this)">Remove</button>
-                                                    `;
-                                                    document.getElementById("serialNumbersList").appendChild(serialNumberDiv);
-
-                                                    // Clear the input field
-                                                    slnoInput.value = "";
-                                                } else {
-                                                    alert("Please enter a serial number.");
-                                                }
-                                            }
-
-                                            function removeSerialNumber(button) {
-                                                // Remove the serial number item
-                                                button.parentElement.remove();
-                                            }
-
-                                            // When the modal is opened, load the checkbox states
-                                            $('#slno-modal').on('show.bs.modal', function () {
-                                                const checkboxes = document.querySelectorAll('.form-check-input');
-                                                checkboxes.forEach(checkbox => {
-                                                    const serialNumber = checkbox.id.replace('checkbox_', ''); // Extract serial number from checkbox ID
-                                                    checkbox.checked = checkedStates[serialNumber] || false; // Restore the checked state
-                                                });
-                                            });
-
-                                            // When the modal is closed, save the checkbox states
-                                            $('#slno-modal').on('hidden.bs.modal', function () {
-                                                // Do not uncheck the checkboxes, just hide the modal
-                                            });
-
-                                            // AJAX call to fetch serial numbers
-                                            function openSerialModal(id) {
-                                                // Clear previous serial numbers
-                                                document.getElementById("serialNumbersList").innerHTML = '';
-                                                document.getElementById('item_id').value = id;
-                                                document.getElementById("slno").value = ''; // Clear the input field
-                                                var modal = new bootstrap.Modal(document.getElementById('slno-modal'));
-                                                modal.show();
-
-                                                // Fetch serial numbers for the item
-                                                $.ajax({
-                                                    url: `{{ route('getSerialNumbers', '') }}/${id}`, // Use Laravel's route helper
-                                                    type: 'GET',
-                                                    success: function(response) {
-                                                        response.forEach(function(serial) {
-                                                            var serialNumberDiv = document.createElement("div");
-                                                            serialNumberDiv.className = "serial-number-item mb-2";
-                                                            // Add item_id to the checkbox and input IDs
-                                                            var isChecked = localStorage.getItem(`${id}_${serial.slno}`) === 'true';
-                                                            serialNumberDiv.innerHTML = `
-                                                                <input type="checkbox" 
-                                                                       class="form-check-input" 
-                                                                       id="checkbox_${id}_${serial.slno}" 
-                                                                       onchange="updateSerialInput(this, '${serial.slno}', ${id})" 
-                                                                       ${isChecked ? 'checked' : ''}> 
-                                                                <input type="text" 
-                                                                       value="${serial.slno}" 
-                                                                       class="form-control form-control-sm" 
-                                                                       readonly 
-                                                                       style="width:70%;" 
-                                                                       id="checkinput_${id}_${serial.slno}">
-                                                            `;
-                                                            document.getElementById("serialNumbersList").appendChild(serialNumberDiv);
-                                                        });
-                                                    },
-                                                    error: function(xhr) {
-                                                        console.error(xhr.responseText);
-                                                        alert('An error occurred while fetching serial numbers.');
-                                                    }
-                                                });
+                                                // Close the modal
+                                                const modal = bootstrap.Modal.getInstance(document.getElementById(`slno-modal-${itemId}`));
+                                                modal.hide();
                                             }
                                         </script>
                                         <style>
-                                            .modal-content {
-                                                border-radius: 8px; /* Rounded corners for the modal */
-                                                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+                                            .serial-item {
+                                                border-bottom: 1px solid #eee;
+                                                padding: 5px 0;
                                             }
 
-                                            .modal-header {
-                                                border-bottom: none; /* Remove default border */
+                                            .serial-item:last-child {
+                                                border-bottom: none;
                                             }
 
-                                            .modal-footer {
-                                                border-top: none; /* Remove default border */
-                                            }
-
-                                            .serial-number-item {
-                                                display: flex;
-                                                justify-content: space-between; /* Space between input and button */
-                                                align-items: center; /* Center align items */
+                                            #serialList {
+                                                max-height: 300px;
+                                                overflow-y: auto;
+                                                padding: 10px;
+                                                border: 1px solid #ddd;
+                                                border-radius: 4px;
+                                                margin-top: 10px;
                                             }
                                         </style>
                                         <script>
@@ -1744,6 +1725,7 @@
             var qty = document.getElementById('qty_').value;
             var unit_cost = document.getElementById('unit_cost_').value;
             var total = document.getElementById('total_amount_');
+
 
 
 
@@ -1890,16 +1872,16 @@
                             data.item_name +
                             "</td>";
 
-                            @foreach ($logo as $lo)
-                             @if ($lo->slno == 1)
-                        htmlRows +=
-                            '<td style="display:flex; justify-content:center; align-items:center; font-size:20px; cursor:pointer;">' +
-                            '<i class="bi bi-list-task" onclick="openSerialModal(' +  data.id  + ')" data-toggle="modal"></i>' +
-                            '</td>';
-                        @endif
+                      @foreach ($logo as $lo)
+                            @if ($lo->slno == 1)
+                                htmlRows +=
+                                    '<td style="display:flex; justify-content:center; align-items:center; font-size:20px; cursor:pointer;">' +
+                                    '<i class="bi bi-list-task" onclick="openPopup(' + data.id + ')" style="cursor:pointer;"></i>' +
+                                    '</td>';
+                            @endif
                         @endforeach
-                        htmlRows +=
-
+                      
+                    htmlRows += 
                             '<td><div class="input-group input-group-sm mb-3"><button type="button" onclick="decrement_qty(1,' +
                             count +
                             ')" class="input-group-text">-</button><input name="purchase_qty[]" id="qty_' +
@@ -2071,7 +2053,6 @@
                         calculatingtax(count);
                         itemTotal(count);
                         total_sum();
-                        totalamtsum();
 
                     });
                 },
@@ -2085,7 +2066,7 @@
             var table = document.getElementById("purchase_table");
             var rows = table.getElementsByTagName("tr");
             var rowToDelete = null;
-            
+
             // Find the row with the matching item ID
             for (var i = 1; i < rows.length; i++) {
                 var itemIdInput = rows[i].querySelector(`#item_id_${count}`);
@@ -2094,22 +2075,22 @@
                     break;
                 }
             }
-            
+
             if (rowToDelete) {
                 // Remove the row
                 rowToDelete.remove();
-                
+
                 // Reindex remaining rows
                 reindexRows();
-                
+
                 // Update total item count
                 var remainingRows = $(".itemRow").length;
                 document.getElementById("totalitemqty").value = remainingRows;
-                
+
                 // Recalculate all totals
-            total_sum();
+                total_sum();
                 updateGSTTotals();
-                
+
                 // Update any other dependent calculations
                 calculatingtax(count);
                 itemTotal(count);
@@ -2212,8 +2193,8 @@
                 var discount_amt = discount;
             }
 
-            var itemtotalamt = (((parseFloat(purchase_price) * parseFloat(qty)) + parseFloat(taxamt))) - parseFloat(
-                discount_amt);
+            var itemtotalamt = (((parseFloat(purchase_price) * parseFloat(qty)) + parseFloat(taxamt) - parseFloat(
+                discount_amt)));
 
             document.getElementById("total_amount_" + count).value = itemtotalamt.toFixed(3);
 
@@ -2366,17 +2347,291 @@
             });
         }
     </script>
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 @endsection
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize all modals
-    var modals = document.querySelectorAll('.modal');
-    modals.forEach(function(modal) {
-        new bootstrap.Modal(modal);
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize all modals
+        var modals = document.querySelectorAll('.modal');
+        modals.forEach(function(modal) {
+            new bootstrap.Modal(modal);
+        });
     });
+</script>
+
+<script>
+    // Initialize modals when document is ready
+    document.addEventListener('DOMContentLoaded', function() {
+        try {
+            // Make sure Bootstrap is loaded
+            if (typeof bootstrap === 'undefined') {
+                console.error('Bootstrap is not loaded');
+                return;
+            }
+
+            // Initialize all modals
+            var modals = document.querySelectorAll('.modal');
+            modals.forEach(function(modalElement) {
+                new bootstrap.Modal(modalElement, {
+                    keyboard: true,
+                    backdrop: true
+                });
+            });
+
+            console.log('Modals initialized successfully');
+        } catch (error) {
+            console.error('Error initializing modals:', error);
+        }
+    });
+</script>
+
+<script>
+function closeModal(itemId) {
+    // Get the modal element
+    const modalElement = document.getElementById(`slno-modal-${itemId}`);
+    
+    // Get the modal instance
+    const modal = bootstrap.Modal.getInstance(modalElement);
+    
+    // Hide the modal
+    if (modal) {
+        modal.hide();
+    }
+    
+    // Remove backdrop manually if it exists
+    const backdrop = document.querySelector('.modal-backdrop');
+    if (backdrop) {
+        backdrop.remove();
+    }
+    
+    // Remove modal-open class from body
+    document.body.classList.remove('modal-open');
+    document.body.style.overflow = '';
+    document.body.style.paddingRight = '';
+}
+
+// Also update your slupdate function
+function slupdate(itemId) {
+    // Your existing logic here...
+    
+    // Close modal properly at the end
+    closeModal(itemId);
+}
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize modals with specific options
+        var modals = document.querySelectorAll('.modal');
+        modals.forEach(function(modalElement) {
+            new bootstrap.Modal(modalElement, {
+                backdrop: true,
+                keyboard: true,
+                focus: true
+            });
+        });
+    });
+</script>
+
+<style>
+.custom-popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.custom-popup.show {
+    opacity: 1;
+}
+
+.popup-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.7);
+    background-color: white;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+    max-width: 500px;
+    width: 95%;
+    opacity: 0;
+    transition: all 0.3s ease-in-out;
+}
+
+.custom-popup.show .popup-content {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+}
+
+.popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    margin: -25px -25px 20px;
+    background: #4e73df;
+    border-radius: 8px 8px 0 0;
+}
+
+.popup-title {
+    margin: 0;
+    color: white;
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+
+.popup-close {
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: white;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.popup-close:hover {
+    opacity: 1;
+}
+
+.popup-body {
+    max-height: 60vh;
+    overflow-y: auto;
+    padding: 0 5px;
+}
+
+.popup-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.popup-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.popup-body::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+}
+
+.popup-body::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.popup-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+    margin-top: 20px;
+    gap: 10px;
+}
+
+.popup-footer button {
+    padding: 8px 20px;
+    border-radius: 5px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.popup-footer .btn-warning {
+    background-color: #f6c23e;
+    border-color: #f6c23e;
+    color: #fff;
+}
+
+.popup-footer .btn-primary {
+    background-color: #4e73df;
+    border-color: #4e73df;
+}
+
+.popup-footer button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.serial-item {
+    background: #f8f9fc;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 8px;
+    transition: all 0.2s;
+}
+
+.serial-item:hover {
+    background: #eaecf4;
+}
+
+.form-check-input {
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+}
+</style>
+
+<script>
+function openPopup(itemId) {
+    const popup = document.getElementById(`popup-${itemId}`);
+    if (popup) {
+        popup.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+        // Trigger reflow
+        popup.offsetHeight;
+        // Add show class for animation
+        popup.classList.add('show');
+    }
+}
+
+function closePopup(itemId) {
+    const popup = document.getElementById(`popup-${itemId}`);
+    if (popup) {
+        popup.classList.remove('show');
+        // Wait for animation to finish
+        setTimeout(() => {
+        popup.style.display = 'none';
+            document.body.style.overflow = '';
+        }, 300);
+    }
+}
+
+// Update click outside to close with animation
+document.addEventListener('click', function(event) {
+    const popups = document.querySelectorAll('.custom-popup');
+    popups.forEach(popup => {
+        if (event.target === popup) {
+            const itemId = popup.id.split('-')[1];
+            closePopup(itemId);
+        }
+    });
+});
+
+// Add escape key to close
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        const popup = document.querySelector('.custom-popup.show');
+        if (popup) {
+            const itemId = popup.id.split('-')[1];
+            closePopup(itemId);
+        }
+    }
 });
 </script>

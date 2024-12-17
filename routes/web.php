@@ -62,3 +62,4 @@ Route::post('/login', [LoginController::class, 'loginpost'])->name('loginpost');
 Route::get('/', [LoginController::class, 'login'])->name('login');
 Route::get('/qrview/{id}', [QrviewController::class, 'qrview'])->name('qrview');
 Route::get('/store_itemsscan/{id}', [QrviewController::class, 'store_itemsscan'])->name('store_itemsscan');
+Route::get('/get-serials', [PurchaseController::class, 'getSerials'])->name('get.serials');

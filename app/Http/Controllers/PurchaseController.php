@@ -47,8 +47,16 @@ class PurchaseController extends Controller
         $category = category::all();
         $account = Account::all();
         $country = countrysettings::all();
-        $serial = Serial::where('id');
-        return view('admin.purchase.addpurchase', compact('supplier', 'account', 'ware', 'tax', 'store', 'unit', 'logo', 'category', 'brands', 'country'));
+        
+        // Get both grouped and ungrouped serials
+        $serialsAll = Serial::orderBy('item_id')->get();
+        $serialsGrouped = $serialsAll->groupBy('item_id');
+        
+        return view('admin.purchase.addpurchase', compact(
+            'supplier', 'account', 'ware', 'tax', 'store', 
+            'unit', 'logo', 'category', 'brands', 'country', 
+            'serialsAll', 'serialsGrouped'
+        ));
     }
     public function getSuppliers(Request $request)
     {
@@ -1143,6 +1151,13 @@ public function purchase_return_list() {
     $user = UserList::whereIn('id', $userIds)->first();
 
     return view('admin.purchase.purchasereturnlist', compact('sales', 'suppliers', 'user', 'logo', 'account'));
+}
+
+public function getSerials(Request $request)
+{
+    $itemId = $request->input('item_id');
+    $serials = Serial::where('item_id', $itemId)->get();
+    return response()->json($serials);
 }
 
 }
