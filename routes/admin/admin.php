@@ -17,6 +17,7 @@ use App\Http\Controllers\LedgerController;
 
 use App\Http\Controllers\MakepaymentController;
 use App\Http\Controllers\NewitemController;
+use App\Http\Controllers\PayInOutController;
 use App\Http\Controllers\PosController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\PurchaseOrderController;
@@ -307,7 +308,9 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'role:admin|superadm
     Route::get('/seconderyunit-list',[SecondryController::class,'secondryunitlist'])->name('secondryunitlist');
     Route::post('/slupdate',[ItemsController::class,'slupdate'])->name('slupdate');
     Route::post('/serial', [SerialController::class, 'serialpost'])->name('serial.post');
-    // In routes/web.php or routes/api.php
-Route::get('/getSerialNumbers/{id}', [SerialController::class, 'getSerialNumbers'])->name('getSerialNumbers');
+ 
+    Route::get('/getSerialNumbers/{id}', [SerialController::class, 'getSerialNumbers'])->name('getSerialNumbers');
+    Route::get('/payin',[PayInOutController::class,'payin'])->name('pay.in');
+    Route::get('/get-bill', [PayInOutController::class, 'getbill'])->name('get.bill');
 });
 
