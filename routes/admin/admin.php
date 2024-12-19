@@ -312,5 +312,6 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'role:admin|superadm
     Route::get('/getSerialNumbers/{id}', [SerialController::class, 'getSerialNumbers'])->name('getSerialNumbers');
     Route::get('/payin',[PayInOutController::class,'payin'])->name('pay.in');
     Route::get('/get-bill', [PayInOutController::class, 'getbill'])->name('get.bill');
+    Route::post('/payinpost', [PayInOutController::class, 'payinpost'])->name('payin.post');
 });
 
