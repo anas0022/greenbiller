@@ -313,5 +313,12 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'role:admin|superadm
     Route::get('/payin',[PayInOutController::class,'payin'])->name('pay.in');
     Route::get('/get-bill', [PayInOutController::class, 'getbill'])->name('get.bill');
     Route::post('/payinpost', [PayInOutController::class, 'payinpost'])->name('payin.post');
+    Route::get('paybill', [PayInOutController::class, 'paybill'])->name('pay.bill');
+    Route::get('/payout',[PayInOutController::class,'payout'])->name('pay.out');
+    
+    Route::get('/find-supplier', [PayInOutController::class, 'findSupplier'])->name('findSupplier');
+    Route::get('/get-suppliers-by-store', [PayInOutController::class, 'getSuppliersByStore'])->name('get.suppliers.by.store');
+    Route::get('/get-bill-purchase', [PayInOutController::class, 'getbillpurchase'])->name('get.bill.purchase');
+    Route::post('/payoutpost', [PayInOutController::class, 'payoutpost'])->name('payout.post');
 });
 

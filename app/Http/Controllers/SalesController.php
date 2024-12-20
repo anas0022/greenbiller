@@ -242,7 +242,7 @@ class SalesController extends Controller
 
                 'payment_note' => $payment_note,
 
-                'paid_amount' => $payment_amount,
+                'paid_amount' =>round($payment_amount),
 
                 'round_off' => $round_off,
 
@@ -250,7 +250,7 @@ class SalesController extends Controller
 
                 'created_on' => $created_on,
 
-                'grand_total' => $grand_total,
+                'grand_total' =>round($grand_total),
 
                 'invoice_terms' => $invoice_terms,
 
