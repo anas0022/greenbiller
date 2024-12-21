@@ -18,6 +18,7 @@ use App\Models\Unit;
 use App\Models\Warehouse;
 use App\Models\Supplier;
 use App\Models\Purchase;
+use App\Models\Purchasepay;
 use Illuminate\Http\Request;
 
 class PayInOutController extends Controller
@@ -376,17 +377,7 @@ public function payoutpost(Request $request){
         $payment_type = $request->input('type');
         $account_id = $request->input('account_id');
 
-        // Validate required fields
-        if (!$payment_type || !$account_id) {
-            return back()->withErrors(['error' => 'Please select payment type and account'])->withInput();
-        }
-
-        if (!is_array($saleIds) || !is_array($payments) || empty($saleIds) || count($saleIds) !== count($payments)) {
-            return back()->withErrors(['error' => 'Invalid payment data'])->withInput();
-        }
-
-        // Start transaction
-        \DB::beginTransaction();
+       
         try {
             foreach ($saleIds as $key => $saleId) {
                 // Find sale and update
@@ -398,7 +389,9 @@ public function payoutpost(Request $request){
 
                $sale_staus = $sale->payment_status;
              $grand = $sale->grand_total;
+             
              $paid = $sale->paid_amount;
+           
              if($paid >= $grand){
                 $sale->payment_status = 'Paid';
                 $sale->save();
@@ -422,12 +415,13 @@ public function payoutpost(Request $request){
                     $existingLedger->supplyer_id = $supplier_id;
                     $existingLedger->store_id = $store_id;
                     $existingLedger->type = $payment_type;
+                    
                     $existingLedger->save();
                 } else {
                     $ledger = new Ledger();
                     $ledger->supplyer_id = $supplier_id;
                     $ledger->store_id = $store_id;
-                    $ledger->sale_id = $saleId;
+                    $ledger->purchase_id = $saleId;
                     $ledger->debit = $newPayment;
                     $ledger->date = $date;
                     $ledger->type = $payment_type;
@@ -440,7 +434,7 @@ public function payoutpost(Request $request){
                 $payment_code = $sales_payment_init . '/' . sprintf("%04d", $sale->id + 1);
 
                 // Check and update or create sales payment entry
-                $existingPayment = SalesPayment::where('purchase_id', $saleId)
+                $existingPayment = Purchasepay::where('purchase_id', $saleId)
                     ->where('payment_type', $payment_type)
                     ->where('payment_date', $date)
                     ->first();
@@ -457,11 +451,11 @@ public function payoutpost(Request $request){
                     $existingPayment->account_id = $account_id;
                     $existingPayment->save();
                 } else {
-                    $payment = new SalesPayment();
+                    $payment = new Purchasepay();
                     $payment->supplier_id = $supplier_id;
                     $payment->count_id = $sale->count_id;
                     $payment->store_id = $store_id;
-                    $payment->sales_id = $saleId;
+                    $payment->purchase_id = $saleId;
                     $payment->payment = $newPayment;
                     $payment->payment_type = $payment_type;
                     $payment->payment_date = $date;
@@ -483,18 +477,19 @@ public function payoutpost(Request $request){
                 if ($sale) {
                     $billDetails[] = [
                         'bill_no' => $sale->prefix . $sale->sales_code,
-                        'amount' => $payments[array_search($saleId, $saleIds)]
+                        'payment' => $payments[array_search($saleId, $saleIds)]
                     ];
                 }
             }
            
 
-            $payment = new SalesPayment();
+            $payment = new Purchasepay();
             $payment->supplier_id = $supplier_id;
             $payment->payment_code = 'QA' . date('Y') . '-' . str_pad($payment_code, 6, '0', STR_PAD_LEFT);
             $payment->payment_date = date('Y-m-d');
-            $payment->payment_mode = $request->payment_mode;
-            $payment->amount = $totalPaid;
+            //$payment->payment_mode = $request->payment_mode;
+            $payment->payment = $totalPaid;
+            $payment->purchase_id = $saleId;
             $payment->save();
 
             \DB::commit();
@@ -516,5 +511,45 @@ public function payoutpost(Request $request){
             ->withInput();
     }
 }
+public function paybillpurchase(Request $request)
+{
+    $logo = Coresetting::all();
+    try {
+        $billDetails = $request->billDetails ?? [];
+        $totalPaid = $request->totalPaid ?? 0;
+        $supplier_id = $request->supplier_id;
 
-}
+        if (empty($billDetails)) {
+            return redirect()->route('pay.out')->with('error', 'No bill details found');
+        }
+
+        $store = Store::first();
+        if (!$store) {
+            return redirect()->route('pay.out')->with('error', 'Store information not found');
+        }
+
+        $supplier = Supplier::find($supplier_id);
+        if (!$supplier) {
+            return redirect()->route('pay.out')->with('error', 'Supplier information not found');
+        }
+
+        // Find the payment record
+        $payment = PurchasePayment::where('supplier_id', $supplier_id)
+                             ->orderBy('id', 'desc')
+                             ->first();
+
+        if (!$payment) {
+            return redirect()->route('pay.out')->with('error', 'Payment record not found');
+        }
+        
+        $ledger = new \stdClass();
+        $ledger->invoice_purchase_no = $billDetails[0]['bill_no'] ?? '';
+        $ledger->date = now()->format('Y-m-d');
+        $ledger->payment_code = $payment->payment_code;
+        
+        return view('admin.pay.bill_details_purchase', compact('billDetails', 'totalPaid', 'store', 'supplier', 'ledger', 'logo'));
+    } catch (\Exception $e) {
+        \Log::error('Error in paybill: ' . $e->getMessage());
+        return redirect()->route('pay.out')->with('error', 'An error occurred while processing the payment receipt');
+    }
+}}
